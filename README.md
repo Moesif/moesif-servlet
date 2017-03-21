@@ -133,17 +133,26 @@ In `web.xml` file:
 
 ```xml
 
-<filter>
-    <filter-name>moesifFilter</filter-name>
- 	<filter-class>com.moesif.servlet.MoesifFilter</filter-class>
-</filter>
-<filter-mapping>
- 	<filter-name>moesifFilter</filter-name>
- 	<url-pattern>/*</url-pattern>
-</filter-mapping>
+  <filter>
+    <filter-name>MoesifFilter</filter-name>
+    <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>your application id</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>MoesifFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
 
 ```
-You may have to override `onStartup()` to pass in the filter your configuration.
+You may have to override `onStartup()` to pass in the MoesifConfiguration object.
 
 ### Configuration options
 

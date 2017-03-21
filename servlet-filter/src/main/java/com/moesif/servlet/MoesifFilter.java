@@ -41,11 +41,18 @@ public class MoesifFilter implements Filter {
   private MoesifAPIClient moesifApi;
   private boolean debug;
 
+  /**
+   * Default Constructor, please set ApplicationId before use.
+   */
   public MoesifFilter() {
     this.config = new MoesifConfigurationAdapter();
     this.debug = false;
   }
 
+  /**
+   * Constructor
+   * @param    applicationId   Required parameter: obtained from your moesif Account.
+   */
   public MoesifFilter(String applicationId) {
     this.applicationId = applicationId;
     this.config = new MoesifConfigurationAdapter();
@@ -53,6 +60,11 @@ public class MoesifFilter implements Filter {
     this.debug = false;
   }
 
+  /**
+   * Constructor
+   * @param    applicationId   Required parameter: obtained from your moesif Account.
+   * @param    debug Flag for turning debug messages on.
+   */
   public MoesifFilter(String applicationId, boolean debug) {
     this.applicationId = applicationId;
     this.config = new MoesifConfigurationAdapter();
@@ -60,6 +72,11 @@ public class MoesifFilter implements Filter {
     this.debug = debug;
   }
 
+  /**
+   * Constructor
+   * @param    applicationId   Required parameter: obtained from your moesif Account.
+   * @param    config MoesifConfiguration Object.
+   */
   public MoesifFilter(String applicationId, MoesifConfiguration config) {
     this.applicationId = applicationId;
     this.config = config;
@@ -67,6 +84,12 @@ public class MoesifFilter implements Filter {
     this.debug = false;
   }
 
+  /**
+   * Constructor
+   * @param    applicationId   Required parameter: obtained from your moesif Account.
+   * @param    config MoesifConfiguration Object
+   * @param    debug boolean
+   */
   public MoesifFilter(String applicationId, MoesifConfiguration config, boolean debug) {
     this.applicationId = applicationId;
     this.config = config;
@@ -74,15 +97,27 @@ public class MoesifFilter implements Filter {
     this.debug = debug;
   }
 
+  /**
+   * Sets the Moesif Application Id.
+   * @param    applicationId   Required parameter: obtained from your moesif Account.
+   */
   public void setApplicationId(String applicationId) {
     this.applicationId = applicationId;
     this.moesifApi = new MoesifAPIClient(applicationId);
   }
 
+  /**
+   * Sets the MoesifConfiguration
+   * @param    config MoesifConfiguration Object
+   */
   public void setConfigure(MoesifConfiguration config) {
     this.config = config;
   }
 
+  /**
+   * Sets the debug flag
+   * @param    debug boolean
+   */
   public void setDebug(boolean debug) {
     this.debug = debug;
   }
@@ -111,7 +146,7 @@ public class MoesifFilter implements Filter {
     Date startDate = new Date();
 
     if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-      throw new ServletException("LoggingFilter just supports HTTP requests");
+      throw new ServletException("MoesifFilter just supports HTTP requests");
     }
 
     HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -361,7 +396,7 @@ public class MoesifFilter implements Filter {
     return ipAddress;
   }
 
-  public static String getFullURL(HttpServletRequest request) {
+  static String getFullURL(HttpServletRequest request) {
     StringBuffer requestURL = request.getRequestURL();
     String queryString = request.getQueryString();
 

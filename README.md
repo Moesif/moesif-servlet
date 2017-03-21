@@ -89,15 +89,20 @@ public class MyConfig extends WebMvcConfigurerAdapter {
 
 #### How to Compile the Spring Boot Example
 
-```mvn clean package```
-
+```bash
+mvn clean package
+```
 #### How to run the Spring Boot Example
 
-```java -jar target/gs-rest-service-0.1.0.jar```
+```bash
+java -jar target/moesif-spring-example.jar
+```
 
 or
 
-```mvn spring-boot:run```
+```bash
+mvn spring-boot:run
+```
 
 ### Spring MVC (Java Config))
 

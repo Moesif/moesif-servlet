@@ -127,6 +127,17 @@ public class MoesifFilter implements Filter {
     if (debug) {
       logger.fine("moesif filter init called");
     }
+    String appId = filterConfig.getInitParameter("application-id");
+    if (appId != null) {
+      this.applicationId = appId;
+      this.moesifApi = new MoesifAPIClient(this.applicationId);
+    }
+    String debug = filterConfig.getInitParameter("debug");
+    if (debug != null) {
+      if (debug.equals("true")) {
+        this.debug = true;
+      }
+    }
   }
 
   @Override

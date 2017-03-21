@@ -11,6 +11,7 @@
   <modules>
     <module>servlet-filter</module>
     <module>spring-example</module>
+    <module>servlet-example</module>
   </modules>
   
   <build>

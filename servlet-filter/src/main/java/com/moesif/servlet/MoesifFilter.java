@@ -316,6 +316,7 @@ public class MoesifFilter implements Filter {
         public void onFailure(HttpContext context, Throwable error) {
           if (debug) {
             logger.info("send to Moesif error ");
+            logger.info( error.toString());
           }
         }
       };

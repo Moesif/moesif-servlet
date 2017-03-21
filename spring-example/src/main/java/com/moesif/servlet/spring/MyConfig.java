@@ -52,6 +52,6 @@ public class MyConfig extends WebMvcConfigurerAdapter{
       }
     };
 
-    return new MoesifFilter("eyJhcHAiOiI5NDo2IiwidmVyIjoiMi4wIiwib3JnIjoiODg6NSIsImlhdCI6MTQ5MDA1NDQwMH0.xzx38eiT8J0DjpjpwzGK7OTLVB5uRAySurH0QaBq8CA", config, true);
+    return new MoesifFilter("eyJhcHAiOiIyMjM6MTIiLCJ2ZXIiOiIyLjAiLCJvcmciOiIzNTE6MTUiLCJpYXQiOjE0OTAwNTQ0MDB9.RkPJ__KpWdvvDCo2bnVs3baXckzanHNn6gxW5xqltYU", config, true);
   }
 }

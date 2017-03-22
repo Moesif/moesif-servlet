@@ -38,7 +38,7 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or t
 <dependency>
     <groupId>com.moesif.moesif-servlet</groupId>
     <artifactId>servlet-filter</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -166,7 +166,7 @@ Check that your maven version is 3.0.x or above:
 mvn -v
 ```
 
-Edit the web.xml file to add your application id that you obtained from your Moesif Account. 
+Edit the web.xml file to add your application id that you obtained from your Moesif Account.
 
 ```xml
   <filter>
@@ -195,9 +195,9 @@ In order to build and run the project you must execute:
 mvn clean install tomcat7:run
 ```
 
-Then, go to [http://localhost:3099/Demo1](http://localhost:3099/Demo1).
+Then, go to `http://localhost:3099/Demo1`.
 
-In your Moesif Account, you should see event logged and monitored. 
+In your Moesif Account, you should see event logged and monitored.
 
 Shut it down manually with Ctrl-C.
 

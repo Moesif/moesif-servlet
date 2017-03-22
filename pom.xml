@@ -9,7 +9,7 @@
   <name>moesif-servlet</name>
 
   <properties>
-    <global.version>1.0.2</global.version>
+    <global.version>1.0.3</global.version>
   </properties>
 
   <modules>

@@ -18,7 +18,7 @@ Different web frameworks have different way of configuring
 filters. Please take a look at the framework specific examples or reach out to us for any questions.
 Refer to the framework specific documentation for adding or configuring servlet filters.
 
-For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or the [JavaDoc](https://jitpack.io/com/moesif/moesif-servlet/servlet-filter/1.0.2/javadoc/)
+For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or the [JavaDoc](https://jitpack.io/com/moesif/moesif-servlet/servlet-filter/1.0.3/javadoc/)
 
 ## How to install
 

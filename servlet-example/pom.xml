@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>servlet-filter</artifactId>
-      <version>1.0.1</version>
+      <version>${global.version}</version>
     </dependency>
   </dependencies>
 

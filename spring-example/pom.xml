@@ -8,7 +8,7 @@
   </parent>
   <groupId>com.moesif.servlet.spring</groupId>
   <artifactId>spring-example</artifactId>
-  <version>${global.version}</version>
+  <version>1.0.2</version>
   <name>spring-example</name>
   <url>http://maven.apache.org</url>
 
@@ -41,7 +41,7 @@
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>servlet-filter</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -86,10 +86,6 @@
     <repository>
       <id>spring-releases</id>
       <url>https://repo.spring.io/libs-release</url>
-    </repository>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
     </repository>
   </repositories>
   <pluginRepositories>

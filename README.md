@@ -8,11 +8,11 @@ moesif-servlet is a Java SDK for capturing API traffic and sending to [Moesif](h
 
 The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
 without importing large framework specific dependencies.
-Many frameworks are built on top of the Servlet API such as Spring, Apache Struts, etc.
+Many frameworks are built on top of the Servlet API such as Spring, Apache Struts, Jersey, etc.
 
 If your using a web framework that is built on the
 [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html)
-such as Spring Boot, Spring MVC, and Apache Struts, then you can enable this SDK with minimal configuration.
+such as Spring Boot, Spring MVC, Jersey, and Apache Struts, then you can enable this SDK with minimal configuration.
 
 Different web frameworks have different way of configuring
 filters. Please take a look at the framework specific examples or reach out to us for any questions.

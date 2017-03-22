@@ -18,7 +18,7 @@ Different web frameworks have different way of configuring
 filters. Please take a look at the framework specific examples or reach out to us for any questions.
 Refer to the framework specific documentation for adding or configuring servlet filters.
 
-For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or the [JavaDoc](https://jitpack.io/com/moesif/moesif-servlet/servlet-filter/1.0.1/javadoc/)
+For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or the [JavaDoc](https://jitpack.io/com/moesif/moesif-servlet/servlet-filter/1.0.2/javadoc/)
 
 ## How to install
 
@@ -38,7 +38,7 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or t
 <dependency>
     <groupId>com.moesif.moesif-servlet</groupId>
     <artifactId>servlet-filter</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 

@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrapper {
 
-  private final LoggingServletOutpuStream loggingServletOutpuStream = new LoggingServletOutpuStream();
+  private final LoggingServletOutputStream loggingServletOutputStream = new LoggingServletOutputStream();
 
   private final HttpServletResponse delegate;
 
@@ -26,12 +26,12 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
 
   @Override
   public ServletOutputStream getOutputStream() throws IOException {
-    return loggingServletOutpuStream;
+    return loggingServletOutputStream;
   }
 
   @Override
   public PrintWriter getWriter() throws IOException {
-    return new PrintWriter(loggingServletOutpuStream.baos);
+    return new PrintWriter(loggingServletOutputStream.baos, true);
   }
 
   public Map<String, String> getHeaders() {
@@ -45,17 +45,17 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
   public String getContent() {
     try {
       String responseEncoding = delegate.getCharacterEncoding();
-      return loggingServletOutpuStream.baos.toString(responseEncoding != null ? responseEncoding : UTF_8.name());
+      return loggingServletOutputStream.baos.toString(responseEncoding != null ? responseEncoding : UTF_8.name());
     } catch (UnsupportedEncodingException e) {
       return "[UNSUPPORTED ENCODING]";
     }
   }
 
   public byte[] getContentAsBytes() {
-    return loggingServletOutpuStream.baos.toByteArray();
+    return loggingServletOutputStream.baos.toByteArray();
   }
 
-  private class LoggingServletOutpuStream extends ServletOutputStream {
+  private class LoggingServletOutputStream extends ServletOutputStream {
 
     private ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

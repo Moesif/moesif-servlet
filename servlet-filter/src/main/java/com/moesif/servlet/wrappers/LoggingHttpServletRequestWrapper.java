@@ -14,14 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper {
@@ -116,10 +110,13 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   }
 
   private byte[] getContentFromParameterMap(Map<String, String[]> parameterMap) {
-    return parameterMap.entrySet().stream().map(e -> {
+
+    List<String> result = new ArrayList<>();
+    for (Map.Entry<String, String[]>  e: parameterMap.entrySet()) {
       String[] value = e.getValue();
-      return e.getKey() + "=" + (value.length == 1 ? value[0] : Arrays.toString(value));
-    }).collect(Collectors.joining("&")).getBytes();
+      result.add(e.getKey() + "=" + (value.length == 1 ? value[0] : Arrays.toString(value)));
+    }
+    return StringUtils.join(result, "&").getBytes();
   }
 
   public Map<String, String> getHeaders() {
@@ -134,13 +131,6 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
     return headers;
   }
 
-  public Map<String, String> getParameters() {
-    return getParameterMap().entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> {
-      String[] values = e.getValue();
-      return values.length > 0 ? values[0] : "[EMPTY]";
-    }));
-  }
-
   public boolean isFormPost() {
     String contentType = getContentType();
     return (contentType != null && contentType.contains(FORM_CONTENT_TYPE) && METHOD_POST.equalsIgnoreCase(getMethod()));
@@ -151,7 +141,8 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
     private final Iterator<String> iterator;
 
     private ParamNameEnumeration(Set<String> values) {
-      this.iterator = values != null ? values.iterator() : Collections.emptyIterator();
+      Iterator<String> emptyIterator = Collections.emptyIterator();
+      this.iterator = values != null ? values.iterator() : emptyIterator;
     }
 
     @Override

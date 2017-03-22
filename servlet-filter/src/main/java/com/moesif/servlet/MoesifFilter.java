@@ -125,7 +125,7 @@ public class MoesifFilter implements Filter {
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
     if (debug) {
-      logger.fine("moesif filter init called");
+      logger.fine("init filter");
     }
     String appId = filterConfig.getInitParameter("application-id");
     if (appId != null) {
@@ -143,21 +143,22 @@ public class MoesifFilter implements Filter {
   @Override
   public void destroy() {
     if (debug) {
-      logger.fine("moesif filter destroy called");
+      logger.fine("destroying filter");
     }
   }
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
     if (debug) {
-      logger.fine("moesif doFilter called");
+      logger.fine("filtering request");
     }
 
-    long startTime = System.currentTimeMillis();
     Date startDate = new Date();
 
     if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-      throw new ServletException("MoesifFilter just supports HTTP requests");
+      logger.warning("MoesifFilter was called for non HTTP requests");
+      filterChain.doFilter(request, response);
+      return;
     }
 
     HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -175,10 +176,8 @@ public class MoesifFilter implements Filter {
         startDate, config.getApiVersion(httpRequest, httpResponse));
 
     // pass to next step in the chain.
-
     filterChain.doFilter(requestWrapper, responseWrapper);
 
-    // logger.info(getResponseDescription(responseWrapper));
     Date endDate = new Date();
     EventResponseModel eventResponseModel = getEventResponseModel(responseWrapper, endDate);
 
@@ -332,15 +331,12 @@ public class MoesifFilter implements Filter {
 
       } catch(Exception e) {
         if (debug) {
-          logger.info("send to Moesif failed");
-          logger.info(e.toString());
+          logger.warning("send to Moesif failed " + e.toString());
         }
       }
 
     } else {
-      if (debug) {
-        logger.fine("The application Id should be set before using MoesifFilter");
-      }
+      logger.warning("The application Id should be set before using MoesifFilter");
     }
   }
 
@@ -379,7 +375,7 @@ public class MoesifFilter implements Filter {
       HashMap<String, String> errorHash = new HashMap<String, String>();
       errorHash.put("code", "json_parse_error");
       errorHash.put("src", "moesif-servlet");
-      errorHash.put("msg", "Body is not a valid JSON Objec tor JSON Array");
+      errorHash.put("msg", "Body is not a valid JSON Object tor JSON Array");
       errorHash.put("args", str);
       hmap.put("moesif_error", errorHash);
       return hmap;

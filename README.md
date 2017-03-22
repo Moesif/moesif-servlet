@@ -18,6 +18,8 @@ Different web frameworks have different way of configuring
 filters. Please take a look at the framework specific examples or reach out to us for any questions.
 Refer to the framework specific documentation for adding or configuring servlet filters.
 
+For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or the [JavaDoc](https://jitpack.io/com/moesif/moesif-servlet/servlet-filter/1.0.1/javadoc/)
+
 ## How to install
 
 ```xml
@@ -36,7 +38,7 @@ Refer to the framework specific documentation for adding or configuring servlet 
 <dependency>
     <groupId>com.moesif.moesif-servlet</groupId>
     <artifactId>servlet-filter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -154,6 +156,51 @@ In `web.xml` file:
 ```
 You may have to override `onStartup()` to pass in the MoesifConfiguration object.
 
+### General Java HTTP Servlet
+
+In order to run this example you will need to have Java 7+ and Maven installed.
+
+Check that your maven version is 3.0.x or above:
+
+```sh
+mvn -v
+```
+
+Edit the web.xml file to add your application id that you obtained from your Moesif Account. 
+
+```xml
+  <filter>
+    <filter-name>MoesifFilter</filter-name>
+    <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>your application id</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>MoesifFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+```
+
+
+In order to build and run the project you must execute:
+
+```sh
+mvn clean install tomcat7:run
+```
+
+Then, go to [http://localhost:3099/Demo1](http://localhost:3099/Demo1).
+
+In your Moesif Account, you should see event logged and monitored. 
+
+Shut it down manually with Ctrl-C.
+
 ### Configuration options
 
 To configure the filter, extend the `MoesifConfigurationAdapter` class to override a few config params or implement the entire
@@ -222,3 +269,7 @@ to the event.
     return request.getHeader("X-Api-Version");
   }
 ```
+
+## Other integrations
+
+To view more more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__

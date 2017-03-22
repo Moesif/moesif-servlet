@@ -11,11 +11,13 @@ public class ServletDemo1 extends HttpServlet{
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException{
     PrintWriter out = response.getWriter();
-    out.println("<html>");
-    out.println("<body>");
-    out.println("<h1>Hello Servlet Get</h1>");
-    out.println("</body>");
-    out.println("</html>");
+    String json = "{"
+            + "\"field_a\": {"
+            +     "\"id\": 123456,"
+            +     "\"msg\": \"Hello World.\""
+            +   "}"
+            + "}";
+    out.println(json);
   }
 }
 

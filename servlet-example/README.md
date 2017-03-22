@@ -1,6 +1,6 @@
 
 
-# Starter Example for Servelet
+# Moesif Example for Java Servlet
 
 In order to run this example you will need to have Java 7+ and Maven installed.
 
@@ -42,6 +42,5 @@ mvn clean install tomcat7:run
 Then, go to [http://localhost:3099/Demo1](http://localhost:3099/Demo1).
 
 In your Moesif Account, you should see event logged and monitored. 
-
 
 Shut it down manually with Ctrl-C.

@@ -237,8 +237,9 @@ ensures the highest accuracy with user attribution.
   }
 ```
 
-#### 4. `public String getSessionToken(HttpServletRequest request, HttpServletResponse response)` Moesif automatically
-detects the end user's session token or API key, but you can manually define the token for finer control.
+#### 4. `public String getSessionToken(HttpServletRequest request, HttpServletResponse response)` 
+
+Moesif automatically detects the end user's session token or API key, but you can manually define the token for finer control.
 
 ```java
   @Override

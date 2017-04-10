@@ -188,8 +188,8 @@ Edit the web.xml file to add your application id that you obtained from your Moe
 
 ```
 
+#### How to run the Servlet Example:
 
-In order to build and run the project you must execute:
 
 ```sh
 mvn clean install tomcat7:run

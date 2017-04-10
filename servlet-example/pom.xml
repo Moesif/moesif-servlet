@@ -4,14 +4,11 @@
   <parent>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>${global.version}</version>
+    <version>1.0.4</version>
   </parent>
-  <groupId>com.moesif.servlet</groupId>
   <artifactId>servlet-example</artifactId>
   <packaging>war</packaging>
-  <version>${global.version}</version>
   <name>servlet-example</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
     <java.version>1.7</java.version>
@@ -25,19 +22,36 @@
       <version>3.1.0</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
     </dependency>
 
+    <!-- Local project artifact -->
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>servlet-filter</artifactId>
-      <version>${global.version}</version>
+      <version>${project.version}</version>
     </dependency>
+
+   <!-- Published artifact in JitPack -->
+    <!--
+    <dependency>
+      <groupId>com.moesif.moesif-servlet</groupId>
+      <artifactId>servlet-filter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>

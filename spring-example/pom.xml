@@ -38,11 +38,23 @@
       <artifactId>json-path</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Local project artifact -->
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>servlet-filter</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
+
+    <!-- Published artifact in JitPack -->
+    <!--
+    <dependency>
+      <groupId>com.moesif.moesif-servlet</groupId>
+      <artifactId>servlet-filter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -86,6 +98,10 @@
     <repository>
       <id>spring-releases</id>
       <url>https://repo.spring.io/libs-release</url>
+    </repository>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
   <pluginRepositories>

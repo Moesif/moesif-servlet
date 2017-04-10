@@ -4,13 +4,9 @@
   
   <groupId>com.moesif.servlet</groupId>
   <artifactId>moesif-servlet</artifactId>
-  <version>${global.version}</version>
+  <version>1.0.4</version>
   <packaging>pom</packaging>
   <name>moesif-servlet</name>
-
-  <properties>
-    <global.version>1.0.3</global.version>
-  </properties>
 
   <modules>
     <module>servlet-filter</module>

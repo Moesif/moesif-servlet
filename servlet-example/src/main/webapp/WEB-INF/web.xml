@@ -24,14 +24,11 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <servlet>
     <servlet-name>Servlet Example</servlet-name>
-    <servlet-class>com.moesif.servlet.example.ServletDemo1</servlet-class>
+    <servlet-class>com.moesif.servlet.example.ServletDemo</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>Servlet Example</servlet-name>
-    <url-pattern>/Demo1</url-pattern>
+    <url-pattern>/demo</url-pattern>
   </servlet-mapping>
-
-
-
 </web-app>

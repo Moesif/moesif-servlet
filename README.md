@@ -38,7 +38,7 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or t
 <dependency>
     <groupId>com.moesif.moesif-servlet</groupId>
     <artifactId>servlet-filter</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -92,12 +92,14 @@ public class MyConfig extends WebMvcConfigurerAdapter {
 #### How to Compile the Spring Boot Example
 
 ```bash
-mvn clean package
+git clone https://github.com/Moesif/moesif-servlet
+cd moesif-servlet
+mvn clean install
 ```
 #### How to run the Spring Boot Example
 
 ```bash
-java -jar target/moesif-spring-example.jar
+java -jar spring-example/target/moesif-spring-example.jar
 ```
 
 or
@@ -188,11 +190,19 @@ Edit the web.xml file to add your application id that you obtained from your Moe
 
 ```
 
-#### How to run the Servlet Example:
+#### How to Compile the Spring Boot Example
+
+```bash
+git clone https://github.com/Moesif/moesif-servlet
+cd moesif-servlet
+mvn clean install
+```
+
+#### How to run the Servlet Example
 
 
-```sh
-mvn clean install tomcat7:run
+```bash
+mvn tomcat7:run -pl servlet-example
 ```
 
 Then, go to `http://localhost:3099/Demo1`.

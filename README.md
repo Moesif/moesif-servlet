@@ -89,26 +89,52 @@ public class MyConfig extends WebMvcConfigurerAdapter {
 }
 ```
 
-#### How to Compile the Spring Boot Example
+#### Running the Spring Boot example
 
-```bash
-git clone https://github.com/Moesif/moesif-servlet
-cd moesif-servlet
-mvn clean install
-```
-#### How to run the Spring Boot Example
+In order to run this example you will need to have Java 7+ and Maven installed.
 
-```bash
-java -jar spring-example/target/moesif-spring-example.jar
+Before starting, check that your maven version is 3.0.x or above:
+
+```sh
+mvn -v
 ```
 
-or
+1. Clone the repository
 
-```bash
-mvn spring-boot:run
-```
+	```bash
+	git clone https://github.com/Moesif/moesif-servlet
+	```
 
-### Spring MVC (Java Config))
+2. Update MyConfig to use your own Moesif ApplicationId
+(Register for an account on [moesif.com](https://www.moesif.com))
+
+	```bash
+	vim moesif-servlet/spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
+	```
+
+3. Compile the project
+
+	```bash
+	cd moesif-servlet
+	mvn clean install
+	```
+
+4. Run spring-example
+
+	```bash
+	java -jar spring-example/target/moesif-spring-example.jar
+	```
+
+	Alternatively:
+
+	```bash
+	mvn  spring-boot:run -pl spring-example
+	```
+
+
+5. Go to `http://localhost:8080/greeting` or the port that Spring Boot is running on.
+
+### Spring MVC (Java Config)
 
 ```java
 
@@ -158,15 +184,7 @@ In `web.xml` file:
 ```
 You may have to override `onStartup()` to pass in the MoesifConfiguration object.
 
-### General Java HTTP Servlet
-
-In order to run this example you will need to have Java 7+ and Maven installed.
-
-Check that your maven version is 3.0.x or above:
-
-```sh
-mvn -v
-```
+### Generic Java Servlet
 
 Edit the web.xml file to add your application id that you obtained from your Moesif Account.
 
@@ -190,35 +208,59 @@ Edit the web.xml file to add your application id that you obtained from your Moe
 
 ```
 
-#### How to Compile the Spring Boot Example
+#### Running the Generic Servlet example
 
-```bash
-git clone https://github.com/Moesif/moesif-servlet
-cd moesif-servlet
-mvn clean install
+This example implements the Servlet Filter directly in a generic Servlet app rather than using a higher level
+framework like Spring MVC or Spring Boot.
+
+In order to run this example you will need to have Java 7+ and Maven installed.
+
+Before starting, check that your maven version is 3.0.x or above:
+
+```sh
+mvn -v
 ```
 
-#### How to run the Servlet Example
+1. Clone the repository
 
+	```bash
+	git clone https://github.com/Moesif/moesif-servlet
+	```
 
-```bash
-mvn tomcat7:run -pl servlet-example
-```
+2. Update web.xml to use your own Moesif ApplicationId
+(Register for an account on [moesif.com](https://www.moesif.com))
 
-Then, go to `http://localhost:3099/Demo1`.
+	```bash
+	vim moesif-servlet/servlet-example/src/main/webapp/WEB-INF/web.xml
+	```
+
+3. Compile the project
+
+	```bash
+	cd moesif-servlet
+	mvn clean install
+	```
+
+4. Run servlet-example
+
+	```bash
+	mvn tomcat7:run -pl servlet-example
+	```
+
+5. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 
 Shut it down manually with Ctrl-C.
 
-### Configuration options
+## Configuration options
 
 To configure the filter, extend the `MoesifConfigurationAdapter` class to override a few config params or implement the entire
 `MoesifConfiguration` interface.
 Both will achieve similar results.
 
 
-#### 1. `public boolean skip(HttpServletRequest request, HttpServletResponse response)`
+### 1. `public boolean skip(HttpServletRequest request, HttpServletResponse response)`
 Return `true` if you want to skip logging a
 request to Moesif i.e. to skip boring requests like health probes.
 
@@ -230,10 +272,10 @@ request to Moesif i.e. to skip boring requests like health probes.
   }
 ```
 
-#### 2. `public EventModel maskContent(EventModel eventModel)`
+### 2. `public EventModel maskContent(EventModel eventModel)`
 If you want to remove any sensitive data in the HTTP headers or body before sending to Moesif, you can do so with `maskContent`
 
-#### 3. `public String identifyUser(HttpServletRequest request, HttpServletResponse response)`
+### 3. `public String identifyUser(HttpServletRequest request, HttpServletResponse response)`
 Highly recommended. Even though Moesif automatically detects the end userId if possible, setting this configuration
 ensures the highest accuracy with user attribution.
 
@@ -247,7 +289,7 @@ ensures the highest accuracy with user attribution.
   }
 ```
 
-#### 4. `public String getSessionToken(HttpServletRequest request, HttpServletResponse response)` 
+### 4. `public String getSessionToken(HttpServletRequest request, HttpServletResponse response)`
 
 Moesif automatically detects the end user's session token or API key, but you can manually define the token for finer control.
 
@@ -266,11 +308,11 @@ A second example if want to use servlet sessions
   }
 ```
 
-#### 5. `public String getTags(HttpServletRequest request, HttpServletResponse response)`
+### 5. `public String getTags(HttpServletRequest request, HttpServletResponse response)`
 You can add any additional tags as needed
 to the event.
 
-#### 6. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
+### 6. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
 You can optionally add an API version
 to the event.
 

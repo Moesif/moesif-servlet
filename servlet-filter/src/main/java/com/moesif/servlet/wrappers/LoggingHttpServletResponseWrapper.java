@@ -1,5 +1,7 @@
 package com.moesif.servlet.wrappers;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
@@ -8,8 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -36,8 +37,16 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
 
   public Map<String, String> getHeaders() {
     Map<String, String> headers = new HashMap<String, String>(0);
-    for (String headerName : getHeaderNames()) {
-      headers.put(headerName, getHeader(headerName));
+    Collection<String> headerNames = getHeaderNames();
+
+    for (String headerName: headerNames) {
+      if (headerName != null) {
+        if (headerName.equals("set-cookie")) {
+          headers.put(headerName, getHeader(headerName));
+        } else {
+          headers.put(headerName, StringUtils.join(getHeaders(headerName), ","));
+        }
+      }
     }
     return headers;
   }

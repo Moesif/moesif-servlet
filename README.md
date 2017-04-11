@@ -38,7 +38,7 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or t
 <dependency>
     <groupId>com.moesif.moesif-servlet</groupId>
     <artifactId>servlet-filter</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
@@ -101,33 +101,33 @@ mvn -v
 
 1. Clone the repository
 
-	```bash
+	```sh
 	git clone https://github.com/Moesif/moesif-servlet
 	```
 
 2. Update MyConfig to use your own Moesif ApplicationId
 (Register for an account on [moesif.com](https://www.moesif.com))
 
-	```bash
+	```sh
 	vim moesif-servlet/spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
 	```
 
 3. Compile the project
 
-	```bash
+	```sh
 	cd moesif-servlet
 	mvn clean install
 	```
 
 4. Run spring-example
 
-	```bash
+	```sh
 	java -jar spring-example/target/moesif-spring-example.jar
 	```
 
 	Alternatively:
 
-	```bash
+	```sh
 	mvn  spring-boot:run -pl spring-example
 	```
 
@@ -223,27 +223,27 @@ mvn -v
 
 1. Clone the repository
 
-	```bash
+	```sh
 	git clone https://github.com/Moesif/moesif-servlet
 	```
 
 2. Update web.xml to use your own Moesif ApplicationId
 (Register for an account on [moesif.com](https://www.moesif.com))
 
-	```bash
+	```sh
 	vim moesif-servlet/servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
 
 3. Compile the project
 
-	```bash
+	```sh
 	cd moesif-servlet
 	mvn clean install
 	```
 
 4. Run servlet-example
 
-	```bash
+	```sh
 	mvn tomcat7:run -pl servlet-example
 	```
 

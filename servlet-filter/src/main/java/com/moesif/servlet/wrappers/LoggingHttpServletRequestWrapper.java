@@ -124,8 +124,9 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
     Enumeration<String> headerNames = getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
+
       if (headerName != null) {
-        headers.put(headerName, getHeader(headerName));
+        headers.put(headerName, StringUtils.join(Collections.list(getHeaders(headerName)), ","));
       }
     }
     return headers;

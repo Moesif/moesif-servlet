@@ -3,9 +3,6 @@ package com.moesif.servlet;
 import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.Date;
-import java.util.HashMap;
-import com.moesif.servlet.utils.Base64;
-import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,8 +26,10 @@ import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 
+import com.moesif.servlet.utils.IpAddress;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
+import org.apache.commons.lang3.StringUtils;
 
 public class MoesifFilter implements Filter {
 
@@ -193,57 +192,31 @@ public class MoesifFilter implements Filter {
   }
 
 
-  protected EventRequestModel getEventRequestModel(LoggingHttpServletRequestWrapper requestWrapper, Date date, String apiVersion) {
+  private EventRequestModel getEventRequestModel(LoggingHttpServletRequestWrapper requestWrapper, Date date, String apiVersion) {
     EventRequestBuilder eventRequestBuilder = new EventRequestBuilder();
     eventRequestBuilder
         .time(date)
         .uri(getFullURL(requestWrapper))
         .headers(requestWrapper.getHeaders())
-        .verb(requestWrapper.getMethod());
+        .verb(requestWrapper.getMethod())
+        .ipAddress(IpAddress.getClientIp(requestWrapper));
 
-    String ipAddress = getIpAddress(requestWrapper);
-
-    if (ipAddress != null) {
-      eventRequestBuilder.ipAddress(ipAddress);
-    }
-
-    if (apiVersion != null) {
+    if (StringUtils.isNotEmpty(apiVersion)) {
       eventRequestBuilder.apiVersion(apiVersion);
     }
 
     String content = requestWrapper.getContent();
 
     if (content != null) {
-      if(content.equals("[\"[UNSUPPORTED ENCODING]\"]")) {
-
-        String errorMsgJson = "{"
-            + "    \"moesif_error\": {"
-            + "       \"code\": \"servlet_content_type_error\","
-            + "       \"msg\": \"The content type of the body is not supported.\","
-            + "       \"src\": \"moesif-servlet\","
-            + "       \"args\": \"\""
-            + "    }";
-
-        try {
-          Object reqBody = APIHelper.deserialize(errorMsgJson);
-          eventRequestBuilder.body(reqBody);
-        } catch(Exception E) {
-          if (debug) {
-            logger.fine("the error message parse failed");
-          }
-        }
-      } else if (isJsonHeader(requestWrapper.getHeaders()) || isStartJson(content)) {
-        eventRequestBuilder.body(safeParseJson(content));
-      } else {
-        eventRequestBuilder.transferEncoding("base64");
-        eventRequestBuilder.body(getBase64String(content));
-      }
+      BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
+      eventRequestBuilder.body(bodyWrapper.body);
+      eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
     }
 
     return eventRequestBuilder.build();
   }
 
-  protected EventResponseModel getEventResponseModel(LoggingHttpServletResponseWrapper responseWrapper, Date date) {
+  private EventResponseModel getEventResponseModel(LoggingHttpServletResponseWrapper responseWrapper, Date date) {
     EventResponseBuilder eventResponseBuilder = new EventResponseBuilder();
     eventResponseBuilder
         .time(date)
@@ -253,36 +226,15 @@ public class MoesifFilter implements Filter {
     String content = responseWrapper.getContent();
 
     if (content != null) {
-      if(content.equals("[\"[UNSUPPORTED ENCODING]\"]")) {
-
-        String errorMsgJson = "{"
-            + "    \"moesif_error\": {"
-            + "       \"code\": \"servlet_content_type_error\","
-            + "       \"msg\": \"The content type of the body is not supported.\","
-            + "       \"src\": \"moesif-servlet\","
-            + "       \"args\": \"\""
-            + "    }";
-
-        try {
-          Object resBody = APIHelper.deserialize(errorMsgJson);
-          eventResponseBuilder.body(resBody);
-        } catch(Exception E) {
-          if (debug) {
-            logger.fine("the error message parse failed");
-          }
-        }
-      } else if (isJsonHeader(responseWrapper.getHeaders()) || isStartJson(content)) {
-        eventResponseBuilder.body(safeParseJson(content));
-      } else {
-        eventResponseBuilder.transferEncoding("base64");
-        eventResponseBuilder.body(getBase64String(content));
-      }
+      BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
+      eventResponseBuilder.body(bodyWrapper.body);
+      eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);
     }
 
     return eventResponseBuilder.build();
   }
 
-  protected void sendEvent(EventRequestModel eventRequestModel,
+  private void sendEvent(EventRequestModel eventRequestModel,
                            EventResponseModel eventResponseModel,
                            String userId,
                            String sessionToken,
@@ -338,70 +290,6 @@ public class MoesifFilter implements Filter {
     } else {
       logger.warning("The application Id should be set before using MoesifFilter");
     }
-  }
-
-  static boolean isJsonHeader(Map<String, String> headers) {
-    // TODO check capitalized case also.
-    String val = headers.get("Content-Type");
-    if (val != null) {
-      if (val.contains("json")) {
-        return true;
-      }
-    }
-    String val2 = headers.get("content-type");
-    if (val2 != null) {
-      if (val2.contains("json")) {
-        return true;
-      }
-    }
-    String val3 = headers.get("CONTENT-TYPE");
-    if (val3 != null) {
-      if (val3.contains("json")) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  static boolean isStartJson(String str) {
-    return str.trim().startsWith("[") || str.trim().startsWith("{");
-  }
-
-  static Object safeParseJson(String str) {
-    try {
-      return APIHelper.deserialize(str);
-    } catch(IOException e) {
-      HashMap<String, Object> hmap = new HashMap<String, Object>();
-      HashMap<String, String> errorHash = new HashMap<String, String>();
-      errorHash.put("code", "json_parse_error");
-      errorHash.put("src", "moesif-servlet");
-      errorHash.put("msg", "Body is not a valid JSON Object tor JSON Array");
-      errorHash.put("args", str);
-      hmap.put("moesif_error", errorHash);
-      return hmap;
-    }
-  }
-
-  static String getBase64String(String str) {
-    byte[] encodedBytes = Base64.encode(str.getBytes(), Base64.DEFAULT);
-    return new String(encodedBytes);
-  }
-
-  static String getIpAddress(HttpServletRequest request) {
-    String ipAddress = request.getHeader("X-FORWARDED-FOR");
-
-    if (ipAddress == null) {
-      ipAddress = request.getHeader("X-Forwarded-For");
-    }
-
-    if (ipAddress == null) {
-      ipAddress = request.getHeader("x-forwarded-for");
-    }
-
-    if (ipAddress == null) {
-      ipAddress = request.getRemoteAddr();
-    }
-    return ipAddress;
   }
 
   static String getFullURL(HttpServletRequest request) {

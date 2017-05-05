@@ -8,7 +8,7 @@
   </parent>
   <groupId>com.moesif.servlet.spring</groupId>
   <artifactId>spring-example</artifactId>
-  <version>1.0.2</version>
+  <version>1.1.0</version>
   <name>spring-example</name>
   <url>http://maven.apache.org</url>
 
@@ -39,21 +39,11 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Local project artifact -->
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>servlet-filter</artifactId>
-      <version>1.0.5</version>
+      <version>1.1.0</version>
     </dependency>
-
-    <!-- Published artifact in JitPack -->
-    <!--
-    <dependency>
-      <groupId>com.moesif.moesif-servlet</groupId>
-      <artifactId>servlet-filter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -99,10 +89,6 @@
       <id>spring-releases</id>
       <url>https://repo.spring.io/libs-release</url>
     </repository>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -120,4 +106,12 @@
     </plugins>
     <finalName>moesif-spring-example</finalName>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>bintray-moesif-maven</id>
+      <name>moesif-maven</name>
+      <url>https://api.bintray.com/maven/moesif/maven/moesif-servlet/;publish=1</url>
+    </repository>
+  </distributionManagement>
 </project>

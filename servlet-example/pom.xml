@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.0.5</version>
+    <version>1.1.0</version>
   </parent>
   <artifactId>servlet-example</artifactId>
   <packaging>war</packaging>
@@ -28,31 +28,14 @@
       <version>1.2</version>
     </dependency>
 
-    <!-- Local project artifact -->
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>servlet-filter</artifactId>
       <version>${project.version}</version>
     </dependency>
 
-   <!-- Published artifact in JitPack -->
-    <!--
-    <dependency>
-      <groupId>com.moesif.moesif-servlet</groupId>
-      <artifactId>servlet-filter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    -->
-
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
-
+  
   <build>
     <plugins>
       <plugin>

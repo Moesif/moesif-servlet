@@ -42,12 +42,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <distributionManagement>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>moesif-maven</name>
-      <url>https://api.bintray.com/maven/moesif/maven/moesif-servlet/;publish=1</url>
-    </repository>
-  </distributionManagement>
 </project>

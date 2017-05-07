@@ -13,6 +13,7 @@
   <url>http://maven.apache.org</url>
 
   <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <assertj-core.version>3.1.0</assertj-core.version>
     <commons-io.version>2.4</commons-io.version>
@@ -41,7 +42,7 @@
 
     <dependency>
       <groupId>com.moesif.servlet</groupId>
-      <artifactId>servlet-filter</artifactId>
+      <artifactId>moesif-servlet</artifactId>
       <version>1.1.0</version>
     </dependency>
 
@@ -86,6 +87,11 @@
 
   <repositories>
     <repository>
+      <id>bintray-moesif-maven</id>
+      <name>bintray</name>
+      <url>http://dl.bintray.com/moesif/maven</url>
+    </repository>
+    <repository>
       <id>spring-releases</id>
       <url>https://repo.spring.io/libs-release</url>
     </repository>
@@ -106,12 +112,4 @@
     </plugins>
     <finalName>moesif-spring-example</finalName>
   </build>
-
-  <distributionManagement>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>moesif-maven</name>
-      <url>https://api.bintray.com/maven/moesif/maven/moesif-servlet/;publish=1</url>
-    </repository>
-  </distributionManagement>
 </project>

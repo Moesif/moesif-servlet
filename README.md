@@ -18,7 +18,7 @@ Different web frameworks have different way of configuring
 filters. Please take a look at the framework specific examples or reach out to us for any questions.
 Refer to the framework specific documentation for adding or configuring servlet filters.
 
-For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or the [JavaDoc](https://jitpack.io/com/moesif/moesif-servlet/servlet-filter/-SNAPSHOT/javadoc/)
+For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs)
 
 ## How to install
 
@@ -26,19 +26,20 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs) or t
 <!-- Step 1. Add the JitPack repository to your build file -->
 
 <repositories>
-	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
-	</repository>
+    <repository>
+      <id>bintray-moesif-maven</id>
+      <name>bintray</name>
+      <url>http://dl.bintray.com/moesif/maven</url>
+    </repository>
 </repositories>
 
 
 <!-- Step 2. Add the dependency -->
 
 <dependency>
-    <groupId>com.moesif.moesif-servlet</groupId>
-    <artifactId>servlet-filter</artifactId>
-    <version>1.0.5</version>
+    <groupId>com.moesif.servlet</groupId>
+    <artifactId>moesif-servlet</artifactId>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -112,23 +113,23 @@ mvn -v
 	vim moesif-servlet/spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
 	```
 
-3. Compile the project
+3. Compile the example
 
 	```sh
-	cd moesif-servlet
+	cd spring-example
 	mvn clean install
 	```
 
-4. Run spring-example
+4. Run spring-example (from the spring-example dir)
 
 	```sh
-	java -jar spring-example/target/moesif-spring-example.jar
+	java -jar target/moesif-spring-example.jar
 	```
 
 	Alternatively:
 
 	```sh
-	mvn  spring-boot:run -pl spring-example
+	mvn  spring-boot:run
 	```
 
 
@@ -234,20 +235,14 @@ mvn -v
 	vim moesif-servlet/servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
 
-3. Compile the project
+3. Run servlet-example
 
 	```sh
-	cd moesif-servlet
-	mvn clean install
+	cd servlet-example
+	mvn tomcat7:run
 	```
 
-4. Run servlet-example
-
-	```sh
-	mvn tomcat7:run -pl servlet-example
-	```
-
-5. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 
@@ -322,6 +317,15 @@ to the event.
     return request.getHeader("X-Api-Version");
   }
 ```
+
+## Building moesif-servlet locally
+If you are contributing to moesif-servlet, you can build it locally and install in local Maven Repo:
+
+```sh
+cd moesif-servlet
+mvn clean install
+```
+
 
 ## Other integrations
 

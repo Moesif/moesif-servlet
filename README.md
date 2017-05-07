@@ -1,6 +1,6 @@
 # Moesif Servlet SDK
 
-[![](https://jitpack.io/v/com.moesif/moesif-servlet.svg)](https://jitpack.io/#com.moesif/moesif-servlet)
+ [ ![Download](https://api.bintray.com/packages/moesif/maven/moesif-servlet/images/download.svg) ](https://bintray.com/moesif/maven/moesif-servlet/_latestVersion)
 
 ## Introduction
 
@@ -23,7 +23,7 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs)
 ## How to install
 
 ```xml
-<!-- Step 1. Add the JitPack repository to your build file -->
+<!-- Step 1. Add the Bintray repository to your build file -->
 
 <repositories>
     <repository>

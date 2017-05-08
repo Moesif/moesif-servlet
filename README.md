@@ -22,25 +22,24 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs)
 
 ## How to install
 
+#### Maven users
+
+Add this dependency to your project's POM:
+
 ```xml
-<!-- Step 1. Add the Bintray repository to your build file -->
-
-<repositories>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>bintray</name>
-      <url>http://dl.bintray.com/moesif/maven</url>
-    </repository>
-</repositories>
-
-
-<!-- Step 2. Add the dependency -->
-
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
     <version>1.1.0</version>
 </dependency>
+```
+
+#### Gradle users
+
+Add this dependency to your project's build file:
+
+```gradle
+compile 'com.moesif.servlet:moesif-servlet:1.1.0'
 ```
 
 ## How to use

@@ -1,4 +1,6 @@
-### Generic Java Servlet
+### Jersey Servlet
+
+There are multiple ways to run Jersey, as a Java Servlet or embedded with a Java NIO framework like Grizzly. This subsection focuses on running Jersey as a Servlet.
 
 Edit the web.xml file to add your application id that you obtained from your Moesif Account.
 
@@ -22,10 +24,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
 
 ```
 
-#### Running the Generic Servlet example
-
-This example implements the Servlet Filter directly in a generic Servlet app rather than using a higher level
-framework like Spring MVC or Spring Boot.
+#### Running the Jersey Servlet example
 
 In order to run this example you will need to have Java 7+ and Maven installed.
 
@@ -46,13 +45,13 @@ mvn -v
 (Register for an account on [moesif.com](https://www.moesif.com))
 
 	```sh
-	vim servlet-example/src/main/webapp/WEB-INF/web.xml
+	vim jersey-servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
 
-3. Run servlet-example
+3. Run jersey-servlet-example
 
 	```sh
-	cd servlet-example
+	cd jersey-servlet-example
 	mvn tomcat7:run
 	```
 

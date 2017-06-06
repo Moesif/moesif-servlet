@@ -103,13 +103,14 @@ mvn -v
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
+  cd moesif-servlet
 	```
 
 2. Update MyConfig to use your own Moesif ApplicationId
 (Register for an account on [moesif.com](https://www.moesif.com))
 
 	```sh
-	vim moesif-servlet/spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
+	vim spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
 	```
 
 3. Compile the example
@@ -172,7 +173,7 @@ In `web.xml` file:
     </init-param>
     <init-param>
       <param-name>debug</param-name>
-      <param-value>true</param-value>
+      <param-value>false</param-value>
     </init-param>
   </filter>
   <filter-mapping>
@@ -183,6 +184,69 @@ In `web.xml` file:
 
 ```
 You may have to override `onStartup()` to pass in the MoesifConfiguration object.
+
+### Jersey Servlet
+
+There are multiple ways to run Jersey, as a Java Servlet or embedded with a Java NIO framework like Grizzly. This subsection focuses on running Jersey as a Servlet.
+
+Edit the web.xml file to add your application id that you obtained from your Moesif Account.
+
+```xml
+  <filter>
+    <filter-name>MoesifFilter</filter-name>
+    <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>your application id</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>MoesifFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+```
+
+#### Running the Jersey Servlet example
+
+In order to run this example you will need to have Java 7+ and Maven installed.
+
+Before starting, check that your maven version is 3.0.x or above:
+
+```sh
+mvn -v
+```
+
+1. Clone the repository
+
+	```sh
+	git clone https://github.com/Moesif/moesif-servlet
+  cd moesif-servlet
+	```
+
+2. Update web.xml to use your own Moesif ApplicationId
+(Register for an account on [moesif.com](https://www.moesif.com))
+
+	```sh
+	vim jersey-servlet-example/src/main/webapp/WEB-INF/web.xml
+	```
+
+3. Run jersey-servlet-example
+
+	```sh
+	cd jersey-servlet-example
+	mvn tomcat7:run
+	```
+
+4. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
+
+In your Moesif Account, you should see event logged and monitored.
+
+Shut it down manually with Ctrl-C.
 
 ### Generic Java Servlet
 
@@ -198,7 +262,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     </init-param>
     <init-param>
       <param-name>debug</param-name>
-      <param-value>true</param-value>
+      <param-value>false</param-value>
     </init-param>
   </filter>
   <filter-mapping>
@@ -225,13 +289,14 @@ mvn -v
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
+  cd moesif-servlet
 	```
 
 2. Update web.xml to use your own Moesif ApplicationId
 (Register for an account on [moesif.com](https://www.moesif.com))
 
 	```sh
-	vim moesif-servlet/servlet-example/src/main/webapp/WEB-INF/web.xml
+	vim servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
 
 3. Run servlet-example

@@ -1,10 +1,9 @@
 package com.moesif.servlet.spring;
 
 import java.util.concurrent.atomic.AtomicLong;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
+
 import java.util.logging.Logger;
 
 
@@ -31,6 +30,12 @@ public class GreetingController {
   @ResponseBody
   public String simpleString() {
     return "this is a simple string";
+  }
+
+  @RequestMapping("/empty_resp_body")
+  @ResponseBody
+  public String emptyRespBody(@RequestParam(value="name", defaultValue="") String name, @RequestBody String reqBody) {
+    return reqBody;
   }
 
   @RequestMapping("/badjson")

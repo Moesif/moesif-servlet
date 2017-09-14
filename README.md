@@ -242,7 +242,7 @@ mvn -v
 	mvn tomcat7:run
 	```
 
-4. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 
@@ -306,7 +306,7 @@ mvn -v
 	mvn tomcat7:run
 	```
 
-4. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 
@@ -370,7 +370,7 @@ mvn -v
 	mvn tomcat7:run
 	```
 
-4. Go to `http://localhost:3099/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 

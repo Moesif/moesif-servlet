@@ -29,6 +29,6 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <servlet-mapping>
     <servlet-name>Servlet Example</servlet-name>
-    <url-pattern>/demo</url-pattern>
+    <url-pattern>/api/demo</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -30,7 +30,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -39,7 +39,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.servlet:moesif-servlet:1.1.0'
+compile 'com.moesif.servlet:moesif-servlet:1.2.0'
 ```
 
 ## How to use

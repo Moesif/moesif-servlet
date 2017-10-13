@@ -25,6 +25,7 @@ import com.moesif.api.APIHelper;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
+import com.moesif.api.controllers.APIController;
 
 import com.moesif.servlet.utils.IpAddress;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
@@ -119,6 +120,17 @@ public class MoesifFilter implements Filter {
    */
   public void setDebug(boolean debug) {
     this.debug = debug;
+  }
+
+  /**
+   * Get the underlying APIController
+   * @return	Returns the APIController instance
+   */
+  public APIController getAPI() {
+    if (moesifApi != null) {
+      return moesifApi.getAPI();
+    }
+    return null;
   }
 
   @Override

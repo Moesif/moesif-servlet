@@ -6,7 +6,7 @@
     <groupId>com.moesif.servlet.jersey</groupId>
     <artifactId>jersey-servlet-example</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <name>jersey-servlet-example</name>
 
     <build>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>com.moesif.servlet</groupId>
             <artifactId>moesif-servlet</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
     <properties>

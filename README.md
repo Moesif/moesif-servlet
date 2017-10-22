@@ -10,7 +10,7 @@ The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/t
 without importing large framework specific dependencies.
 Many frameworks are built on top of the Servlet API such as Spring, Apache Struts, Jersey, etc.
 
-If your using a web framework that is built on the
+If you're using a web framework that is built on the
 [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html)
 such as Spring Boot, Spring MVC, Jersey, and Apache Struts, then you can enable this SDK with minimal configuration.
 

@@ -1,6 +1,9 @@
 # Moesif Servlet SDK
 
- [ ![Download](https://api.bintray.com/packages/moesif/maven/moesif-servlet/images/download.svg) ](https://bintray.com/moesif/maven/moesif-servlet/_latestVersion)
+ [![Built For rack][ico-built-for]][link-built-for]
+ [![Latest Version][ico-version]][link-package]
+ [![Software License][ico-license]][link-license]
+ [![Source Code][ico-source]][link-source]
 
 ## Introduction
 
@@ -458,3 +461,13 @@ mvn clean install
 ## Other integrations
 
 To view more more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__
+
+[ico-built-for]: https://img.shields.io/badge/built%20for-servlet-blue.svg
+[ico-version]: https://api.bintray.com/packages/moesif/maven/moesif-servlet/images/download.svg
+[ico-license]: https://img.shields.io/badge/License-Apache%202.0-green.svg
+[ico-source]: https://img.shields.io/github/last-commit/moesif/moesif-servlet.svg?style=social
+
+[link-built-for]: https://en.wikipedia.org/wiki/Java_servlet
+[link-package]: https://bintray.com/moesif/maven/moesif-servlet/_latestVersion
+[link-license]: https://raw.githubusercontent.com/Moesif/moesif-servlet/master/LICENSE
+[link-source]: https://github.com/moesif/moesif-servlet

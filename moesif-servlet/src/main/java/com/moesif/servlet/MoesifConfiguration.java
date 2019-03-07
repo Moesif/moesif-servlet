@@ -17,4 +17,6 @@ public interface MoesifConfiguration {
   String getTags(HttpServletRequest request, HttpServletResponse response);
 
   String getApiVersion(HttpServletRequest request, HttpServletResponse response);
+  
+  boolean disableTransactionId();
 }

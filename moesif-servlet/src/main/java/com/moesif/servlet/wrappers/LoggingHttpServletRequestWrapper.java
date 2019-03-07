@@ -118,6 +118,16 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
     }
     return StringUtils.join(result, "&").getBytes();
   }
+  
+  // Wrapper function to addHeader
+  public Map<String, String> addHeader(String headerKey, String headerValue) {
+	  Map<String, String> headers = new HashMap<String, String>(0);
+	  headers = getHeaders();
+	  headers.put(headerKey, headerValue);
+	  // Remove header as the case is not preserved
+	  headers.remove("x-moesif-transaction-id");
+	  return headers;
+  }
 
   public Map<String, String> getHeaders() {
     Map<String, String> headers = new HashMap<String, String>(0);

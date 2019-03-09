@@ -3,6 +3,9 @@ package com.moesif.servlet;
 import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.Date;
+import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -183,8 +186,26 @@ public class MoesifFilter implements Filter {
     LoggingHttpServletRequestWrapper requestWrapper = new LoggingHttpServletRequestWrapper(httpRequest);
     LoggingHttpServletResponseWrapper responseWrapper = new LoggingHttpServletResponseWrapper(httpResponse);
 
+
+    // Initialize transactionId    
+    String transactionId = null;
+
+    if (!config.disableTransactionId()) {
+    	
+    	String reqTransId = requestWrapper.getHeader("X-Moesif-Transaction-Id"); 
+        
+        if (reqTransId != null && !reqTransId.isEmpty()) {
+        	transactionId = reqTransId;
+        } else {
+        	transactionId = UUID.randomUUID().toString();
+        }
+
+        // Add Transaction Id to the response model and response sent to the client
+        responseWrapper.addHeader("X-Moesif-Transaction-Id", transactionId);	
+    }
+
     EventRequestModel eventRequestModel = getEventRequestModel(requestWrapper,
-        startDate, config.getApiVersion(httpRequest, httpResponse));
+        startDate, config.getApiVersion(httpRequest, httpResponse), transactionId);
 
     // pass to next step in the chain.
     filterChain.doFilter(requestWrapper, responseWrapper);
@@ -204,12 +225,19 @@ public class MoesifFilter implements Filter {
   }
 
 
-  private EventRequestModel getEventRequestModel(LoggingHttpServletRequestWrapper requestWrapper, Date date, String apiVersion) {
+  private EventRequestModel getEventRequestModel(LoggingHttpServletRequestWrapper requestWrapper, Date date, String apiVersion, String transactionId) {
     EventRequestBuilder eventRequestBuilder = new EventRequestBuilder();
+    // Add Transaction Id to the request model
+    Map<String, String> reqHeaders = new HashMap<String, String>(0);
+    if (transactionId != null) {
+    	reqHeaders = requestWrapper.addHeader("X-Moesif-Transaction-Id", transactionId);
+    } else {
+    	reqHeaders = requestWrapper.getHeaders();
+    }
     eventRequestBuilder
         .time(date)
         .uri(getFullURL(requestWrapper))
-        .headers(requestWrapper.getHeaders())
+        .headers(reqHeaders)
         .verb(requestWrapper.getMethod())
         .ipAddress(IpAddress.getClientIp(requestWrapper));
 

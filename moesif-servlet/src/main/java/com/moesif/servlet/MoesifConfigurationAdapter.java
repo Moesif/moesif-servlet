@@ -29,4 +29,8 @@ public class MoesifConfigurationAdapter implements MoesifConfiguration {
   public String getApiVersion(HttpServletRequest request, HttpServletResponse response) {
     return null;
   }
+  
+  public boolean disableTransactionId() {
+	  return false;
+  }
 }

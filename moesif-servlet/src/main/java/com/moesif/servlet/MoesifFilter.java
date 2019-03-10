@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,7 +30,9 @@ import com.moesif.api.APIHelper;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
+import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.controllers.APIController;
+import com.moesif.api.Configuration;
 
 import com.moesif.servlet.utils.IpAddress;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
@@ -43,6 +47,9 @@ public class MoesifFilter implements Filter {
   private MoesifConfiguration config;
   private MoesifAPIClient moesifApi;
   private boolean debug;
+  private int samplingPercentage;
+  private Map<String, Map<String, Object>> configDict;
+  private Date lastUpdatedTime;
 
   /**
    * Default Constructor, please set ApplicationId before use.
@@ -152,6 +159,15 @@ public class MoesifFilter implements Filter {
         this.debug = true;
       }
     }
+    
+    // Global dict
+    this.configDict = new HashMap<String, Map<String, Object>>();
+    try {
+    	this.samplingPercentage = getAppConfig(null);	
+    } catch (Throwable t) {
+    	this.samplingPercentage = 100;
+    }
+    
   }
 
   @Override
@@ -159,6 +175,53 @@ public class MoesifFilter implements Filter {
     if (debug) {
       logger.fine("destroying filter");
     }
+  }
+  
+  // Get Config
+  public int getAppConfig(String cachedConfigEtag) throws Throwable {
+	  // Initialize sampleRate
+	  int sampleRate = 100;
+	  try {
+      	  // Calling the api
+          HttpResponse configApiResponse = moesifApi.getAPI().getAppConfig();
+          // Fetch the response ETag
+          String responseConfigEtag = configApiResponse.getHeaders().get("x-moesif-config-etag");
+          
+		  if(cachedConfigEtag != null && !cachedConfigEtag.isEmpty() && this.configDict.containsKey(cachedConfigEtag)) { 
+			  // Remove from the cache
+		  		this.configDict.remove(cachedConfigEtag);			  
+		  }
+		 
+		  // Read the response body
+		  ObjectMapper mapper = new ObjectMapper();
+		  Map<String, Object> jsonMap = mapper.readValue(configApiResponse.getRawBody(), Map.class);
+		  
+		  // Add to the global dict
+		  this.configDict.put(responseConfigEtag, jsonMap);
+		  
+		  try {
+			  Map<String, Object> appConfig = this.configDict.get(responseConfigEtag);
+			  // Get the sample rate and update last updated time
+			  if (!appConfig.isEmpty()) {
+				  sampleRate = (int) appConfig.getOrDefault("sample_rate", 100);
+				  this.lastUpdatedTime = new Date();
+			  }
+			  else {
+				  // Upate last updated time
+				  this.lastUpdatedTime = new Date();
+			  }
+		  }
+		  catch(Exception e)  {
+			  // Upate last updated time
+			  this.lastUpdatedTime = new Date();
+		  }
+      } catch(Exception e) {
+    	  // Upate last updated time
+          logger.warning("getConfig call failed " + e.toString());
+          this.lastUpdatedTime = new Date();
+      }
+	  // Return sampleRate
+	  return sampleRate;
   }
 
   @Override
@@ -319,9 +382,37 @@ public class MoesifFilter implements Filter {
           logger.severe("maskContent() returned a null object, not allowed");
         }
 
-        moesifApi.getAPI().createEventAsync(maskedEvent, callBack);
+        // Generate random number
+        double randomPercentage = Math.random() * 100;
+        
+        // Compare percentage to send event
+        if (this.samplingPercentage >= randomPercentage) {
+        	// Send Event
+        	Map<String, String> eventApiResponse = moesifApi.getAPI().createEvent(maskedEvent);
+        	// Get the key from the global dict
+        	String cachedConfigEtag = this.configDict.keySet().iterator().next();
+        	// Get the etag from event api response
+        	String eventResponseConfigEtag = eventApiResponse.get("x-moesif-config-etag");
+        	
+        	// Check if needed to call the getConfig api to update samplingPercentage
+        	if (eventResponseConfigEtag != null 
+        			&& !(eventResponseConfigEtag.equals(cachedConfigEtag)) 
+        			&& new Date().after(new Date(this.lastUpdatedTime.getTime() + 5 * 60 * 1000))) {
+        		// Call api to update samplingPercentage
+        		this.samplingPercentage = getAppConfig(cachedConfigEtag);
+        	}
+        	
+        	if (debug) {
+                logger.warning("Event successfully sent to Moesif");
+              }
+        } 
+        else {
+        	if(debug) {
+        		logger.info("Skipped Event due to SamplingPercentage " + this.samplingPercentage + " and randomPercentage " + randomPercentage);	
+        	}
+        }
 
-      } catch(Exception e) {
+      } catch(Throwable e) {
         if (debug) {
           logger.warning("send to Moesif failed " + e.toString());
         }

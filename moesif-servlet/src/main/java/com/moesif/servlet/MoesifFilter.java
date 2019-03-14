@@ -145,9 +145,8 @@ public class MoesifFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    if (debug) {
-      logger.fine("init filter");
-    }
+    logger.fine("init Moesif filter");
+
     String appId = filterConfig.getInitParameter("application-id");
     if (appId != null) {
       this.applicationId = appId;
@@ -167,13 +166,12 @@ public class MoesifFilter implements Filter {
     } catch (Throwable t) {
     	this.samplingPercentage = 100;
     }
-    
   }
 
   @Override
   public void destroy() {
     if (debug) {
-      logger.fine("destroying filter");
+      logger.fine("destroying Moesif filter");
     }
   }
   

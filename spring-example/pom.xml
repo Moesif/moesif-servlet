@@ -8,7 +8,7 @@
   </parent>
   <groupId>com.moesif.servlet.spring</groupId>
   <artifactId>spring-example</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
   <name>spring-example</name>
   <url>http://maven.apache.org</url>
 
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>moesif-servlet</artifactId>
-      <version>1.2.0</version>
+      <version>1.5.0</version>
     </dependency>
 
     <dependency>
@@ -87,9 +87,8 @@
 
   <repositories>
     <repository>
-      <id>bintray-moesif-maven</id>
-      <name>bintray</name>
-      <url>http://dl.bintray.com/moesif/maven</url>
+      <id>jcenter</id>
+      <url>https://jcenter.bintray.com/</url>
     </repository>
     <repository>
       <id>spring-releases</id>

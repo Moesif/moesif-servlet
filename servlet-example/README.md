@@ -49,15 +49,21 @@ mvn -v
 	vim servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
 
-3. Run servlet-example
+3. Compile the example
 
 	```sh
 	cd servlet-example
+	mvn clean install
+	```
+	
+4. Run servlet-example
+
+	```sh
 	mvn tomcat7:run
 	```
 
-4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
+5. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
 
-In your Moesif Account, you should see event logged and monitored.
+In your Moesif Account, you should see API calls logged under API Analytics -> Live Event Stream.
 
 Shut it down manually with Ctrl-C.

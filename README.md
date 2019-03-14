@@ -27,9 +27,17 @@ For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs)
 
 #### Maven users
 
-Add this dependency to your project's POM:
+Add the Moesif dependency to your project's pom.xml file:
 
 ```xml
+<!-- Include jcenter repository if you don't already have it. -->
+<repositories>
+    <repository>
+        <id>jcenter</id>
+        <url>https://jcenter.bintray.com/</url>
+    </repository>
+</repositories>
+    
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
@@ -39,11 +47,23 @@ Add this dependency to your project's POM:
 
 #### Gradle users
 
-Add this dependency to your project's build file:
+Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
-compile 'com.moesif.servlet:moesif-servlet:1.4.0'
+// Include jcenter repository if you don't already have it.
+repositories {
+    jcenter()
+}
+ 
+dependencies {   
+    compile 'com.moesif.servlet:moesif-servlet:1.4.0'
+}
 ```
+
+#### Others
+
+The jars are available from a public [Bintray Jcenter](https://bintray.com/moesif/maven/moesif-servlet) repository.
+
 
 ## How to use
 

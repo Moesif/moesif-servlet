@@ -4,19 +4,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.moesif.api.models.EventModel;
 
-public interface MoesifConfiguration {
+public class MoesifConfiguration {
 
-  boolean skip(HttpServletRequest request, HttpServletResponse response);
+  public boolean skip(HttpServletRequest request, HttpServletResponse response) {
+    return false;
+  }
 
-  EventModel maskContent(EventModel eventModel);
+  public EventModel maskContent(EventModel eventModel) {
+    return eventModel;
+  }
 
-  String identifyUser(HttpServletRequest request, HttpServletResponse response);
+  public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
 
-  String getSessionToken(HttpServletRequest request, HttpServletResponse response);
+  public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
 
-  String getTags(HttpServletRequest request, HttpServletResponse response);
+  @Deprecated
+  public String getTags(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
 
-  String getApiVersion(HttpServletRequest request, HttpServletResponse response);
-  
-  boolean disableTransactionId();
+  public String getApiVersion(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
+
+  public Object getMetadata(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
+
+  public boolean disableTransactionId = false;
 }

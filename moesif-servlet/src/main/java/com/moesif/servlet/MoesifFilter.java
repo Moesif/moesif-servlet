@@ -179,7 +179,6 @@ public class MoesifFilter implements Filter {
   
   // Get Config
   public int getAppConfig(String cachedConfigEtag) throws Throwable {
-	  // Initialize sampleRate
 	  int sampleRate = 100;
 	  try {
       	  // Calling the api
@@ -220,7 +219,6 @@ public class MoesifFilter implements Filter {
           logger.warning("getConfig call failed " + e.toString());
           this.lastUpdatedTime = new Date();
       }
-	  // Return sampleRate
 	  return sampleRate;
   }
 
@@ -253,7 +251,7 @@ public class MoesifFilter implements Filter {
     // Initialize transactionId    
     String transactionId = null;
 
-    if (!config.disableTransactionId()) {
+    if (!config.disableTransactionId) {
     	
     	String reqTransId = requestWrapper.getHeader("X-Moesif-Transaction-Id"); 
         
@@ -283,7 +281,8 @@ public class MoesifFilter implements Filter {
         eventResponseModel,
         config.identifyUser(httpRequest, httpResponse),
         config.getSessionToken(httpRequest, httpResponse),
-        config.getTags(httpRequest, httpResponse)
+        config.getTags(httpRequest, httpResponse),
+        config.getMetadata(httpRequest, httpResponse)
     );
   }
 
@@ -341,7 +340,8 @@ public class MoesifFilter implements Filter {
                            EventResponseModel eventResponseModel,
                            String userId,
                            String sessionToken,
-                           String tags) {
+                           String tags,
+                           Object metadata) {
     EventBuilder eb = new EventBuilder();
     eb.request(eventRequestModel);
     eb.response(eventResponseModel);
@@ -353,6 +353,10 @@ public class MoesifFilter implements Filter {
     }
     if (tags != null) {
       eb.tags(tags);
+    }
+
+    if (metadata != null) {
+      eb.metadata(metadata);
     }
 
     EventModel event = eb.build();

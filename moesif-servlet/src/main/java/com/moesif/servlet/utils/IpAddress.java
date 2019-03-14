@@ -35,6 +35,12 @@ public class IpAddress {
             return header;
         }
 
+        // Fastly
+        header = getClientIpFromHeader(request.getHeader("fastly-client-ip"));
+        if (StringUtils.isNotEmpty(header)) {
+            return header;
+        }
+
         // Akamai and Cloudflare: True-Client-IP.
         header = getClientIpFromHeader(request.getHeader("true-client-ip"));
         if (StringUtils.isNotEmpty(header)) {

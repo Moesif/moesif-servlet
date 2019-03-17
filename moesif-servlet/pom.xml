@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.servlet</groupId>
   <artifactId>moesif-servlet</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.1</version>
   <packaging>jar</packaging>
   <name>moesif-servlet</name>
   <description>Moesif SDK for Java Servlet to log and analyze API calls</description>
@@ -66,7 +66,7 @@
     <dependency>
 	  <groupId>com.fasterxml.jackson.core</groupId>
 	  <artifactId>jackson-databind</artifactId>
-	  <version>2.9.6</version>
+	  <version>2.9.8</version>
 	</dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -78,6 +78,11 @@
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
     </dependency>
+    <dependency>
+	    <groupId>org.apache.tomcat</groupId>
+	    <artifactId>catalina</artifactId>
+	    <version>6.0.16</version>
+	</dependency>
 
 
     <!-- testing -->

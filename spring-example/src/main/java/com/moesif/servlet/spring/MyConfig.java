@@ -52,6 +52,6 @@ public class MyConfig extends WebMvcConfigurerAdapter{
       }
     };
 
-    return new MoesifFilter("eyJhcHAiOiIyMjM6MTIiLCJ2ZXIiOiIyLjAiLCJvcmciOiIzNTE6MTUiLCJpYXQiOjE0OTAwNTQ0MDB9.RkPJ__KpWdvvDCo2bnVs3baXckzanHNn6gxW5xqltYU", config, true);
+    return new MoesifFilter("Your Application Id", config, true);
   }
 }

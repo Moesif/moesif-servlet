@@ -272,7 +272,9 @@ public class MoesifFilter implements Filter {
 
     if(!(responseWrapper.delegate instanceof ResponseFacade)) {
     	
-    	if (responseWrapper.getHeaders().get("Content-Type").toLowerCase().contains("html")) {
+    	if (responseWrapper.getHeaders() != null &&
+    			!responseWrapper.getHeaders().isEmpty() &&
+    			responseWrapper.getHeaders().get("Content-Type").toLowerCase().contains("html")) {
     		if (debug) {
     			logger.warning("MoesifFilter was called for html response, skipping send Event to Moesif");	
     		}

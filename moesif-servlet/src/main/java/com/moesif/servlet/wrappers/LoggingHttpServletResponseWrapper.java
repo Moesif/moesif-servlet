@@ -18,7 +18,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
 
   private final LoggingServletOutputStream loggingServletOutputStream = new LoggingServletOutputStream();
 
-  private final HttpServletResponse delegate;
+  public final HttpServletResponse delegate;
 
   public LoggingHttpServletResponseWrapper(HttpServletResponse response) {
     super(response);

@@ -38,6 +38,7 @@ import com.moesif.servlet.utils.IpAddress;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.catalina.connector.ResponseFacade;
 
 public class MoesifFilter implements Filter {
 
@@ -269,6 +270,17 @@ public class MoesifFilter implements Filter {
     // pass to next step in the chain.
     filterChain.doFilter(requestWrapper, responseWrapper);
 
+    if(!(responseWrapper.delegate instanceof ResponseFacade)) {
+    	
+    	if (responseWrapper.getHeaders().get("Content-Type").toLowerCase().contains("html")) {
+    		if (debug) {
+    			logger.warning("MoesifFilter was called for html response, skipping send Event to Moesif");	
+    		}
+            filterChain.doFilter(request, response);
+            return;
+    	}
+    }
+    
     Date endDate = new Date();
     EventResponseModel eventResponseModel = getEventResponseModel(responseWrapper, endDate);
 
@@ -307,7 +319,7 @@ public class MoesifFilter implements Filter {
 
     String content = requestWrapper.getContent();
 
-    if (content != null) {
+    if (content != null  && !content.isEmpty()) {
       BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
       eventRequestBuilder.body(bodyWrapper.body);
       eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
@@ -325,7 +337,7 @@ public class MoesifFilter implements Filter {
 
     String content = responseWrapper.getContent();
 
-    if (content != null) {
+    if (content != null  && !content.isEmpty()) {
       BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
       eventResponseBuilder.body(bodyWrapper.body);
       eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);

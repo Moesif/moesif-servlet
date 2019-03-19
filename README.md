@@ -229,7 +229,7 @@ mvn -v
 (Register for an account on [moesif.com](https://www.moesif.com))
 
 	```sh
-  vim spring-mvc-example/src/main/webapp/WEB-INF/web.xml
+    vim spring-mvc-example/src/main/webapp/WEB-INF/web.xml
 	```
 
 3. Run spring-mvc-example

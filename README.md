@@ -41,7 +41,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
 </dependency>
 ```
 
@@ -56,7 +56,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.5.1'
+    compile 'com.moesif.servlet:moesif-servlet:1.5.2'
 }
 ```
 
@@ -512,6 +512,84 @@ cd moesif-servlet
 mvn clean install
 ```
 
+## UpdateUser method
+
+A method is attached to the servlet object to update the users profile or metadata.
+The metadata field can be any custom data you want to set on the user. The `user_id` field is required.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+
+UserModel user = new UserBuilder()
+    .userId("javaapiuser")
+    .modifiedTime(new Date())
+    .ipAddress("29.80.250.240")
+    .sessionToken("di3hd982h3fubv3yfd94egf")
+    .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+    .metadata(APIHelper.deserialize("{" +
+        "\"email\": \"johndoe@acmeinc.com\"," +
+        "\"string_field\": \"value_1\"," +
+        "\"number_field\": 0," +
+        "\"object_field\": {" +
+        "\"field_1\": \"value_1\"," +
+        "\"field_2\": \"value_2\"" +
+        "}" +
+        "}"))
+    .build();
+filter.updateUser(user);
+```
+
+## UpdateUsersBatch method
+
+A method is attached to the servlet object to update the users profile or metadata in batch.
+The metadata field can be any custom data you want to set on the user. The `user_id` field is required.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+List<UserModel> users = new ArrayList<UserModel>();
+
+HashMap<String, Object> metadata = new HashMap<String, Object>();
+metadata = APIHelper.deserialize("{" +
+    "\"email\": \"johndoe@acmeinc.com\"," +
+    "\"string_field\": \"value_1\"," +
+    "\"number_field\": 0," +
+    "\"object_field\": {" +
+    "\"field_1\": \"value_1\"," +
+    "\"field_2\": \"value_2\"" +
+    "}" +
+    "}");
+
+UserModel userA = new UserBuilder()
+    .userId("javaapiuser")
+    .modifiedTime(new Date())
+    .ipAddress("29.80.250.240")
+    .sessionToken("di3hd982h3fubv3yfd94egf")
+    .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+    .metadata(metadata)
+    .build();
+
+UserModel userB = new UserBuilder()
+		.userId("javaapiuser1")
+    .modifiedTime(new Date())
+    .ipAddress("29.80.250.240")
+    .sessionToken("di3hd982h3fubv3yfd94egf")
+    .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+    .metadata(metadata)
+    .build();
+
+users.add(userA);
+users.add(userB);
+
+filter.updateUsersBatch(users);
+```
+
+## How to test
+
+1. Manually clone the git repo
+2. Invoke `mvn clean install -U` if you haven't done so.
+3. Add your own application id to 'src/test/java/com/moesif/servlet/MoesifServletTests.java'. You can find your Application Id from [_Moesif Dashboard_](https://www.moesif.com/) -> _Top Right Menu_ -> _Installation_
+4. From terminal/cmd navigate to the root directory of the moesif-servlet.
+5. Invoke `mvn -Dtest=MoesifServletTests test` to run the tests.
 
 ## Other integrations
 

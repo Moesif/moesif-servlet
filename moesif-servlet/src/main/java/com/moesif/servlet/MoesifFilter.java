@@ -1,11 +1,8 @@
 package com.moesif.servlet;
 
 import java.io.IOException;
+import java.util.*;
 import java.util.logging.Logger;
-import java.util.Date;
-import java.util.UUID;
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,12 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.moesif.api.models.EventModel;
-import com.moesif.api.models.EventRequestModel;
-import com.moesif.api.models.EventResponseModel;
-import com.moesif.api.models.EventBuilder;
-import com.moesif.api.models.EventRequestBuilder;
-import com.moesif.api.models.EventResponseBuilder;
+import com.moesif.api.models.*;
 
 import com.moesif.api.APIHelper;
 import com.moesif.api.MoesifAPIClient;
@@ -219,6 +211,57 @@ public class MoesifFilter implements Filter {
           this.lastUpdatedTime = new Date();
       }
 	  return sampleRate;
+  }
+
+  public void updateUser(UserModel userModel) throws Throwable{
+
+    if (this.moesifApi != null) {
+      String userId = userModel.getUserId();
+      if (userId != null && !userId.isEmpty()) {
+        try {
+          moesifApi.getAPI().updateUser(userModel);
+        }
+        catch(Exception e) {
+          if (debug) {
+            logger.warning("Update User to Moesif failed " + e.toString());
+          }
+        }
+      }
+      else {
+        throw new IllegalArgumentException("To update an user, an userId field is required");
+      }
+    }
+    else {
+      logger.warning("The application Id should be set before using MoesifFilter");
+    }
+  }
+
+  public void updateUsersBatch(List<UserModel> usersModel) throws Throwable{
+
+    List<UserModel> users = new ArrayList<UserModel>();
+    if (this.moesifApi != null) {
+      for (UserModel user : usersModel) {
+        String userId = user.getUserId();
+        if (userId != null && !userId.isEmpty()) {
+          users.add(user);
+        } else {
+          throw new IllegalArgumentException("To update an user, an userId field is required");
+        }
+      }
+    }
+    else {
+      logger.warning("The application Id should be set before using MoesifFilter");
+    }
+
+    if (!users.isEmpty()) {
+      try {
+        moesifApi.getAPI().updateUsersBatch(users);
+      } catch (Exception e) {
+        if (debug) {
+          logger.warning("Update User to Moesif failed " + e.toString());
+        }
+      }
+    }
   }
 
   @Override

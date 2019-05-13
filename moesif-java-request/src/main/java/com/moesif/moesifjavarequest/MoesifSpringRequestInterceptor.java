@@ -17,19 +17,31 @@ import java.util.Map;
 
 public class MoesifSpringRequestInterceptor implements ClientHttpRequestInterceptor {
     private MoesifAPIClient moesifApi;
+    private MoesifRequestConfiguration config;
 
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
         this.moesifApi = moesifApi;
+        this.config = new MoesifRequestConfiguration();
     }
 
     public MoesifSpringRequestInterceptor(String applicationId) {
         this.moesifApi = new MoesifAPIClient(applicationId);
+        this.config = new MoesifRequestConfiguration();
+    }
+
+    public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi, MoesifRequestConfiguration config) {
+        this(moesifApi);
+        this.config = config;
+    }
+
+    public MoesifSpringRequestInterceptor(String applicationId, MoesifRequestConfiguration config) {
+        this(applicationId);
+        this.config = config;
     }
 
     private String streamToString(InputStream inputStream) {
         try {
             StringBuilder inputStringBuilder = new StringBuilder();
-            // TODO: different encodings?
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String line = bufferedReader.readLine();
 
@@ -46,7 +58,6 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     }
 
     private EventRequestModel buildEventRequestModel(HttpRequest request, byte[] body) {
-        // TODO: transactionId
         EventRequestBuilder eventRequestBuilder = new EventRequestBuilder();
         Map<String, String> reqHeaders = new HashMap<String, String>(0);
         eventRequestBuilder
@@ -54,10 +65,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 .uri(request.getURI().toString())
                 .headers(request.getHeaders().toSingleValueMap())
                 .verb(request.getMethod().toString());
-                // .ipAddress()
 
-        // TODO: apiVersion
-        eventRequestBuilder.body(new String(body)); // TODO: need transfer encoding still?
+        eventRequestBuilder.body(new String(body));
 
         return eventRequestBuilder.build();
     }
@@ -78,10 +87,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 .status(statusCode)
                 .headers(response.getHeaders().toSingleValueMap());
 
-        // response.getBody
         try {
-            // eventResponseBuilder.body(response.getBody()); // TODO: Definitely doesn't work
-            eventResponseBuilder.body(streamToString(response.getBody())); // TODO: verify input can still be read
+            eventResponseBuilder.body(streamToString(response.getBody()));
         } catch (Exception e) {
             System.out.println("Error getting response body");
         }

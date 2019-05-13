@@ -15,8 +15,12 @@ import java.util.Map;
 public class MoesifSpringRequestInterceptor implements ClientHttpRequestInterceptor {
     private MoesifAPIClient moesifApi;
 
-    MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
+    public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
         this.moesifApi = moesifApi;
+    }
+
+    public MoesifSpringRequestInterceptor(String applicationId) {
+        this.moesifApi = new MoesifAPIClient(applicationId);
     }
 
     private EventRequestModel buildEventRequestModel(HttpRequest request, byte[] body) {

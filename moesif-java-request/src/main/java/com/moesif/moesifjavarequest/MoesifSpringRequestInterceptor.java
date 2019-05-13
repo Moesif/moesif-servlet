@@ -7,7 +7,10 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import com.moesif.api.MoesifAPIClient;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,25 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         this.moesifApi = new MoesifAPIClient(applicationId);
     }
 
+    private String streamToString(InputStream inputStream) {
+        try {
+            StringBuilder inputStringBuilder = new StringBuilder();
+            // TODO: different encodings?
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = bufferedReader.readLine();
+
+            while (line != null) {
+                inputStringBuilder.append(line);
+                inputStringBuilder.append('\n');
+                line = bufferedReader.readLine();
+            }
+
+            return inputStringBuilder.toString();
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
     private EventRequestModel buildEventRequestModel(HttpRequest request, byte[] body) {
         // TODO: transactionId
         EventRequestBuilder eventRequestBuilder = new EventRequestBuilder();
@@ -35,7 +57,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 // .ipAddress()
 
         // TODO: apiVersion
-        eventRequestBuilder.body(body); // TODO: need transfer encoding still?
+        eventRequestBuilder.body(new String(body)); // TODO: need transfer encoding still?
 
         return eventRequestBuilder.build();
     }
@@ -58,7 +80,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
         // response.getBody
         try {
-            eventResponseBuilder.body(response.getBody()); // TODO: Definitely doesn't work
+            // eventResponseBuilder.body(response.getBody()); // TODO: Definitely doesn't work
+            eventResponseBuilder.body(streamToString(response.getBody())); // TODO: verify input can still be read
         } catch (Exception e) {
             System.out.println("Error getting response body");
         }
@@ -87,6 +110,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
         EventResponseModel eventResponseModel = buildEventResponseModel(response);
 
+        System.out.println("begin SendEvent()");
         moesifApi.getAPI().sendEvent(
                 eventRequestModel,
                 eventResponseModel,
@@ -95,6 +119,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 null,
                 null
         );
+        System.out.println("end SendEvent()");
 
         return response;
     }

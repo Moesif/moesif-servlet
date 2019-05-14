@@ -25,11 +25,15 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
         this.moesifApi = moesifApi;
         this.config = new MoesifRequestConfiguration();
+
+        this.moesifApi.getAPI().setShouldSyncAppConfig(true);
     }
 
     public MoesifSpringRequestInterceptor(String applicationId) {
         this.moesifApi = new MoesifAPIClient(applicationId);
         this.config = new MoesifRequestConfiguration();
+
+        this.moesifApi.getAPI().setShouldSyncAppConfig(true);
     }
 
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi, MoesifRequestConfiguration config) {

@@ -25,8 +25,8 @@ import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.controllers.APIController;
 import com.moesif.api.Configuration;
+import com.moesif.api.IpAddress;
 
-import com.moesif.servlet.utils.IpAddress;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
@@ -356,7 +356,10 @@ public class MoesifFilter implements Filter {
         .uri(getFullURL(requestWrapper))
         .headers(reqHeaders)
         .verb(requestWrapper.getMethod())
-        .ipAddress(IpAddress.getClientIp(requestWrapper));
+        .ipAddress(IpAddress.getClientIp(
+          requestWrapper.getHeaders(),
+          requestWrapper.getRemoteAddr()
+        ));
 
     if (StringUtils.isNotEmpty(apiVersion)) {
       eventRequestBuilder.apiVersion(apiVersion);

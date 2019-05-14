@@ -7,6 +7,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.controllers.APIController;
+import com.moesif.api.IpAddress;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,7 +66,11 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 .time(new Date())
                 .uri(request.getURI().toString())
                 .headers(request.getHeaders().toSingleValueMap())
-                .verb(request.getMethod().toString());
+                .verb(request.getMethod().toString())
+                .ipAddress(IpAddress.getClientIp(
+                    request.getHeaders().toSingleValueMap(),
+                    null
+                ));
 
         eventRequestBuilder.body(new String(body));
 

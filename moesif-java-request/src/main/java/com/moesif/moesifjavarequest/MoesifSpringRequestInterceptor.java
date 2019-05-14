@@ -117,16 +117,20 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
         EventResponseModel eventResponseModel = buildEventResponseModel(response);
 
-        System.out.println("begin SendEvent()");
-        moesifApi.getAPI().sendEvent(
+        if (!config.skip(request, response)) {
+            EventModel eventModel = moesifApi.getAPI().buildEventModel(
                 eventRequestModel,
                 eventResponseModel,
+                config.identifyUser(request, response),
+                config.getSessionToken(request, response),
                 null,
-                null,
-                null,
-                null
-        );
-        System.out.println("end SendEvent()");
+                config.getMetadata(request, response)
+            );
+
+            eventModel = config.maskContent(eventModel);
+
+            moesifApi.getAPI().sendEvent(eventModel);
+        }
 
         return response;
     }

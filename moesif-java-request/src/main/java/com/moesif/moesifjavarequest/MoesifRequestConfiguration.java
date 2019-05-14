@@ -21,7 +21,6 @@ public class MoesifRequestConfiguration {
         return null;
     }
 
-    // TODO
     public String getApiVersion(HttpRequest request, ClientHttpResponse response) {
         return null;
     }

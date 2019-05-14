@@ -21,11 +21,7 @@ public class MoesifRequestConfiguration {
         return null;
     }
 
-    @Deprecated
-    public String getTags(HttpRequest request, ClientHttpResponse response) {
-        return null;
-    }
-
+    // TODO
     public String getApiVersion(HttpRequest request, ClientHttpResponse response) {
         return null;
     }

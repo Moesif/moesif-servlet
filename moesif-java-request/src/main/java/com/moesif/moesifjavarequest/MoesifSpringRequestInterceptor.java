@@ -6,6 +6,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import com.moesif.api.MoesifAPIClient;
+import com.moesif.api.controllers.APIController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -98,18 +99,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        System.out.println("intercept()");
-        System.out.println(request.getURI());
-        System.out.println(request.getMethod());
-
-//        config.identifyUser(httpRequest, httpResponse),
-//        config.getSessionToken(httpRequest, httpResponse),
-//        config.getTags(httpRequest, httpResponse),
-//        config.getMetadata(httpRequest, httpResponse)
-
         AppConfigModel appConfig = moesifApi.getAPI().getCachedAndLoadAppConfig();
-
-
+        
         EventRequestModel eventRequestModel = buildEventRequestModel(request, body);
 
         // run the request
@@ -118,7 +109,9 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         EventResponseModel eventResponseModel = buildEventResponseModel(response);
 
         if (!config.skip(request, response)) {
-            EventModel eventModel = moesifApi.getAPI().buildEventModel(
+            APIController api = moesifApi.getAPI();
+
+            EventModel eventModel = api.buildEventModel(
                 eventRequestModel,
                 eventResponseModel,
                 config.identifyUser(request, response),
@@ -129,7 +122,13 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
             eventModel = config.maskContent(eventModel);
 
-            moesifApi.getAPI().sendEvent(eventModel);
+            if (api.shouldSendSampledEvent()) {
+                try {
+                    api.createEvent(eventModel);
+                } catch (Throwable e) {
+                    // TODO: log?
+                }
+            }
         }
 
         return response;

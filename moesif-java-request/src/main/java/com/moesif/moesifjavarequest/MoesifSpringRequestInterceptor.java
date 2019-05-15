@@ -2,6 +2,7 @@ package com.moesif.moesifjavarequest;
 
 import com.moesif.api.models.*;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -10,15 +11,15 @@ import com.moesif.api.controllers.APIController;
 import com.moesif.api.IpAddress;
 import com.moesif.api.BodyParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class MoesifSpringRequestInterceptor implements ClientHttpRequestInterceptor {
+    private static final Logger logger = Logger.getLogger(MoesifSpringRequestInterceptor.class.toString());
+
     private MoesifAPIClient moesifApi;
     private MoesifRequestConfiguration config;
 
@@ -46,25 +47,6 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         this.config = config;
     }
 
-    private String streamToString(ClientHttpResponse request) {
-        try {
-            InputStream inputStream = request.getBody();
-            StringBuilder inputStringBuilder = new StringBuilder();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-            String line = bufferedReader.readLine();
-
-            while (line != null) {
-                inputStringBuilder.append(line);
-                inputStringBuilder.append('\n');
-                line = bufferedReader.readLine();
-            }
-
-            return inputStringBuilder.toString();
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
     private EventRequestModel buildEventRequestModel(HttpRequest request, byte[] body) {
         EventRequestBuilder eventRequestBuilder = new EventRequestBuilder();
         Map<String, String> headers = new HashMap<String, String>(0);
@@ -89,7 +71,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         return eventRequestBuilder.build();
     }
 
-    private EventResponseModel buildEventResponseModel(ClientHttpResponse response) {
+    private EventResponseModel buildEventResponseModel(MoesifClientHttpResponse response) throws IOException {
         EventResponseBuilder eventResponseBuilder = new EventResponseBuilder();
         Map<String, String> headers = response.getHeaders().toSingleValueMap();
 
@@ -98,7 +80,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         try {
             statusCode = response.getRawStatusCode();
         } catch (Exception e) {
-            System.out.println("Error getting raw status code");
+            logger.warning(e.toString());
         }
 
         eventResponseBuilder
@@ -106,7 +88,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 .status(statusCode)
                 .headers(headers);
 
-        String content = streamToString(response);
+        String content = response.getBodyString();
+
         if (content != null && !content.isEmpty()) {
             BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(headers, content);
             eventResponseBuilder.body(bodyWrapper.body);
@@ -117,14 +100,37 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         return eventResponseBuilder.build();
     }
 
+    private EventResponseModel buildEventResponseModel(Exception e) {
+        return new EventResponseBuilder()
+            .time(new Date())
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .body(e.toString())
+            .headers(new HashMap<String, String>()) // required
+            .build();
+    }
+
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+        IOException queryException = null;
         EventRequestModel eventRequestModel = buildEventRequestModel(request, body);
+        EventResponseModel eventResponseModel = null;
 
-        // run the request
-        ClientHttpResponse response = execution.execute(request, body);
+        MoesifClientHttpResponse response = null;
+        try {
+            // run the request
+            ClientHttpResponse rawResponse = execution.execute(request, body);
 
-        EventResponseModel eventResponseModel = buildEventResponseModel(response);
+            response = new MoesifClientHttpResponse(rawResponse);
+        } catch (IOException e) {
+            queryException = e;
+        }
+
+        if (queryException == null) {
+            // wrap it so we can read the body twice
+            eventResponseModel = buildEventResponseModel(response);
+        } else {
+            eventResponseModel = buildEventResponseModel(queryException);
+        }
 
         if (!config.skip(request, response)) {
             APIController api = moesifApi.getAPI();
@@ -142,11 +148,22 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
             if (api.shouldSendSampledEvent()) {
                 try {
+                    // TODO: this is not async
                     api.createEvent(eventModel);
                 } catch (Throwable e) {
-                    // TODO: log?
+                    if (config.debug) {
+                        logger.warning(
+                            "Error sending event to moesif\n" +
+                            e.toString() +
+                            e.getStackTrace()
+                        );
+                    }
                 }
             }
+        }
+
+        if (queryException != null) {
+            throw queryException;
         }
 
         return response;

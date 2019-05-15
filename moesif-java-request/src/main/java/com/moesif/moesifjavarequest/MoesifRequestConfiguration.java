@@ -5,6 +5,8 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
 public class MoesifRequestConfiguration {
+    public boolean debug = false;
+
     public boolean skip(HttpRequest request, ClientHttpResponse response) {
         return false;
     }

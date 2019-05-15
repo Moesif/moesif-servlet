@@ -107,7 +107,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         return new EventResponseBuilder()
             .time(new Date())
             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .body(e.toString())
+            .body(e.toString() + "\n" + e.getStackTrace())
             .headers(new HashMap<String, String>()) // required
             .build();
     }

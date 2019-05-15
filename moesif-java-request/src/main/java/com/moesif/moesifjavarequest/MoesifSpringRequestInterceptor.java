@@ -8,6 +8,9 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.controllers.APIController;
+import com.moesif.api.http.client.APICallBack;
+import com.moesif.api.http.client.HttpContext;
+import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.IpAddress;
 import com.moesif.api.BodyParser;
 
@@ -148,16 +151,19 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
             if (api.shouldSendSampledEvent()) {
                 try {
-                    // TODO: this is not async
-                    api.createEvent(eventModel);
+                    APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
+                        public void onSuccess(HttpContext context, HttpResponse response) {
+                            // noop
+                        }
+
+                        public void onFailure(HttpContext context, Throwable error) {
+                            warnSendFailed(error);
+                        }
+                    };
+
+                    api.createEventAsync(eventModel, callback);
                 } catch (Throwable e) {
-                    if (config.debug) {
-                        logger.warning(
-                            "Error sending event to moesif\n" +
-                            e.toString() +
-                            e.getStackTrace()
-                        );
-                    }
+                    warnSendFailed(e);
                 }
             }
         }
@@ -167,6 +173,16 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         }
 
         return response;
+    }
+
+    private void warnSendFailed(Throwable e) {
+        if (config.debug) {
+            logger.warning(
+                "Error sending event to moesif\n" +
+                e.toString() +
+                e.getStackTrace()
+    );
+        }
     }
 }
 

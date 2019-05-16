@@ -1,11 +1,16 @@
 package com.moesif.moesifjavarequest;
 
 import com.moesif.api.models.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.HttpServerErrorException.GatewayTimeout;
+
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.controllers.APIController;
 import com.moesif.api.http.client.APICallBack;
@@ -15,6 +20,7 @@ import com.moesif.api.IpAddress;
 import com.moesif.api.BodyParser;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +31,9 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
     private MoesifAPIClient moesifApi;
     private MoesifRequestConfiguration config;
+
+    private int ERROR_GATEWAY_TIMEOUT = 504;
+    private int ERROR_BAD_GATEWAY = 502;
 
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
         this.moesifApi = moesifApi;
@@ -103,11 +112,32 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         return eventResponseBuilder.build();
     }
 
+    private int getStatusCodeForError(Exception e) {
+        int result = ERROR_BAD_GATEWAY;
+
+        if (e.getClass().getName().equals("org.springframework.web.client.HttpServerErrorException.GatewayTimeout")) {
+            result = ERROR_GATEWAY_TIMEOUT;
+        }
+
+        return result;
+    }
+
     private EventResponseModel buildEventResponseModel(Exception e) {
+        JSONObject moesifError = new JSONObject();
+        JSONObject body = new JSONObject();
+
+        try {
+            moesifError.put("code", "moesif_java_request_error");
+            moesifError.put("msg", e.toString() + "\n" + e.getStackTrace().toString());
+            body.put("moesif_error", moesifError);
+        } catch (JSONException ex) {
+            warn(ex);
+        }
+
         return new EventResponseBuilder()
             .time(new Date())
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .body(e.toString() + "\n" + e.getStackTrace())
+            .status(getStatusCodeForError(e))
+            .body(body.toString())
             .headers(new HashMap<String, String>()) // required
             .build();
     }
@@ -157,13 +187,13 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                         }
 
                         public void onFailure(HttpContext context, Throwable error) {
-                            warnSendFailed(error);
+                            warn(error);
                         }
                     };
 
                     api.createEventAsync(eventModel, callback);
                 } catch (Throwable e) {
-                    warnSendFailed(e);
+                    warn(e);
                 }
             }
         }
@@ -175,10 +205,10 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         return response;
     }
 
-    private void warnSendFailed(Throwable e) {
+    private void warn(Throwable e) {
         if (config.debug) {
             logger.warning(
-                "Error sending event to moesif\n" +
+                "Warning:\n" +
                 e.toString() +
                 e.getStackTrace()
     );

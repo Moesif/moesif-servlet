@@ -1,9 +1,7 @@
-package com.moesif.moesifjavarequest;
+package com.moesif.javarequest;
 
 import com.moesif.api.models.*;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -17,6 +15,10 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.IpAddress;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.moesif.api.BodyParser;
 
 import java.io.IOException;
@@ -123,21 +125,27 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     }
 
     private EventResponseModel buildEventResponseModel(Exception e) {
-        JSONObject moesifError = new JSONObject();
-        JSONObject body = new JSONObject();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.createObjectNode();
+        JsonNode error = mapper.createObjectNode();
 
+        ((ObjectNode) error).put("code", "moesif_java_request_error");
+        ((ObjectNode) error).put("msg", e.toString());
+        ((ObjectNode) rootNode).set("moesif_error", error);
+
+        String response = null;
         try {
-            moesifError.put("code", "moesif_java_request_error");
-            moesifError.put("msg", e.toString() + "\n" + e.getStackTrace().toString());
-            body.put("moesif_error", moesifError);
-        } catch (JSONException ex) {
+            response = mapper
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(rootNode);
+        } catch (JsonProcessingException ex) {
             warn(ex);
         }
 
         return new EventResponseBuilder()
             .time(new Date())
             .status(getStatusCodeForError(e))
-            .body(body.toString())
+            .body(response)
             .headers(new HashMap<String, String>()) // required
             .build();
     }
@@ -207,11 +215,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
     private void warn(Throwable e) {
         if (config.debug) {
-            logger.warning(
-                "Warning:\n" +
-                e.toString() +
-                e.getStackTrace()
-    );
+            logger.warning("Warning:\n" + e.toString());
         }
     }
 }

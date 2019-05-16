@@ -6,7 +6,7 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>1.5.19.RELEASE</version>
   </parent>
-  <groupId>com.moesif.javarequest</groupId>
+  <groupId>com.moesif.javarequestexample</groupId>
   <artifactId>java-request-example</artifactId>
   <version>1.3.0</version>
   <name>java-request-example</name>
@@ -45,11 +45,25 @@
       <artifactId>moesif-servlet</artifactId>
       <version>1.5.2</version>
     </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.9.8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.moesif.javarequest</groupId>
+      <artifactId>moesif-javarequest</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>/Users/matt/workspace/moesif-servlet/moesif-java-request/target/moesif-javarequest.jar</systemPath>
+    </dependency>
 
     <dependency>
-      <groupId>com.moesif.moesifjavarequest</groupId>
-      <artifactId>moesif-moesifjavarequest</artifactId>
-      <version>1.0.0</version>
+      <groupId>com.moesif.api</groupId>
+      <artifactId>moesifapi</artifactId>
+      <version>1.6.2</version>
+      <scope>system</scope>
+      <systemPath>/Users/matt/workspace/moesifapi-java/target/moesifapi-1.6.2.jar</systemPath>
     </dependency>
 
     <dependency>

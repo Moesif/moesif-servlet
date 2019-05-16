@@ -1,6 +1,5 @@
-package com.moesif.javarequest;
+package com.moesif.javarequestexample;
 
-import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +12,7 @@ public class PostController {
 
   @RequestMapping("/create_post")
   public String createPost(@RequestParam(value="name", defaultValue="New Post") String name) {
-    JSONObject json = new JSONObject();
-
-    json.put("id", Long.toString(Math.round(Math.random() * 1000)).toString());
-    json.put("name", name);
-
-    HttpEntity<String> request = new HttpEntity<String>(json.toString());
+    HttpEntity<String> request = new HttpEntity<String>("{\"id\": \"1\", \"name\": \"new post\"}");
 
     ResponseEntity<String> response = httpClient.getRestTemplate().exchange(
       "https://jsonplaceholder.typicode.com/posts",

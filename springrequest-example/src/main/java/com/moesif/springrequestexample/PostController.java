@@ -1,4 +1,4 @@
-package com.moesif.javarequestexample;
+package com.moesif.springrequestexample;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

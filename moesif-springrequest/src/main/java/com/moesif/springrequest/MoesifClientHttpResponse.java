@@ -1,4 +1,4 @@
-package com.moesif.javarequest;
+package com.moesif.springrequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

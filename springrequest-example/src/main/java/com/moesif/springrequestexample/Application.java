@@ -1,4 +1,4 @@
-package com.moesif.javarequestexample;
+package com.moesif.springrequestexample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

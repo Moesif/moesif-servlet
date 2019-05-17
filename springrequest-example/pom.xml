@@ -6,10 +6,10 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>1.5.19.RELEASE</version>
   </parent>
-  <groupId>com.moesif.javarequestexample</groupId>
-  <artifactId>java-request-example</artifactId>
+  <groupId>com.moesif.springrequestexample</groupId>
+  <artifactId>springrequest-example</artifactId>
   <version>1.3.0</version>
-  <name>java-request-example</name>
+  <name>springrequest-example</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -51,8 +51,8 @@
         <version>2.9.8</version>
     </dependency>
     <dependency>
-      <groupId>com.moesif.javarequest</groupId>
-      <artifactId>moesif-javarequest</artifactId>
+      <groupId>com.moesif.springrequest</groupId>
+      <artifactId>moesif-springrequest</artifactId>
       <version>1.0.0</version>
     </dependency>
 
@@ -125,6 +125,6 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
     </plugins>
-    <finalName>moesif-java-request-example</finalName>
+    <finalName>moesif-springrequest-example</finalName>
   </build>
 </project>

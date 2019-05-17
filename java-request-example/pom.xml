@@ -54,16 +54,12 @@
       <groupId>com.moesif.javarequest</groupId>
       <artifactId>moesif-javarequest</artifactId>
       <version>1.0.0</version>
-      <scope>system</scope>
-      <systemPath>/Users/matt/workspace/moesif-servlet/moesif-java-request/target/moesif-javarequest.jar</systemPath>
     </dependency>
 
     <dependency>
       <groupId>com.moesif.api</groupId>
       <artifactId>moesifapi</artifactId>
       <version>1.6.2</version>
-      <scope>system</scope>
-      <systemPath>/Users/matt/workspace/moesifapi-java/target/moesifapi-1.6.2.jar</systemPath>
     </dependency>
 
     <dependency>

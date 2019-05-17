@@ -1,4 +1,4 @@
-package com.moesif.javarequest;
+package com.moesif.springrequest;
 
 import com.moesif.api.models.EventModel;
 import org.springframework.http.HttpRequest;

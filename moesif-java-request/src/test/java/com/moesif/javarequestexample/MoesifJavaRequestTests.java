@@ -1,4 +1,4 @@
-package com.moesif.moesifjavarequest;
+package com.moesif.javarequest;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

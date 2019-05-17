@@ -1,9 +1,9 @@
-package com.moesif.javarequest;
+package com.moesif.javarequestexample;
 
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
-import com.moesif.moesifjavarequest.MoesifSpringRequestInterceptor;
+import com.moesif.javarequest.MoesifSpringRequestInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;

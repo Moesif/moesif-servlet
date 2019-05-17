@@ -1,6 +1,7 @@
-package com.moesif.moesifjavarequest;
+package com.moesif.javarequest;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,7 +11,7 @@ import org.springframework.http.client.ClientHttpResponse;
 
 /**
  * The body of ClientHttpResponse is an InputStream which can only be read once.
- * 
+ *
  * Since we want to report the body contents without disrupting the application
  * code which depends on the response body, we must create a wrapper object.
  */
@@ -19,11 +20,22 @@ public class MoesifClientHttpResponse implements ClientHttpResponse {
   private String bodyString;
   private InputStream inputStream;
 
+  private byte[] streamToBytes(InputStream inputStream) throws IOException {
+    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+    byte[] buffer = new byte[1024];
+    int len;
+
+    while ((len = inputStream.read(buffer)) != -1) {
+      byteStream.write(buffer, 0, len);
+    }
+
+    return byteStream.toByteArray();
+  }
+
   MoesifClientHttpResponse(ClientHttpResponse response) throws IOException {
     this.response = response;
-
-    InputStream bodyStream = response.getBody();
-    byte[] bodyBytes = bodyStream.readAllBytes();
+    byte[] bodyBytes = streamToBytes(response.getBody());
 
     bodyString = new String(bodyBytes);
     inputStream = new ByteArrayInputStream(bodyBytes);

@@ -26,6 +26,7 @@ import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.controllers.APIController;
 import com.moesif.api.Configuration;
 import com.moesif.api.IpAddress;
+import com.moesif.api.BodyParser;
 
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;

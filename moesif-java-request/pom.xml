@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.moesif.moesifjavarequest</groupId>
-  <artifactId>moesif-moesifjavarequest</artifactId>
+  <groupId>com.moesif.javarequest</groupId>
+  <artifactId>moesif-javarequest</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
-  <name>moesif-java-request</name>
+  <name>moesif-javarequest</name>
   <description>Moesif SDK for Java to log and analyze outgoing API calls</description>
   <url>https://www.moesif.com/docs/server-integration/servlet/</url>
 
@@ -111,7 +111,7 @@
   </pluginRepositories>
 
   <build>
-    <finalName>moesif-moesifjavarequest</finalName>
+    <finalName>moesif-javarequest</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -161,7 +161,7 @@
     <repository>
       <id>bintray-moesif-maven</id>
       <name>moesif-maven</name>
-      <url>https://api.bintray.com/maven/moesif/maven/moesif-servlet/;publish=1</url>
+      <url>https://api.bintray.com/maven/moesif/maven/moesif-javarequest/;publish=1</url>
     </repository>
   </distributionManagement>
 </project>

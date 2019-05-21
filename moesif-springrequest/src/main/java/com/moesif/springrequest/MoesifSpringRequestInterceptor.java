@@ -37,6 +37,10 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     private int ERROR_GATEWAY_TIMEOUT = 504;
     private int ERROR_BAD_GATEWAY = 502;
 
+    /**
+     * Constructor
+     * @param moesifApi API instance
+     */
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
         this.moesifApi = moesifApi;
         this.config = new MoesifRequestConfiguration();
@@ -44,6 +48,10 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         this.moesifApi.getAPI().setShouldSyncAppConfig(true);
     }
 
+    /**
+     * Constructor
+     * @param applicationId your Moesif App ID
+     */
     public MoesifSpringRequestInterceptor(String applicationId) {
         this.moesifApi = new MoesifAPIClient(applicationId);
         this.config = new MoesifRequestConfiguration();
@@ -51,11 +59,21 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         this.moesifApi.getAPI().setShouldSyncAppConfig(true);
     }
 
+    /**
+     * Constructor
+     * @param moesifApi API instance
+     * @param config Override default behavior (masking of content, user identification, etc)
+     */
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi, MoesifRequestConfiguration config) {
         this(moesifApi);
         this.config = config;
     }
 
+    /**
+     * Constructor
+     * @param applicationId your Moesif App ID
+     * @param config Override default behavior (masking of content, user identification, etc)
+     */
     public MoesifSpringRequestInterceptor(String applicationId, MoesifRequestConfiguration config) {
         this(applicationId);
         this.config = config;
@@ -150,6 +168,14 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
             .build();
     }
 
+    /**
+     * Report the header, body, method, and URL of the request-response pair to moesif.com
+     * @param request the http request
+     * @param body the request body
+     * @param execution instance to make the HTTP request
+     * @return the HTTP response
+     * @throws IOException Throws if there's an error making the request
+     */
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         IOException queryException = null;

@@ -41,7 +41,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.5.2</version>
+    <version>1.5.3</version>
 </dependency>
 ```
 
@@ -56,7 +56,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.5.2'
+    compile 'com.moesif.servlet:moesif-servlet:1.5.3'
 }
 ```
 
@@ -583,10 +583,72 @@ users.add(userB);
 filter.updateUsersBatch(users);
 ```
 
+## UpdateCompany method
+
+A method is attached to the servlet object to update the company profile or metadata.
+The metadata field can be any custom data you want to set on the company. The `company_id` field is required.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+
+CompanyModel company = new CompanyBuilder()
+				.companyId("javaapicompany")
+				.companyDomain("acmeinc.com")
+				.metadata(APIHelper.deserialize("{" +
+						"\"email\": \"johndoe@acmeinc.com\"," +
+						"\"string_field\": \"value_1\"," +
+						"\"number_field\": 0," +
+						"\"object_field\": {" +
+						"\"field_1\": \"value_1\"," +
+						"\"field_2\": \"value_2\"" +
+						"}" +
+						"}"))
+				.build();
+filter.updateCompany(company);
+```
+
+## UpdateCompaniesBatch method
+
+A method is attached to the servlet object to update the companies profile or metadata in batch.
+The metadata field can be any custom data you want to set on the company. The `company_id` field is required.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+List<CompanyModel> companies = new ArrayList<CompanyModel>();
+
+HashMap<String, Object> metadata = new HashMap<String, Object>();
+metadata = APIHelper.deserialize("{" +
+    "\"email\": \"johndoe@acmeinc.com\"," +
+    "\"string_field\": \"value_1\"," +
+    "\"number_field\": 0," +
+    "\"object_field\": {" +
+    "\"field_1\": \"value_1\"," +
+    "\"field_2\": \"value_2\"" +
+    "}" +
+    "}");
+
+  CompanyModel companyA = new CompanyBuilder()
+  		.companyId("javaapicompany")
+  		.companyDomain("nowhere.com")
+  		.metadata(metadata)
+  		.build();
+
+  CompanyModel companyB = new CompanyBuilder()
+  		.companyId("javaapicompany1")
+  		.companyDomain("nowhere.com")
+  		.metadata(metadata)
+  		.build();
+
+  companies.add(companyA);
+  companies.add(companyB);
+
+  filter.updateCompaniesBatch(companies);
+```
+
 ## How to test
 
 1. Manually clone the git repo
-2. Invoke `mvn clean install -U` if you haven't done so.
+2. Invoke `mvn clean install -U -Dgpg.skip` if you haven't done so.
 3. Add your own application id to 'src/test/java/com/moesif/servlet/MoesifServletTests.java'. You can find your Application Id from [_Moesif Dashboard_](https://www.moesif.com/) -> _Top Right Menu_ -> _Installation_
 4. From terminal/cmd navigate to the root directory of the moesif-servlet.
 5. Invoke `mvn -Dtest=MoesifServletTests test` to run the tests.

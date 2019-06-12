@@ -8,6 +8,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.moesif.api.APIHelper;
+import com.moesif.api.models.CompanyBuilder;
+import com.moesif.api.models.CompanyModel;
 import com.moesif.api.models.UserBuilder;
 import junit.framework.TestCase;
 import org.mockito.Mockito;
@@ -171,6 +173,56 @@ public class MoesifServletTests extends TestCase {
 		users.add(userB);
 
 		filter.updateUsersBatch(users);
+	}
+
+	public void testUpdateCompany() throws Throwable {
+		CompanyModel company = new CompanyBuilder()
+				.companyId("javaapicompany")
+				.companyDomain("acmeinc.com")
+				.metadata(APIHelper.deserialize("{" +
+						"\"email\": \"johndoe@acmeinc.com\"," +
+						"\"string_field\": \"value_1\"," +
+						"\"number_field\": 0," +
+						"\"object_field\": {" +
+						"\"field_1\": \"value_1\"," +
+						"\"field_2\": \"value_2\"" +
+						"}" +
+						"}"))
+				.build();
+		filter.updateCompany(company);
+	}
+
+	public void testUpdateCompaniesBatch() throws Throwable {
+
+		List<CompanyModel> companies = new ArrayList<CompanyModel>();
+
+		HashMap<String, Object> metadata = new HashMap<String, Object>();
+		metadata = APIHelper.deserialize("{" +
+				"\"email\": \"johndoe@acmeinc.com\"," +
+				"\"string_field\": \"value_1\"," +
+				"\"number_field\": 1," +
+				"\"object_field\": {" +
+				"\"field_1\": \"value_1\"," +
+				"\"field_2\": \"value_2\"" +
+				"}" +
+				"}");
+
+		CompanyModel companyA = new CompanyBuilder()
+				.companyId("javaapicompany")
+				.companyDomain("nowhere.com")
+				.metadata(metadata)
+				.build();
+
+		CompanyModel companyB = new CompanyBuilder()
+				.companyId("javaapicompany1")
+				.companyDomain("nowhere.com")
+				.metadata(metadata)
+				.build();
+
+		companies.add(companyA);
+		companies.add(companyB);
+
+		filter.updateCompaniesBatch(companies);
 	}
 
 	public void testGetAppConfig() throws Throwable{

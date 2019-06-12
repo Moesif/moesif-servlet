@@ -265,6 +265,57 @@ public class MoesifFilter implements Filter {
     }
   }
 
+  public void updateCompany(CompanyModel companyModel) throws Throwable{
+
+    if (this.moesifApi != null) {
+      String companyId = companyModel.getCompanyId();
+      if (companyId != null && !companyId.isEmpty()) {
+        try {
+          moesifApi.getAPI().updateCompany(companyModel);
+        }
+        catch(Exception e) {
+          if (debug) {
+            logger.warning("Update Company to Moesif failed " + e.toString());
+          }
+        }
+      }
+      else {
+        throw new IllegalArgumentException("To update a company, a companyId field is required");
+      }
+    }
+    else {
+      logger.warning("The application Id should be set before using MoesifFilter");
+    }
+  }
+
+  public void updateCompaniesBatch(List<CompanyModel> companiesModel) throws Throwable{
+
+    List<CompanyModel> companies = new ArrayList<CompanyModel>();
+    if (this.moesifApi != null) {
+      for (CompanyModel company : companiesModel) {
+        String companyId = company.getCompanyId();
+        if (companyId != null && !companyId.isEmpty()) {
+          companies.add(company);
+        } else {
+          throw new IllegalArgumentException("To update a company, a companyId field is required");
+        }
+      }
+    }
+    else {
+      logger.warning("The application Id should be set before using MoesifFilter");
+    }
+
+    if (!companies.isEmpty()) {
+      try {
+        moesifApi.getAPI().updateCompaniesBatch(companies);
+      } catch (Exception e) {
+        if (debug) {
+          logger.warning("Update Companies to Moesif failed " + e.toString());
+        }
+      }
+    }
+  }
+
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
     if (debug) {

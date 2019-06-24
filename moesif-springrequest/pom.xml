@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.springrequest</groupId>
   <artifactId>moesif-springrequest</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
   <name>moesif-springrequest</name>
   <description>Moesif SDK for Java to log and analyze outgoing API calls</description>
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>com.moesif.api</groupId>
       <artifactId>moesifapi</artifactId>
-      <version>1.6.2</version>
+      <version>1.6.3</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

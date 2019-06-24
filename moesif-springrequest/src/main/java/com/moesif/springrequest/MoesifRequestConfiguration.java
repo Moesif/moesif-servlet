@@ -41,6 +41,16 @@ public class MoesifRequestConfiguration {
     }
 
     /**
+     * Provide the companyId
+     * @param request the HTTP request
+     * @param response the HTTP response
+     * @return the company ID
+     */
+    public String identifyCompany(HttpRequest request, ClientHttpResponse response) {
+        return null;
+    }
+
+    /**
      * If Moesif is unable to identify the session, custom logic can be defined here
      * @param request the HTTP request
      * @param response the HTTP response

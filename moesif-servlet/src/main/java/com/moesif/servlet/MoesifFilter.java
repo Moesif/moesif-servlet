@@ -387,6 +387,7 @@ public class MoesifFilter implements Filter {
         eventRequestModel,
         eventResponseModel,
         config.identifyUser(httpRequest, httpResponse),
+        config.identifyCompany(httpRequest, httpResponse),
         config.getSessionToken(httpRequest, httpResponse),
         config.getTags(httpRequest, httpResponse),
         config.getMetadata(httpRequest, httpResponse)
@@ -449,6 +450,7 @@ public class MoesifFilter implements Filter {
   private void sendEvent(EventRequestModel eventRequestModel,
                            EventResponseModel eventResponseModel,
                            String userId,
+                           String companyId,
                            String sessionToken,
                            String tags,
                            Object metadata) {
@@ -457,6 +459,9 @@ public class MoesifFilter implements Filter {
     eb.response(eventResponseModel);
     if (userId != null) {
       eb.userId(userId);
+    }
+    if (companyId != null) {
+      eb.companyId(companyId);
     }
     if (sessionToken != null) {
       eb.sessionToken(sessionToken);

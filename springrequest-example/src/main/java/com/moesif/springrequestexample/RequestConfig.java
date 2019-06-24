@@ -9,4 +9,9 @@ public class RequestConfig extends MoesifRequestConfiguration {
   public String identifyUser(HttpRequest request, ClientHttpResponse response) {
     return "test_user";
   }
+  
+  @Override
+  public String identifyCompany(HttpRequest request, ClientHttpResponse response) {
+    return "12345";
+  }
 }

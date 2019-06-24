@@ -41,7 +41,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
 </dependency>
 ```
 
@@ -56,7 +56,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.5.3'
+    compile 'com.moesif.servlet:moesif-servlet:1.5.4'
 }
 ```
 
@@ -470,7 +470,17 @@ ensures the highest accuracy with user attribution.
   }
 ```
 
-### 4. `public String getSessionToken(HttpServletRequest request, HttpServletResponse response)`
+### 4. `public String identifyCompany(HttpServletRequest request, HttpServletResponse response)`
+You can set this configuration to add company Id to the event.
+
+```java
+  @Override
+  public String identifyCompany(HttpServletRequest request, HttpServletResponse response) {
+    return "12345";
+  }
+```
+
+### 5. `public String getSessionToken(HttpServletRequest request, HttpServletResponse response)`
 
 Moesif automatically detects the end user's session token or API key, but you can manually define the token for finer control.
 
@@ -489,11 +499,11 @@ A second example if want to use servlet sessions
   }
 ```
 
-### 5. `public String getTags(HttpServletRequest request, HttpServletResponse response)`
+### 6. `public String getTags(HttpServletRequest request, HttpServletResponse response)`
 You can add any additional tags as needed
 to the event.
 
-### 6. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
+### 7. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
 You can optionally add an API version
 to the event.
 

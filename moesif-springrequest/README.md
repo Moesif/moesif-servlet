@@ -26,7 +26,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.springrequest</groupId>
     <artifactId>moesif-springrequest</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.springrequest:moesif-springrequest:1.0.1'
+    compile 'com.moesif.springrequest:moesif-springrequest:1.0.2'
 }
 ```
 
@@ -99,7 +99,17 @@ ensures the highest accuracy with user attribution.
   }
 ```
 
-### 4. `public String getSessionToken(HttpRequest request, ClientHttpResponse response)`
+### 4. `public String identifyCompany(HttpRequest request, ClientHttpResponse response)`
+You can set this configuration to add company Id to the event.
+
+```java
+  @Override
+  public String identifyCompany(HttpRequest request, ClientHttpResponse response) {
+    return "12345";
+  }
+```
+
+### 5. `public String getSessionToken(HttpRequest request, ClientHttpResponse response)`
 
 Moesif automatically detects the end user's session token or API key, but you can manually define the token for finer control.
 

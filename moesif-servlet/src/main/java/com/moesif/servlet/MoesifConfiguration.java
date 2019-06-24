@@ -18,6 +18,10 @@ public class MoesifConfiguration {
     return null;
   }
 
+  public String identifyCompany(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
+
   public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
     return null;
   }

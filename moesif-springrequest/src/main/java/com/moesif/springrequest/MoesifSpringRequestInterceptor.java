@@ -206,6 +206,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 eventRequestModel,
                 eventResponseModel,
                 config.identifyUser(request, response),
+                config.identifyCompany(request, response),
                 config.getSessionToken(request, response),
                 config.getApiVersion(request, response),
                 config.getMetadata(request, response)

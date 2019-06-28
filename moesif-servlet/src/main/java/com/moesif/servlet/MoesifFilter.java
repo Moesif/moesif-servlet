@@ -41,6 +41,7 @@ public class MoesifFilter implements Filter {
   private MoesifConfiguration config;
   private MoesifAPIClient moesifApi;
   private boolean debug;
+  private boolean logBody;
   private int samplingPercentage;
   private Map<String, Map<String, Object>> configDict;
   private Date lastUpdatedTime;
@@ -51,6 +52,7 @@ public class MoesifFilter implements Filter {
   public MoesifFilter() {
     this.config = new MoesifConfigurationAdapter();
     this.debug = false;
+    this.logBody = true;
   }
 
   /**
@@ -62,6 +64,7 @@ public class MoesifFilter implements Filter {
     this.config = new MoesifConfigurationAdapter();
     this.moesifApi = new MoesifAPIClient(applicationId);
     this.debug = false;
+    this.logBody = true;
   }
 
   /**
@@ -74,6 +77,7 @@ public class MoesifFilter implements Filter {
     this.config = new MoesifConfigurationAdapter();
     this.moesifApi = new MoesifAPIClient(applicationId);
     this.debug = debug;
+    this.logBody = true;
   }
 
   /**
@@ -86,6 +90,7 @@ public class MoesifFilter implements Filter {
     this.config = config;
     this.moesifApi = new MoesifAPIClient(applicationId);
     this.debug = false;
+    this.logBody = true;
   }
 
   /**
@@ -99,6 +104,7 @@ public class MoesifFilter implements Filter {
     this.config = config;
     this.moesifApi = new MoesifAPIClient(applicationId);
     this.debug = debug;
+    this.logBody = true;
   }
 
   /**
@@ -150,6 +156,13 @@ public class MoesifFilter implements Filter {
     if (debug != null) {
       if (debug.equals("true")) {
         this.debug = true;
+      }
+    }
+
+    String logBody = filterConfig.getInitParameter("logBody");
+    if (logBody != null) {
+      if (logBody.equals("false")) {
+        this.logBody = false;
       }
     }
     
@@ -420,7 +433,7 @@ public class MoesifFilter implements Filter {
 
     String content = requestWrapper.getContent();
 
-    if (content != null  && !content.isEmpty()) {
+    if (logBody && content != null  && !content.isEmpty()) {
       BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
       eventRequestBuilder.body(bodyWrapper.body);
       eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
@@ -438,7 +451,7 @@ public class MoesifFilter implements Filter {
 
     String content = responseWrapper.getContent();
 
-    if (content != null  && !content.isEmpty()) {
+    if (logBody && content != null  && !content.isEmpty()) {
       BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
       eventResponseBuilder.body(bodyWrapper.body);
       eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);

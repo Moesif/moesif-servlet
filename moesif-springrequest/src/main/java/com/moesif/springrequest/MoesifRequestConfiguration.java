@@ -10,6 +10,11 @@ public class MoesifRequestConfiguration {
      */
     public boolean debug = false;
 
+    // /**
+    //  * Disable logBody to remove logging request and response body
+    //  */
+    public boolean logBody = true;
+
     /**
      * Return true if and only if the request should not be recorded to moesif
      * @param request the HTTP request

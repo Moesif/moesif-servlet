@@ -33,7 +33,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
     private MoesifAPIClient moesifApi;
     private MoesifRequestConfiguration config;
-
+    private boolean debug;
+    private boolean logBody;
     private int ERROR_GATEWAY_TIMEOUT = 504;
     private int ERROR_BAD_GATEWAY = 502;
 
@@ -67,6 +68,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi, MoesifRequestConfiguration config) {
         this(moesifApi);
         this.config = config;
+        this.debug = false;
+        this.logBody = true;
     }
 
     /**
@@ -77,6 +80,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     public MoesifSpringRequestInterceptor(String applicationId, MoesifRequestConfiguration config) {
         this(applicationId);
         this.config = config;
+        this.logBody = true;
+        this.debug = false;
     }
 
     private EventRequestModel buildEventRequestModel(HttpRequest request, byte[] body) {
@@ -93,7 +98,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 ));
 
         String content = new String(body);
-        if (content != null && !content.isEmpty()) {
+        if (config.logBody && content != null && !content.isEmpty()) {
             BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(headers, content);
             eventRequestBuilder.body(bodyWrapper.body);
             eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
@@ -122,7 +127,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
         String content = response.getBodyString();
 
-        if (content != null && !content.isEmpty()) {
+        if (config.logBody && content != null && !content.isEmpty()) {
             BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(headers, content);
             eventResponseBuilder.body(bodyWrapper.body);
             eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);

@@ -133,6 +133,14 @@ public class MoesifFilter implements Filter {
   }
 
   /**
+   * Sets the logBody flag
+   * @param    logBody boolean
+   */
+  public void setLogBody(boolean logBody) {
+    this.logBody = logBody;
+  }
+
+  /**
    * Get the underlying APIController
    * @return	Returns the APIController instance
    */

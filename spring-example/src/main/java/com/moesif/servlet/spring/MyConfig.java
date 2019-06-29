@@ -52,6 +52,11 @@ public class MyConfig extends WebMvcConfigurerAdapter{
       }
     };
 
-    return new MoesifFilter("Your Application Id", config, true);
+    MoesifFilter moesifFilter = new MoesifFilter("Your Application Id", config, true);
+    
+    // Set flag to log request and response body
+    moesifFilter.setLogBody(true);
+
+    return moesifFilter;
   }
 }

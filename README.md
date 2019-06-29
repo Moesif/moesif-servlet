@@ -198,6 +198,10 @@ In `web.xml` file:
       <param-name>debug</param-name>
       <param-value>false</param-value>
     </init-param>
+    <init-param>
+      <param-name>logBody</param-name>
+      <param-value>true</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>MoesifFilter</filter-name>
@@ -260,6 +264,10 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     <init-param>
       <param-name>debug</param-name>
       <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>logBody</param-name>
+      <param-value>true</param-value>
     </init-param>
   </filter>
   <filter-mapping>
@@ -324,6 +332,10 @@ Edit the web.xml file to add your application id that you obtained from your Moe
       <param-name>debug</param-name>
       <param-value>false</param-value>
     </init-param>
+    <init-param>
+      <param-name>logBody</param-name>
+      <param-value>true</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>MoesifFilter</filter-name>
@@ -385,6 +397,10 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     <init-param>
       <param-name>debug</param-name>
       <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>logBody</param-name>
+      <param-value>true</param-value>
     </init-param>
   </filter>
   <filter-mapping>

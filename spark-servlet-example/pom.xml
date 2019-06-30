@@ -58,12 +58,12 @@
         <dependency>
             <groupId>com.moesif.api</groupId>
             <artifactId>moesifapi</artifactId>
-            <version>1.6.0</version>
+            <version>1.6.3</version>
         </dependency>
         <dependency>
             <groupId>com.moesif.servlet</groupId>
             <artifactId>moesif-servlet</artifactId>
-            <version>1.5.2</version>
+            <version>1.5.7</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

@@ -16,9 +16,14 @@ public class MoesifHttpClient {
 
     final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
 
+    RequestConfig requestConfig = new RequestConfig();
+    
+    // Set logBody flag to false to remove logging request and response body to Moesif
+    requestConfig.logBody = true;
+
     interceptors.add(new MoesifSpringRequestInterceptor(
       "Enter your Moesif AppId here",
-      new RequestConfig()
+      requestConfig
     ));
 
     template.setInterceptors( interceptors );

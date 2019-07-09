@@ -26,7 +26,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.springrequest</groupId>
     <artifactId>moesif-springrequest</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.springrequest:moesif-springrequest:1.0.3'
+    compile 'com.moesif.springrequest:moesif-springrequest:1.0.4'
 }
 ```
 
@@ -142,8 +142,30 @@ mvn clean install
 ## Enable Debug Messsages
 
 ```java
-@Override
-public boolean debug = true;
+RequestConfig requestConfig = new RequestConfig();
+
+requestConfig.debug = true;
+
+interceptors.add(new MoesifSpringRequestInterceptor(
+  "Enter your Moesif AppId here",
+  requestConfig
+));
+```
+
+## Disable Logging Request and Response Body
+
+Optional, Default `true`. Set `logBody` flag to `false` to remove logging request and response body to Moesif.
+
+```java
+RequestConfig requestConfig = new RequestConfig();
+    
+// Set logBody flag to false to remove logging request and response body to Moesif
+requestConfig.logBody = true;
+
+interceptors.add(new MoesifSpringRequestInterceptor(
+  "Enter your Moesif AppId here",
+  requestConfig
+));
 ```
 
 ## Other integrations

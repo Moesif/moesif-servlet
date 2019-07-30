@@ -7,7 +7,8 @@
 
 ## Introduction
 
-moesif-servlet is a Java SDK for capturing API traffic and sending to [Moesif](https://www.moesif.com) for analysis.
+`moesif-servlet` is a Java SDK for capturing API traffic and sending to [Moesif](https://www.moesif.com) for 
+API debugging and analytics.
 
 The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
 without importing large framework specific dependencies.
@@ -17,11 +18,7 @@ If you're using a web framework that is built on the
 [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html)
 such as Spring Boot, Spring MVC, Jersey, and Apache Struts, then you can enable this SDK with minimal configuration.
 
-Different web frameworks have different way of configuring
-filters. Please take a look at the framework specific examples or reach out to us for any questions.
-Refer to the framework specific documentation for adding or configuring servlet filters.
-
-For more info, visit [Moesif's Developer Docs](https://www.moesif.com/docs)
+[Source Code on GitHub](https://github.com/moesif/moesif-servlet)
 
 ## How to install
 
@@ -66,6 +63,18 @@ The jars are available from a public [Bintray Jcenter](https://bintray.com/moesi
 
 
 ## How to use
+
+Different Java web frameworks have different way of configuring filters. 
+Go to your specific framework's instructions below:
+
+- [Spring Boot](#spring-boot)
+- [Spring MVC](#spring-mvc-java-config)
+- [Jersey Servlet](#jersey-servlet)
+- [Spark Servlet](#spark-servlet)
+- [Generic Java Servlet](#generic-java-servlet)
+
+
+You can also Refer to the framework's documentation on adding and configuring servlet filters.
 
 ### Spring Boot
 

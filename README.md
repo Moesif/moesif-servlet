@@ -7,8 +7,7 @@
 
 ## Introduction
 
-`moesif-servlet` is a Java SDK for capturing API traffic and sending to [Moesif](https://www.moesif.com) for 
-API debugging and analytics.
+`moesif-servlet` is a Java SDK that logs API calls and sends to [Moesif](https://www.moesif.com) for API analytics and log analysis.
 
 The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
 without importing large framework specific dependencies.
@@ -74,7 +73,12 @@ Go to your specific framework's instructions below:
 - [Generic Java Servlet](#generic-java-servlet)
 
 
-You can also Refer to the framework's documentation on adding and configuring servlet filters.
+Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).
+After signing up for a Moesif account, your Moesif Application Id will be displayed during the onboarding steps. 
+
+You can always find your Moesif Application Id at any time by logging 
+into the [_Moesif Portal_](https://www.moesif.com/), click on the top right menu,
+and then clicking _Installation_.
 
 ### Spring Boot
 
@@ -94,7 +98,7 @@ public class MyConfig extends WebMvcConfigurerAdapter {
 
   @Bean
   public Filter moesifFilter() {
-    return new MoesifFilter("your application id");
+    return new MoesifFilter("Your Moesif Application Id");
   }
 }
 ```
@@ -116,7 +120,7 @@ public class MyConfig extends WebMvcConfigurerAdapter {
 
   @Bean
   public Filter moesifFilter() {
-    return new MoesifFilter("your application id", config);
+    return new MoesifFilter("Your Moesif Application Id", config);
   }
 }
 ```
@@ -182,7 +186,7 @@ public class MyWebInitializer extends
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[]{new MoesifFilter("your application id")};
+		return new Filter[]{new MoesifFilter("Your Moesif Application Id")};
 	}
 }
 
@@ -201,7 +205,7 @@ In `web.xml` file:
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>your application id</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>
@@ -260,7 +264,7 @@ Shut it down manually with Ctrl-C.
 
 There are multiple ways to run Jersey, as a Java Servlet or embedded with a Java NIO framework like Grizzly. This subsection focuses on running Jersey as a Servlet.
 
-Edit the web.xml file to add your application id that you obtained from your Moesif Account.
+Edit the web.xml file to add your Moesif Application Id that you obtained from your Moesif Account.
 
 ```xml
   <filter>
@@ -268,7 +272,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>your application id</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>
@@ -327,7 +331,7 @@ Shut it down manually with Ctrl-C.
 
 There are multiple ways to run Spark, as a Java Servlet or embedded with a server like Jetty. This subsection focuses on running Spark as a Servlet.
 
-Edit the web.xml file to add your application id that you obtained from your Moesif Account.
+Edit the web.xml file to add your Moesif Application Id that you obtained from your Moesif Account.
 
 ```xml
   <filter>
@@ -335,7 +339,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>your application id</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>
@@ -393,7 +397,7 @@ Shut it down manually with Ctrl-C.
 
 ### Generic Java Servlet
 
-Edit the web.xml file to add your application id that you obtained from your Moesif Account.
+Edit the web.xml file to add your Moesif Application Id that you obtained from your Moesif Account.
 
 ```xml
   <filter>
@@ -401,7 +405,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>your application id</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>
@@ -553,7 +557,7 @@ A method is attached to the servlet object to update the users profile or metada
 The metadata field can be any custom data you want to set on the user. The `user_id` field is required.
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 UserModel user = new UserBuilder()
     .userId("javaapiuser")
@@ -580,7 +584,7 @@ A method is attached to the servlet object to update the users profile or metada
 The metadata field can be any custom data you want to set on the user. The `user_id` field is required.
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 List<UserModel> users = new ArrayList<UserModel>();
 
 HashMap<String, Object> metadata = new HashMap<String, Object>();
@@ -624,7 +628,7 @@ A method is attached to the servlet object to update the company profile or meta
 The metadata field can be any custom data you want to set on the company. The `company_id` field is required.
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 CompanyModel company = new CompanyBuilder()
 				.companyId("javaapicompany")
@@ -648,7 +652,7 @@ A method is attached to the servlet object to update the companies profile or me
 The metadata field can be any custom data you want to set on the company. The `company_id` field is required.
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Application Id", new MoesifConfiguration());
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 List<CompanyModel> companies = new ArrayList<CompanyModel>();
 
 HashMap<String, Object> metadata = new HashMap<String, Object>();
@@ -684,7 +688,7 @@ metadata = APIHelper.deserialize("{" +
 
 1. Manually clone the git repo
 2. Invoke `mvn clean install -U -Dgpg.skip` if you haven't done so.
-3. Add your own application id to 'src/test/java/com/moesif/servlet/MoesifServletTests.java'. You can find your Application Id from [_Moesif Dashboard_](https://www.moesif.com/) -> _Top Right Menu_ -> _Installation_
+3. Add your own application id to 'src/test/java/com/moesif/servlet/MoesifServletTests.java'. You can find your Moesif Application Id from [_Moesif Dashboard_](https://www.moesif.com/) -> _Top Right Menu_ -> _Installation_
 4. From terminal/cmd navigate to the root directory of the moesif-servlet.
 5. Invoke `mvn -Dtest=MoesifServletTests test` to run the tests.
 

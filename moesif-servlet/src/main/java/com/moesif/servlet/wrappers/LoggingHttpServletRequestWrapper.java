@@ -15,8 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
@@ -111,7 +109,7 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
   private byte[] getContentFromParameterMap(Map<String, String[]> parameterMap) {
 
-    List<String> result = new ArrayList<>();
+    List<String> result = new ArrayList<String>();
     for (Map.Entry<String, String[]>  e: parameterMap.entrySet()) {
       String[] value = e.getValue();
       result.add(e.getKey() + "=" + (value.length == 1 ? value[0] : Arrays.toString(value)));

@@ -51,7 +51,7 @@ public class MoesifServletTests extends TestCase {
 		when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
 
 		// Mock Request headers
-		Map<String, String> headers = new HashMap<>();
+		Map<String, String> headers = new HashMap<String, String>();
 
 		// create an Enumeration over the header keys
 		final Iterator<String> iterator = headers.keySet().iterator();

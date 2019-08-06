@@ -42,11 +42,4 @@ mvn -v
 	```
 
 
-5. Go to `http://localhost:8080/greeting` or the port that Spring Boot is running on.
-
-6. Set logBody flag to `false` in `MyConfig.java` file to remove logging request and response body to Moesif
-
-```java
- 	// Set flag to log request and response body
-	moesifFilter.setLogBody(true);
-```
+5. Go to `http://localhost:8080/api` or the port that Spring Boot is running on.

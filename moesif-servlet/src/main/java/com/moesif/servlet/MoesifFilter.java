@@ -31,7 +31,6 @@ import com.moesif.api.BodyParser;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.catalina.connector.ResponseFacade;
 
 public class MoesifFilter implements Filter {
 
@@ -214,25 +213,17 @@ public class MoesifFilter implements Filter {
 		  try {
 			  Map<String, Object> appConfig = this.configDict.get(responseConfigEtag);
 			  // Get the sample rate and update last updated time
-			  if (!appConfig.isEmpty()) {
-				  sampleRate = (int) appConfig.getOrDefault("sample_rate", 100);
-				  this.lastUpdatedTime = new Date();
+			  if (!appConfig.isEmpty() && appConfig.containsKey("sample_rate")) {
+				  sampleRate = (Integer) appConfig.get("sample_rate");
 			  }
-			  else {
-				  // Upate last updated time
-				  this.lastUpdatedTime = new Date();
-			  }
-		  }
-		  catch(Exception e)  {
-			  // Upate last updated time
-			  this.lastUpdatedTime = new Date();
-		  }
+          } catch(Exception e)  {
+            logger.warning("getConfig() call failed " + e.toString());
+          }
       } catch(Exception e) {
-    	  // Upate last updated time
-          logger.warning("getConfig call failed " + e.toString());
-          this.lastUpdatedTime = new Date();
+        logger.warning("getConfig() call failed " + e.toString());
       }
-	  return sampleRate;
+    this.lastUpdatedTime = new Date();
+    return sampleRate;
   }
 
   public void updateUser(UserModel userModel) throws Throwable{
@@ -384,35 +375,24 @@ public class MoesifFilter implements Filter {
         startDate, config.getApiVersion(httpRequest, httpResponse), transactionId);
 
     // pass to next step in the chain.
-    filterChain.doFilter(requestWrapper, responseWrapper);
+    try {
+      filterChain.doFilter(requestWrapper, responseWrapper);
+    } finally {
+      Date endDate = new Date();
+      EventResponseModel eventResponseModel = getEventResponseModel(responseWrapper, endDate);
 
-    if(!(responseWrapper.delegate instanceof ResponseFacade)) {
-    	
-    	if (responseWrapper.getHeaders() != null &&
-    			!responseWrapper.getHeaders().isEmpty() &&
-    			responseWrapper.getHeaders().get("Content-Type").toLowerCase().contains("html")) {
-    		if (debug) {
-    			logger.warning("MoesifFilter was called for html response, skipping send Event to Moesif");	
-    		}
-            filterChain.doFilter(request, response);
-            return;
-    	}
+      if (!(responseWrapper.getResponse() instanceof LoggingHttpServletResponseWrapper)) {
+        sendEvent(
+              eventRequestModel,
+              eventResponseModel,
+              config.identifyUser(httpRequest, httpResponse),
+              config.identifyCompany(httpRequest, httpResponse),
+              config.getSessionToken(httpRequest, httpResponse),
+              config.getTags(httpRequest, httpResponse),
+              config.getMetadata(httpRequest, httpResponse)
+        );
+      }
     }
-    
-    Date endDate = new Date();
-    EventResponseModel eventResponseModel = getEventResponseModel(responseWrapper, endDate);
-
-    httpResponse.getOutputStream().write(responseWrapper.getContentAsBytes());
-
-    sendEvent(
-        eventRequestModel,
-        eventResponseModel,
-        config.identifyUser(httpRequest, httpResponse),
-        config.identifyCompany(httpRequest, httpResponse),
-        config.getSessionToken(httpRequest, httpResponse),
-        config.getTags(httpRequest, httpResponse),
-        config.getMetadata(httpRequest, httpResponse)
-    );
   }
 
 

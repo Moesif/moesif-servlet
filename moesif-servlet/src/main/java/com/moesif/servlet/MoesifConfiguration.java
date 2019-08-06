@@ -6,16 +6,15 @@ import com.moesif.api.models.EventModel;
 
 public class MoesifConfiguration {
 
-  public boolean skip(HttpServletRequest request, HttpServletResponse response) {
-    return false;
-  }
-
-  public EventModel maskContent(EventModel eventModel) {
-    return eventModel;
-  }
-
   public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
-    return null;
+    try {
+      if (request.getUserPrincipal() == null) {
+        return null;
+      }
+      return request.getUserPrincipal().getName();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public String identifyCompany(HttpServletRequest request, HttpServletResponse response) {
@@ -23,11 +22,6 @@ public class MoesifConfiguration {
   }
 
   public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
-    return null;
-  }
-
-  @Deprecated
-  public String getTags(HttpServletRequest request, HttpServletResponse response) {
     return null;
   }
 
@@ -39,5 +33,18 @@ public class MoesifConfiguration {
     return null;
   }
 
+  public boolean skip(HttpServletRequest request, HttpServletResponse response) {
+    return false;
+  }
+
+  public EventModel maskContent(EventModel eventModel) {
+    return eventModel;
+  }
+
   public boolean disableTransactionId = false;
+
+  @Deprecated
+  public String getTags(HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
 }

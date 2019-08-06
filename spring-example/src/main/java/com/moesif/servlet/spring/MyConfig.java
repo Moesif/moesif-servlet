@@ -4,59 +4,57 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.moesif.api.models.EventModel;
-import com.moesif.servlet.MoesifConfigurationAdapter;
 import com.moesif.servlet.MoesifConfiguration;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.context.annotation.*;
 import com.moesif.servlet.MoesifFilter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
-@org.springframework.context.annotation.Configuration
-public class MyConfig extends WebMvcConfigurerAdapter{
 
-  @Bean
-  public Filter moesifFilter() {
+@Configuration
+@EnableWebMvc
+@ComponentScan
+public class MyConfig extends WebMvcConfigurerAdapter {
 
-    MoesifConfiguration config = new MoesifConfiguration() {
-      @Override
-      public boolean skip(HttpServletRequest request, HttpServletResponse response) {
-        // Skip logging health probes
-        return request.getRequestURI().contains("health/probe");
-      }
+    @Bean
+    public Filter moesifFilter() {
 
-      @Override
-      public EventModel maskContent(EventModel eventModel) {
-        return eventModel;
-      }
+        MoesifConfiguration config = new MoesifConfiguration() {
 
-      @Override
-      public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getUserPrincipal() == null) {
-          return null;
-        }
-        return request.getUserPrincipal().getName();
-      }
+            @Override
+            public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
+                if (request.getUserPrincipal() == null) {
+                    return null;
+                }
+                return request.getUserPrincipal().getName();
+            }
 
-      @Override
-      public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
-        return request.getHeader("Authorization");
-      }
+            @Override
+            public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
+                return request.getHeader("Authorization");
+            }
 
-      @Override
-      public String getTags(HttpServletRequest request, HttpServletResponse response) {
-        return null;
-      }
+            @Override
+            public String getApiVersion(HttpServletRequest request, HttpServletResponse response) {
+                return request.getHeader("X-Api-Version");
+            }
+        };
 
-      @Override
-      public String getApiVersion(HttpServletRequest request, HttpServletResponse response) {
-        return request.getHeader("X-Api-Version");
-      }
-    };
+        MoesifFilter moesifFilter = new MoesifFilter("your application id", config, true);
 
-    MoesifFilter moesifFilter = new MoesifFilter("Your Application Id", config, true);
-    
-    // Set flag to log request and response body
-    moesifFilter.setLogBody(true);
+        // Set flag to log request and response body
+        moesifFilter.setLogBody(true);
 
-    return moesifFilter;
-  }
+        return moesifFilter;
+    }
+
+    @Bean
+    public InternalResourceViewResolver viewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/WEB-INF/jsp/");
+        resolver.setSuffix(".jsp");
+        return resolver;
+    }
 }

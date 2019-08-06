@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.servlet</groupId>
   <artifactId>moesif-servlet</artifactId>
-  <version>1.5.9</version>
+  <version>1.6.0</version>
   <packaging>jar</packaging>
   <name>moesif-servlet</name>
   <description>Moesif SDK for Java Servlet to log and analyze API calls</description>
@@ -24,7 +24,7 @@
   <developers>
     <developer>
       <id>moesif</id>
-      <name>Moesif API Insights</name>
+      <name>Moesif API Analytics</name>
       <email>support@moesif.com</email>
       <url>https://www.moesif.com</url>
       <organization>Moesif, Inc.</organization>
@@ -78,12 +78,6 @@
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
     </dependency>
-    <dependency>
-	    <groupId>org.apache.tomcat</groupId>
-	    <artifactId>catalina</artifactId>
-	    <version>6.0.16</version>
-	</dependency>
-
 
     <!-- testing -->
     <dependency>

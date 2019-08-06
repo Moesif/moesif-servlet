@@ -7,15 +7,11 @@
 
 ## Introduction
 
-`moesif-servlet` is a Java SDK that logs API calls and sends to [Moesif](https://www.moesif.com) for API analytics and log analysis.
+`moesif-servlet` is a Java Servlet Filter that logs API calls and sends to [Moesif](https://www.moesif.com) for API analytics and log analysis.
 
 The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
-without importing large framework specific dependencies.
-Many frameworks are built on top of the Servlet API such as Spring, Apache Struts, Jersey, etc.
-
-If you're using a web framework that is built on the
-[Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html)
-such as Spring Boot, Spring MVC, Jersey, and Apache Struts, then you can enable this SDK with minimal configuration.
+without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html)
+such as Spring, Struts, Jersey, etc can use this SDK with minimal configuration.
 
 [Source Code on GitHub](https://github.com/moesif/moesif-servlet)
 
@@ -37,7 +33,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.5.9</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
@@ -52,7 +48,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.5.9'
+    compile 'com.moesif.servlet:moesif-servlet:1.6.0'
 }
 ```
 
@@ -169,7 +165,7 @@ mvn -v
 	```
 
 
-5. Go to `http://localhost:8080/greeting` or the port that Spring Boot is running on.
+5. Go to `http://localhost:8080/api` or the port that Spring Boot is running on.
 
 ### Spring MVC (Java Config)
 
@@ -224,41 +220,6 @@ In `web.xml` file:
 
 ```
 You may have to override `onStartup()` to pass in the MoesifConfiguration object.
-
-#### Running the Spring MVC example
-
-In order to run this example you will need to have Java 7+ and Maven installed.
-
-Before starting, check that your maven version is 3.0.x or above:
-
-```sh
-mvn -v
-```
-
-1. Clone the repository
-
-	```sh
-	git clone https://github.com/Moesif/moesif-servlet
-  cd moesif-servlet
-	```
-
-2. Update MyConfig to use your own Moesif ApplicationId
-(Register for an account on [moesif.com](https://www.moesif.com))
-
-	```sh
-    vim spring-mvc-example/src/main/webapp/WEB-INF/web.xml
-	```
-
-3. Run spring-mvc-example
-
-	```sh
-	cd spring-mvc-example
-	mvn jetty:run
-	```
-
-4. Go to `http://localhost:8080/api/json`. In your Moesif Account, you should see event logged and monitored.
-
-Shut it down manually with Ctrl-C.
 
 ### Jersey Servlet
 

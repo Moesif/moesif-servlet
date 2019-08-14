@@ -13,8 +13,6 @@ import com.moesif.api.models.CompanyModel;
 import com.moesif.api.models.UserBuilder;
 import junit.framework.TestCase;
 import org.mockito.Mockito;
-import com.moesif.servlet.MoesifFilter;
-import com.moesif.servlet.MoesifConfiguration;
 import com.moesif.api.models.UserModel;
 import static org.mockito.Mockito.when;
 
@@ -227,7 +225,7 @@ public class MoesifServletTests extends TestCase {
 
 	public void testGetAppConfig() throws Throwable{
 		filter.init(filterConfig);
-		int sampleRate = filter.getAppConfig(null);
+		int sampleRate = filter.getSampleRateToUse(null, null);
 		assertTrue("Sample Rate should be less than equal to 100", 100 >= sampleRate);
 	}
 }

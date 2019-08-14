@@ -219,7 +219,7 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
 
             eventModel = config.maskContent(eventModel);
 
-            if (api.shouldSendSampledEvent()) {
+            if (api.shouldSendSampledEvent(eventModel)) {
                 try {
                     APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
                         public void onSuccess(HttpContext context, HttpResponse response) {

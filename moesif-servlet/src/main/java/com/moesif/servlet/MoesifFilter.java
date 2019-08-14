@@ -18,13 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.moesif.api.models.*;
 
-import com.moesif.api.APIHelper;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.controllers.APIController;
-import com.moesif.api.Configuration;
 import com.moesif.api.IpAddress;
 import com.moesif.api.BodyParser;
 
@@ -41,8 +39,8 @@ public class MoesifFilter implements Filter {
   private MoesifAPIClient moesifApi;
   private boolean debug;
   private boolean logBody;
-  private int samplingPercentage;
-  private Map<String, Map<String, Object>> configDict;
+  private AppConfigModel appConfigModel;
+  private String cachedConfigEtag;
   private Date lastUpdatedTime;
 
   /**
@@ -172,14 +170,8 @@ public class MoesifFilter implements Filter {
         this.logBody = false;
       }
     }
-    
-    // Global dict
-    this.configDict = new HashMap<String, Map<String, Object>>();
-    try {
-    	this.samplingPercentage = getAppConfig(null);	
-    } catch (Throwable t) {
-    	this.samplingPercentage = 100;
-    }
+
+    getAndUpdateAppConfig();
   }
 
   @Override
@@ -189,41 +181,26 @@ public class MoesifFilter implements Filter {
     }
   }
   
-  // Get Config
-  public int getAppConfig(String cachedConfigEtag) throws Throwable {
-	  int sampleRate = 100;
+  // Get Config. called only when configEtagChange is detected
+  public void getAndUpdateAppConfig() {
 	  try {
-      	  // Calling the api
-          HttpResponse configApiResponse = moesifApi.getAPI().getAppConfig();
-          // Fetch the response ETag
-          String responseConfigEtag = configApiResponse.getHeaders().get("x-moesif-config-etag");
-          
-		  if(cachedConfigEtag != null && !cachedConfigEtag.isEmpty() && this.configDict.containsKey(cachedConfigEtag)) { 
-			  // Remove from the cache
-		  		this.configDict.remove(cachedConfigEtag);			  
-		  }
-		 
-		  // Read the response body
-		  ObjectMapper mapper = new ObjectMapper();
-		  Map<String, Object> jsonMap = mapper.readValue(configApiResponse.getRawBody(), Map.class);
-		  
-		  // Add to the global dict
-		  this.configDict.put(responseConfigEtag, jsonMap);
-		  
-		  try {
-			  Map<String, Object> appConfig = this.configDict.get(responseConfigEtag);
-			  // Get the sample rate and update last updated time
-			  if (!appConfig.isEmpty() && appConfig.containsKey("sample_rate")) {
-				  sampleRate = (Integer) appConfig.get("sample_rate");
-			  }
-          } catch(Exception e)  {
-            logger.warning("getConfig() call failed " + e.toString());
-          }
-      } catch(Exception e) {
+        // Calling the api
+        HttpResponse configApiResponse = moesifApi.getAPI().getAppConfig();
+        // Fetch the response ETag
+        String responseConfigEtag = configApiResponse.getHeaders().get("x-moesif-config-etag");
+
+        // Read the response body
+        ObjectMapper mapper = new ObjectMapper();
+        AppConfigModel newConfig = mapper.readValue(configApiResponse.getRawBody(), AppConfigModel.class);
+
+        this.appConfigModel = newConfig;
+        this.cachedConfigEtag = responseConfigEtag;
+      } catch(Throwable e) {
         logger.warning("getConfig() call failed " + e.toString());
+        this.appConfigModel = new AppConfigModel();
+        this.appConfigModel.setSampleRate(100);
       }
     this.lastUpdatedTime = new Date();
-    return sampleRate;
   }
 
   public void updateUser(UserModel userModel) throws Throwable{
@@ -504,13 +481,13 @@ public class MoesifFilter implements Filter {
 
         // Generate random number
         double randomPercentage = Math.random() * 100;
-        
+
+        int samplingPercentage = getSampleRateToUse(userId, companyId);
+
         // Compare percentage to send event
-        if (this.samplingPercentage >= randomPercentage) {
+        if (samplingPercentage >= randomPercentage) {
         	// Send Event
         	Map<String, String> eventApiResponse = moesifApi.getAPI().createEvent(maskedEvent);
-        	// Get the key from the global dict
-        	String cachedConfigEtag = this.configDict.keySet().iterator().next();
         	// Get the etag from event api response
         	String eventResponseConfigEtag = eventApiResponse.get("x-moesif-config-etag");
         	
@@ -519,7 +496,7 @@ public class MoesifFilter implements Filter {
         			&& !(eventResponseConfigEtag.equals(cachedConfigEtag)) 
         			&& new Date().after(new Date(this.lastUpdatedTime.getTime() + 5 * 60 * 1000))) {
         		// Call api to update samplingPercentage
-        		this.samplingPercentage = getAppConfig(cachedConfigEtag);
+        		getAndUpdateAppConfig();
         	}
         	
         	if (debug) {
@@ -528,7 +505,7 @@ public class MoesifFilter implements Filter {
         } 
         else {
         	if(debug) {
-        		logger.info("Skipped Event due to SamplingPercentage " + this.samplingPercentage + " and randomPercentage " + randomPercentage);	
+        		logger.info("Skipped Event due to SamplingPercentage " + samplingPercentage + " and randomPercentage " + randomPercentage);
         	}
         }
 
@@ -541,6 +518,16 @@ public class MoesifFilter implements Filter {
     } else {
       logger.warning("The application Id should be set before using MoesifFilter");
     }
+  }
+
+  public int getSampleRateToUse(String userId, String companyId) {
+    int sampleRate = appConfigModel.getSampleRate();
+    if (userId != null && appConfigModel.getUserSampleRate().containsKey(userId)) {
+      sampleRate = appConfigModel.getUserSampleRate().get(userId);
+    } else if (companyId != null && appConfigModel.getCompanySampleRate().containsKey(companyId)) {
+      sampleRate = appConfigModel.getCompanySampleRate().get(companyId);
+    }
+    return sampleRate;
   }
 
   static String getFullURL(HttpServletRequest request) {

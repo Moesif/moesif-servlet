@@ -116,7 +116,8 @@ public class MoesifServletTests extends TestCase {
 
 	public void testUpdateUser() throws Throwable {
 		UserModel user = new UserBuilder()
-				.userId("javaapiuser")
+				.userId("12345")
+				.companyId("67890")
 				.modifiedTime(new Date())
 				.ipAddress("29.80.250.240")
 				.sessionToken("di3hd982h3fubv3yfd94egf")
@@ -150,7 +151,8 @@ public class MoesifServletTests extends TestCase {
 				"}");
 
 		UserModel userA = new UserBuilder()
-				.userId("javaapiuser")
+				.userId("12345")
+				.companyId("67890")
 				.modifiedTime(new Date())
 				.ipAddress("29.80.250.240")
 				.sessionToken("di3hd982h3fubv3yfd94egf")
@@ -159,7 +161,8 @@ public class MoesifServletTests extends TestCase {
 				.build();
 
 		UserModel userB = new UserBuilder()
-				.userId("javaapiuser1")
+				.userId("1234")
+				.companyId("6789")
 				.modifiedTime(new Date())
 				.ipAddress("29.80.250.240")
 				.sessionToken("di3hd982h3fubv3yfd94egf")
@@ -175,7 +178,7 @@ public class MoesifServletTests extends TestCase {
 
 	public void testUpdateCompany() throws Throwable {
 		CompanyModel company = new CompanyBuilder()
-				.companyId("javaapicompany")
+				.companyId("12345")
 				.companyDomain("acmeinc.com")
 				.metadata(APIHelper.deserialize("{" +
 						"\"email\": \"johndoe@acmeinc.com\"," +
@@ -206,13 +209,13 @@ public class MoesifServletTests extends TestCase {
 				"}");
 
 		CompanyModel companyA = new CompanyBuilder()
-				.companyId("javaapicompany")
-				.companyDomain("nowhere.com")
+				.companyId("12345")
+				.companyDomain("acmeinc.com")
 				.metadata(metadata)
 				.build();
 
 		CompanyModel companyB = new CompanyBuilder()
-				.companyId("javaapicompany1")
+				.companyId("67890")
 				.companyDomain("nowhere.com")
 				.metadata(metadata)
 				.build();

@@ -26,7 +26,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.springrequest</groupId>
     <artifactId>moesif-springrequest</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
@@ -170,7 +170,7 @@ interceptors.add(new MoesifSpringRequestInterceptor(
 
 ## Other integrations
 
-To view more more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__
+To view more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__
 
 [ico-built-for]: https://img.shields.io/badge/built%20for-servlet-blue.svg
 [ico-version]: https://api.bintray.com/packages/moesif/maven/moesif-springrequest/images/download.svg

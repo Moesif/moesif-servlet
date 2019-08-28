@@ -33,7 +33,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.2</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.6.0'
+    compile 'com.moesif.servlet:moesif-servlet:1.6.2'
 }
 ```
 
@@ -521,7 +521,8 @@ The metadata field can be any custom data you want to set on the user. The `user
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 UserModel user = new UserBuilder()
-    .userId("javaapiuser")
+    .userId("12345")
+    .companyId("67890")
     .modifiedTime(new Date())
     .ipAddress("29.80.250.240")
     .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -560,7 +561,8 @@ metadata = APIHelper.deserialize("{" +
     "}");
 
 UserModel userA = new UserBuilder()
-    .userId("javaapiuser")
+    .userId("12345")
+    .companyId("67890")
     .modifiedTime(new Date())
     .ipAddress("29.80.250.240")
     .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -569,7 +571,8 @@ UserModel userA = new UserBuilder()
     .build();
 
 UserModel userB = new UserBuilder()
-		.userId("javaapiuser1")
+		.userId("1234")
+    .companyId("6789")
     .modifiedTime(new Date())
     .ipAddress("29.80.250.240")
     .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -592,7 +595,7 @@ The metadata field can be any custom data you want to set on the company. The `c
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 CompanyModel company = new CompanyBuilder()
-				.companyId("javaapicompany")
+				.companyId("12345")
 				.companyDomain("acmeinc.com")
 				.metadata(APIHelper.deserialize("{" +
 						"\"email\": \"johndoe@acmeinc.com\"," +
@@ -628,13 +631,13 @@ metadata = APIHelper.deserialize("{" +
     "}");
 
   CompanyModel companyA = new CompanyBuilder()
-  		.companyId("javaapicompany")
-  		.companyDomain("nowhere.com")
+  		.companyId("12345")
+  		.companyDomain("acmeinc.com")
   		.metadata(metadata)
   		.build();
 
   CompanyModel companyB = new CompanyBuilder()
-  		.companyId("javaapicompany1")
+  		.companyId("67890")
   		.companyDomain("nowhere.com")
   		.metadata(metadata)
   		.build();
@@ -655,7 +658,7 @@ metadata = APIHelper.deserialize("{" +
 
 ## Other integrations
 
-To view more more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__
+To view more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__
 
 [ico-built-for]: https://img.shields.io/badge/built%20for-servlet-blue.svg
 [ico-version]: https://api.bintray.com/packages/moesif/maven/moesif-servlet/images/download.svg

@@ -8,7 +8,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>your application id</param-value>
+      <param-value>Your Moesif application id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>

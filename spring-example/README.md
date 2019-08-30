@@ -38,7 +38,7 @@ mvn -v
 	Alternatively:
 
 	```sh
-	mvn  spring-boot:run
+	mvn spring-boot:run
 	```
 
 

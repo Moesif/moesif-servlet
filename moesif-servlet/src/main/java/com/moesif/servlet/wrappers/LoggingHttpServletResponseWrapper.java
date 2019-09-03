@@ -76,6 +76,9 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
   public String getContent() {
     try {
       flushBuffer();
+      if (logStream == null) {
+        return null;
+      }
       String responseEncoding = getResponse().getCharacterEncoding();
       return logStream.baos.toString(responseEncoding != null ? responseEncoding : UTF_8.name());
     } catch (UnsupportedEncodingException e) {

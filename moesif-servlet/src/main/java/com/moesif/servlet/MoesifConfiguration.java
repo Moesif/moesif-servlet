@@ -22,7 +22,11 @@ public class MoesifConfiguration {
   }
 
   public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
-    return null;
+    try {
+      return request.getRequestedSessionId();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public String getApiVersion(HttpServletRequest request, HttpServletResponse response) {

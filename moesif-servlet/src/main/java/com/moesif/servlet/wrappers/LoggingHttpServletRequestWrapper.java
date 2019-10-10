@@ -18,7 +18,7 @@ import java.util.*;
 
 public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-  private static final String FORM_CONTENT_TYPE = "application/x-www-form-urlencoded";
+  private static final List<String> FORM_CONTENT_TYPE = Arrays.asList("application/x-www-form-urlencoded", "multipart/form-data");
 
   private static final String METHOD_POST = "POST";
 
@@ -142,7 +142,14 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
   public boolean isFormPost() {
     String contentType = getContentType();
-    return (contentType != null && contentType.contains(FORM_CONTENT_TYPE) && METHOD_POST.equalsIgnoreCase(getMethod()));
+    if (contentType != null && METHOD_POST.equalsIgnoreCase(getMethod())) {
+      for (String formType: FORM_CONTENT_TYPE) {
+        if (contentType.toLowerCase().contains(formType)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private class ParamNameEnumeration implements Enumeration<String> {

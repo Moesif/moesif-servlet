@@ -39,9 +39,9 @@ public class MoesifFilter implements Filter {
   private MoesifAPIClient moesifApi;
   private boolean debug;
   private boolean logBody;
-  private AppConfigModel appConfigModel;
+  private AppConfigModel appConfigModel = new AppConfigModel();
   private String cachedConfigEtag;
-  private Date lastUpdatedTime;
+  private Date lastUpdatedTime = new Date(0);
 
   /**
    * Default Constructor, please set ApplicationId before use.
@@ -150,7 +150,7 @@ public class MoesifFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    logger.fine("init Moesif filter");
+    logger.info("Initialized Moesif filter");
 
     String appId = filterConfig.getInitParameter("application-id");
     if (appId != null) {
@@ -177,7 +177,7 @@ public class MoesifFilter implements Filter {
   @Override
   public void destroy() {
     if (debug) {
-      logger.fine("destroying Moesif filter");
+      logger.info("Destroyed Moesif filter");
     }
   }
   
@@ -196,7 +196,7 @@ public class MoesifFilter implements Filter {
         this.appConfigModel = newConfig;
         this.cachedConfigEtag = responseConfigEtag;
       } catch(Throwable e) {
-        logger.warning("getConfig() call failed " + e.toString());
+        logger.warning("Fetched configuration failed; using default configuration " + e.toString());
         this.appConfigModel = new AppConfigModel();
         this.appConfigModel.setSampleRate(100);
       }
@@ -308,7 +308,7 @@ public class MoesifFilter implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
     if (debug) {
-      logger.fine("filtering request");
+      logger.info("filtering request");
     }
 
     Date startDate = new Date();
@@ -324,7 +324,8 @@ public class MoesifFilter implements Filter {
 
     if (config.skip(httpRequest, httpResponse)) {
       filterChain.doFilter(httpRequest, httpResponse);
-      return;
+        if (debug) { logger.warning("skipping request"); }
+        return;
     }
 
     LoggingHttpServletRequestWrapper requestWrapper = new LoggingHttpServletRequestWrapper(httpRequest);
@@ -447,7 +448,6 @@ public class MoesifFilter implements Filter {
     if (tags != null) {
       eb.tags(tags);
     }
-
     if (metadata != null) {
       eb.metadata(metadata);
     }
@@ -500,7 +500,7 @@ public class MoesifFilter implements Filter {
         	}
         	
         	if (debug) {
-                logger.warning("Event successfully sent to Moesif");
+                logger.info("Event successfully sent to Moesif");
               }
         } 
         else {
@@ -534,7 +534,9 @@ public class MoesifFilter implements Filter {
     StringBuffer requestURL = request.getRequestURL();
     String queryString = request.getQueryString();
 
-    if (queryString == null) {
+    if (requestURL == null) {
+      return "/";
+    } else if (queryString == null) {
       return requestURL.toString();
     } else {
       return requestURL.append('?').append(queryString).toString();

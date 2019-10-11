@@ -1,4 +1,4 @@
-#### Spring Boot example
+#### Spring Boot example using the Spring Boot Starter Parent
 
 In order to run this example you will need to have Java 7+ and Maven installed.
 
@@ -19,20 +19,20 @@ mvn -v
 (Register for an account on [moesif.com](https://www.moesif.com))
 
 	```sh
-	vim spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
+	vim spring-boot-starter-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
 	```
 
 3. Compile the example
 
 	```sh
-	cd spring-example
+	cd spring-boot-starter-example
 	mvn clean install
 	```
 
-4. Run spring-example (from the spring-example dir)
+4. Run spring-boot-starter-example (from the spring-boot-starter-example dir)
 
 	```sh
-	java -jar target/moesif-spring-example.jar
+	java -jar target/moesif-spring-boot-starter-example.jar
 	```
 
 	Alternatively:

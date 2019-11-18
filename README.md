@@ -33,7 +33,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.6.6</version>
+    <version>1.6.7</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.6.6'
+    compile 'com.moesif.servlet:moesif-servlet:1.6.7'
 }
 ```
 
@@ -520,6 +520,11 @@ The metadata field can be any custom data you want to set on the user. The `user
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
+CampaignModel campaign = new CampaignBuilder()
+				.utmSource("Newsletter")
+				.utmMedium("Email")
+				.build();
+
 UserModel user = new UserBuilder()
     .userId("12345")
     .companyId("67890")
@@ -536,6 +541,7 @@ UserModel user = new UserBuilder()
         "\"field_2\": \"value_2\"" +
         "}" +
         "}"))
+    .campaign(campaign)
     .build();
 filter.updateUser(user);
 ```
@@ -594,6 +600,11 @@ The metadata field can be any custom data you want to set on the company. The `c
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
+CampaignModel campaign = new CampaignBuilder()
+				.utmSource("Adwords")
+				.utmMedium("Twitter")
+				.build();
+
 CompanyModel company = new CompanyBuilder()
 				.companyId("12345")
 				.companyDomain("acmeinc.com")
@@ -606,6 +617,7 @@ CompanyModel company = new CompanyBuilder()
 						"\"field_2\": \"value_2\"" +
 						"}" +
 						"}"))
+        .campaign(campaign)
 				.build();
 filter.updateCompany(company);
 ```

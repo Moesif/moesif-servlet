@@ -14,6 +14,8 @@ import com.moesif.api.models.UserBuilder;
 import junit.framework.TestCase;
 import org.mockito.Mockito;
 import com.moesif.api.models.UserModel;
+import com.moesif.api.models.CampaignModel;
+import com.moesif.api.models.CampaignBuilder;
 import static org.mockito.Mockito.when;
 
 
@@ -36,7 +38,7 @@ public class MoesifServletTests extends TestCase {
 		config = new MoesifConfiguration();
 		config.disableTransactionId = true;
 		servletOutputStream = Mockito.mock(ServletOutputStream.class);
-		filter = new MoesifFilter("Your Application Id", config);
+		filter = new MoesifFilter("Your Moesif Application Id", config);
 	}
 
 	public void testSendEvent() throws Exception {
@@ -115,6 +117,12 @@ public class MoesifServletTests extends TestCase {
 	}
 
 	public void testUpdateUser() throws Throwable {
+
+		CampaignModel campaign = new CampaignBuilder()
+				.utmSource("Newsletter")
+				.utmMedium("Email")
+				.build();
+
 		UserModel user = new UserBuilder()
 				.userId("12345")
 				.companyId("67890")
@@ -131,6 +139,7 @@ public class MoesifServletTests extends TestCase {
 						"\"field_2\": \"value_2\"" +
 						"}" +
 						"}"))
+				.campaign(campaign)
 				.build();
 		filter.updateUser(user);
 	}
@@ -177,6 +186,12 @@ public class MoesifServletTests extends TestCase {
 	}
 
 	public void testUpdateCompany() throws Throwable {
+
+		CampaignModel campaign = new CampaignBuilder()
+				.utmSource("Adwords")
+				.utmMedium("Twitter")
+				.build();
+
 		CompanyModel company = new CompanyBuilder()
 				.companyId("12345")
 				.companyDomain("acmeinc.com")
@@ -189,6 +204,7 @@ public class MoesifServletTests extends TestCase {
 						"\"field_2\": \"value_2\"" +
 						"}" +
 						"}"))
+				.campaign(campaign)
 				.build();
 		filter.updateCompany(company);
 	}

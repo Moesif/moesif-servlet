@@ -26,7 +26,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.springrequest</groupId>
     <artifactId>moesif-springrequest</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.springrequest:moesif-springrequest:1.0.4'
+    compile 'com.moesif.springrequest:moesif-springrequest:1.0.7'
 }
 ```
 

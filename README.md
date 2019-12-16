@@ -514,76 +514,92 @@ mvn clean install
 
 ## UpdateUser method
 
-A method is attached to the servlet object to update the users profile or metadata.
-The metadata field can be any custom data you want to set on the user. The `user_id` field is required.
+Create or update a user profile in Moesif. 
+The metadata field can be any customer demographic or other info you want to store.
+Only the `user_id` field is required.
+This method is a convenient helper that calls 
+the Moesif API lib. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-user).
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
+// Campaign object is optional, but useful if you want to track ROI of acquisition channels
+// See https://www.moesif.com/docs/api#users for campaign schema
 CampaignModel campaign = new CampaignBuilder()
-				.utmSource("Newsletter")
-				.utmMedium("Email")
-				.build();
+        .utmSource("google")
+        .utmCampaign("cpc")
+        .utmMedium("adwords")
+        .utmTerm("api+tooling")
+        .utmContent("landing")
+        .build();
 
+// Only userId is required
+// metadata can be any custom object
 UserModel user = new UserBuilder()
     .userId("12345")
-    .companyId("67890")
-    .modifiedTime(new Date())
-    .ipAddress("29.80.250.240")
-    .sessionToken("di3hd982h3fubv3yfd94egf")
-    .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+    .companyId("67890") // If set, associate user with a company object
+    .campaign(campaign)
     .metadata(APIHelper.deserialize("{" +
         "\"email\": \"johndoe@acmeinc.com\"," +
-        "\"string_field\": \"value_1\"," +
-        "\"number_field\": 0," +
-        "\"object_field\": {" +
-        "\"field_1\": \"value_1\"," +
-        "\"field_2\": \"value_2\"" +
-        "}" +
+        "\"first_name\": \"John\"," +
+        "\"last_name\": \"Doe\"," +
+        "\"title\": \"Software Engineer\"," +
+        "\"sales_info\": {" +
+            "\"stage\": \"Customer\"," +
+            "\"lifetime_value\": 24000," +
+            "\"account_owner\": \"mary@contoso.com\"" +
+          "}" +
         "}"))
-    .campaign(campaign)
     .build();
+
 filter.updateUser(user);
 ```
 
 ## UpdateUsersBatch method
 
-A method is attached to the servlet object to update the users profile or metadata in batch.
-The metadata field can be any custom data you want to set on the user. The `user_id` field is required.
+Similar to UpdateUser, but used to update a list of users in one batch. 
+Only the `user_id` field is required.
+This method is a convenient helper that calls 
+the Moesif API lib. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 List<UserModel> users = new ArrayList<UserModel>();
 
-HashMap<String, Object> metadata = new HashMap<String, Object>();
-metadata = APIHelper.deserialize("{" +
-    "\"email\": \"johndoe@acmeinc.com\"," +
-    "\"string_field\": \"value_1\"," +
-    "\"number_field\": 0," +
-    "\"object_field\": {" +
-    "\"field_1\": \"value_1\"," +
-    "\"field_2\": \"value_2\"" +
-    "}" +
-    "}");
-
+// Only userId is required
+// metadata can be any custom object
 UserModel userA = new UserBuilder()
     .userId("12345")
-    .companyId("67890")
-    .modifiedTime(new Date())
-    .ipAddress("29.80.250.240")
-    .sessionToken("di3hd982h3fubv3yfd94egf")
-    .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-    .metadata(metadata)
+    .companyId("67890") // If set, associate user with a company object
+    .metadata(APIHelper.deserialize("{" +
+        "\"email\": \"johndoe@acmeinc.com\"," +
+        "\"first_name\": \"John\"," +
+        "\"last_name\": \"Doe\"," +
+        "\"title\": \"Software Engineer\"," +
+        "\"sales_info\": {" +
+            "\"stage\": \"Customer\"," +
+            "\"lifetime_value\": 24000," +
+            "\"account_owner\": \"mary@contoso.com\"" +
+          "}" +
+        "}"))
     .build();
 
+// Only userId is required
+// metadata can be any custom object
 UserModel userB = new UserBuilder()
-		.userId("1234")
-    .companyId("6789")
-    .modifiedTime(new Date())
-    .ipAddress("29.80.250.240")
-    .sessionToken("di3hd982h3fubv3yfd94egf")
-    .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-    .metadata(metadata)
+    .userId("54321")
+    .companyId("67890") // If set, associate user with a company object
+    .metadata(APIHelper.deserialize("{" +
+        "\"email\": \"mary@acmeinc.com\"," +
+        "\"first_name\": \"Mary\"," +
+        "\"last_name\": \"Jane\"," +
+        "\"title\": \"Software Engineer\"," +
+        "\"sales_info\": {" +
+            "\"stage\": \"Customer\"," +
+            "\"lifetime_value\": 48000," +
+            "\"account_owner\": \"mary@contoso.com\"" +
+          "}" +
+        "}"))
     .build();
 
 users.add(userA);
@@ -594,65 +610,90 @@ filter.updateUsersBatch(users);
 
 ## UpdateCompany method
 
-A method is attached to the servlet object to update the company profile or metadata.
-The metadata field can be any custom data you want to set on the company. The `company_id` field is required.
+Create or update a company profile in Moesif.
+The metadata field can be any company demographic or other info you want to store.
+Only the `company_id` field is required.
+This method is a convenient helper that calls the Moesif API lib.
+For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-company).
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
+// Campaign object is optional, but useful if you want to track ROI of acquisition channels
+// See https://www.moesif.com/docs/api#update-a-company for campaign schema
 CampaignModel campaign = new CampaignBuilder()
-				.utmSource("Adwords")
-				.utmMedium("Twitter")
-				.build();
+        .utmSource("google")
+        .utmCampaign("cpc")
+        .utmMedium("adwords")
+        .utmTerm("api+tooling")
+        .utmContent("landing")
+        .build();
 
+// Only companyId is required
+// metadata can be any custom object
 CompanyModel company = new CompanyBuilder()
-				.companyId("12345")
-				.companyDomain("acmeinc.com")
-				.metadata(APIHelper.deserialize("{" +
-						"\"email\": \"johndoe@acmeinc.com\"," +
-						"\"string_field\": \"value_1\"," +
-						"\"number_field\": 0," +
-						"\"object_field\": {" +
-						"\"field_1\": \"value_1\"," +
-						"\"field_2\": \"value_2\"" +
-						"}" +
-						"}"))
-        .campaign(campaign)
-				.build();
+    .companyId("67890")
+    .companyDomain("acmeinc.com") // If set, Moesif will enrich your profiles with publicly available info 
+    .campaign(campaign) 
+    .metadata(APIHelper.deserialize("{" +
+        "\"org_name\": \"Acme, Inc\"," +
+        "\"plan_name\": \"Free\"," +
+        "\"deal_stage\": \"Lead\"," +
+        "\"mrr\": 24000," +
+        "\"demographics\": {" +
+            "\"alexa_ranking\": 500000," +
+            "\"employee_count\": 47" +
+          "}" +
+        "}"))
+    .build();
+
 filter.updateCompany(company);
 ```
 
 ## UpdateCompaniesBatch method
 
-A method is attached to the servlet object to update the companies profile or metadata in batch.
-The metadata field can be any custom data you want to set on the company. The `company_id` field is required.
+Similar to UpdateCompany, but used to update a list of companies in one batch. 
+Only the `company_id` field is required.
+This method is a convenient helper that calls the Moesif API lib.
+For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-companies-in-batch).
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 List<CompanyModel> companies = new ArrayList<CompanyModel>();
 
-HashMap<String, Object> metadata = new HashMap<String, Object>();
-metadata = APIHelper.deserialize("{" +
-    "\"email\": \"johndoe@acmeinc.com\"," +
-    "\"string_field\": \"value_1\"," +
-    "\"number_field\": 0," +
-    "\"object_field\": {" +
-    "\"field_1\": \"value_1\"," +
-    "\"field_2\": \"value_2\"" +
-    "}" +
-    "}");
+// Only companyId is required
+// metadata can be any custom object
+CompanyModel companyA = new CompanyBuilder()
+    .companyId("67890")
+    .companyDomain("acmeinc.com") // If set, Moesif will enrich your profiles with publicly available info 
+    .metadata(APIHelper.deserialize("{" +
+        "\"org_name\": \"Acme, Inc\"," +
+        "\"plan_name\": \"Free\"," +
+        "\"deal_stage\": \"Lead\"," +
+        "\"mrr\": 24000," +
+        "\"demographics\": {" +
+            "\"alexa_ranking\": 500000," +
+            "\"employee_count\": 47" +
+          "}" +
+        "}"))
+    .build();
 
-  CompanyModel companyA = new CompanyBuilder()
-  		.companyId("12345")
-  		.companyDomain("acmeinc.com")
-  		.metadata(metadata)
-  		.build();
-
-  CompanyModel companyB = new CompanyBuilder()
-  		.companyId("67890")
-  		.companyDomain("nowhere.com")
-  		.metadata(metadata)
-  		.build();
+// Only companyId is required
+// metadata can be any custom object
+CompanyModel companyB = new CompanyBuilder()
+    .companyId("09876")
+    .companyDomain("contoso.com") // If set, Moesif will enrich your profiles with publicly available info 
+    .metadata(APIHelper.deserialize("{" +
+        "\"org_name\": \"Contoso, Inc\"," +
+        "\"plan_name\": \"Free\"," +
+        "\"deal_stage\": \"Lead\"," +
+        "\"mrr\": 48000," +
+        "\"demographics\": {" +
+            "\"alexa_ranking\": 500000," +
+            "\"employee_count\": 53" +
+          "}" +
+        "}"))
+    .build();
 
   companies.add(companyA);
   companies.add(companyB);

@@ -217,6 +217,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 config.getMetadata(request, response)
             );
 
+            eventModel.setDirection("Outgoing");
+
             eventModel = config.maskContent(eventModel);
 
             if (api.shouldSendSampledEvent(eventModel)) {

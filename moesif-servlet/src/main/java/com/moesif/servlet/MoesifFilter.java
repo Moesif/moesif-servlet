@@ -436,6 +436,7 @@ public class MoesifFilter implements Filter {
     EventBuilder eb = new EventBuilder();
     eb.request(eventRequestModel);
     eb.response(eventResponseModel);
+    eb.direction("Incoming");
     if (userId != null) {
       eb.userId(userId);
     }

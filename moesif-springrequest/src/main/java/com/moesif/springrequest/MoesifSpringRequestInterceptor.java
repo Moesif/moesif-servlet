@@ -214,14 +214,15 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 config.identifyCompany(request, response),
                 config.getSessionToken(request, response),
                 config.getApiVersion(request, response),
-                config.getMetadata(request, response)
+                config.getMetadata(request, response),
+                "Outgoing"
             );
-
-            eventModel.setDirection("Outgoing");
 
             eventModel = config.maskContent(eventModel);
 
             if (api.shouldSendSampledEvent(eventModel)) {
+                int sample_rate = api.getSampleRateToUse(eventModel);
+                eventModel.setWeight(api.calculateWeight(sample_rate));
                 try {
                     APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
                         public void onSuccess(HttpContext context, HttpResponse response) {

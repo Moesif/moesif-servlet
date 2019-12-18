@@ -33,7 +33,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.6.8</version>
+    <version>1.6.9</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ repositories {
 }
  
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.6.8'
+    compile 'com.moesif.servlet:moesif-servlet:1.6.9'
 }
 ```
 

@@ -522,7 +522,7 @@ This method is a convenient helper that calls the Moesif API lib.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-user).
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 // Campaign object is optional, but useful if you want to track ROI of acquisition channels
 // See https://www.moesif.com/docs/api#users for campaign schema
@@ -552,28 +552,8 @@ UserModel user = new UserBuilder()
           "}" +
         "}"))
     .build();
-```
 
-### Update the user asynchronously
-
-```java
-APICallBack<Object> callBack = new APICallBack<Object>() {
-    public void onSuccess(HttpContext context, Object response) {
-      // Do something
-    }
-
-    public void onFailure(HttpContext context, Throwable error) {
-      // Do something else
-    }
-};
-
-apiClient.updateUserAsync(user, callBack);
-```
-
-### Update the user synchronously
-
-```java
-apiClient.updateUser(user);
+filter.updateUser(user);
 ```
 
 ## Update Users in Batch
@@ -586,7 +566,7 @@ For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java
 You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 List<UserModel> users = new ArrayList<UserModel>();
 
@@ -625,31 +605,8 @@ UserModel userB = new UserBuilder()
             "}"))
         .build();
 users.add(userB);
-```
 
-### Update the users asynchronously
-
-
-```java
-APICallBack<Object> callBack = new APICallBack<Object>() {
-    public void onSuccess(HttpContext context, Object response) {
-      // Do something
-    }
-
-    public void onFailure(HttpContext context, Throwable error) {
-      // Do something else
-    }
-};
-
-// Asynchronous call to update users
-apiClient.updateUsersBatchAsync(users, callBack);
-
-```
-
-### Update the users synchronously
-
-```java
-apiClient.updateUsersBatch(users, callBack);
+filter.updateUsersBatch(users, callBack);
 ```
 
 ## Update a Single Company
@@ -661,7 +618,7 @@ This method is a convenient helper that calls the Moesif API lib.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-company).
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 // Campaign object is optional, but useful if you want to track ROI of acquisition channels
 // See https://www.moesif.com/docs/api#update-a-company for campaign schema
@@ -690,31 +647,8 @@ CompanyModel company = new CompanyBuilder()
           "}" +
         "}"))
     .build();
-```
 
-### Update the company asynchronously
-
-```java
-MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
-APIController api = client.getAPI();
-
-APICallBack<Object> callBack = new APICallBack<Object>() {
-    public void onSuccess(HttpContext context, Object response) {
-      // Do something
-    }
-
-    public void onFailure(HttpContext context, Throwable error) {
-      // Do something else
-    }
-};
-
-apiClient.updateCompanyAsync(company, callBack);
-```
-
-### Update the company synchronously
-
-```java
-apiClient.updateCompany(company);
+filter.updateCompany(company);
 ```
 
 ## Update Companies in Batch
@@ -728,7 +662,7 @@ For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java
 You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
 
 // Campaign object is optional, but useful if you want to track ROI of acquisition channels
 // See https://www.moesif.com/docs/api#update-a-company for campaign schema
@@ -757,28 +691,8 @@ CompanyModel company = new CompanyBuilder()
           "}" +
         "}"))
     .build();
-```
 
-### Update the companies asynchronously
-
-```java
-APICallBack<Object> callBack = new APICallBack<Object>() {
-    public void onSuccess(HttpContext context, Object response) {
-      // Do something
-    }
-
-    public void onFailure(HttpContext context, Throwable error) {
-      // Do something else
-    }
-};
-
-apiClient.updateCompaniesBatchAsync(companies, callBack);
-```
-
-### Update the companies synchronously
-
-```java
-apiClient.updateCompaniesBatch(companies);
+filter.updateCompaniesBatch(companies);
 ```
 
 ## How to test

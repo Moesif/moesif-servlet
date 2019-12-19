@@ -511,17 +511,18 @@ If you are contributing to moesif-servlet, you can build it locally and install 
 cd moesif-servlet
 mvn clean install
 ```
+**The below methods to update user and company are accessible via the Moesif Java API lib which Moesif Play Filter already imports as a dependency.**
 
-## UpdateUser method
+## Update a Single User
 
-Create or update a user profile in Moesif. 
+Create or update a user profile in Moesif.
 The metadata field can be any customer demographic or other info you want to store.
-Only the `user_id` field is required.
-This method is a convenient helper that calls 
-the Moesif API lib. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-user).
+Only the `userId` field is required.
+This method is a convenient helper that calls the Moesif API lib.
+For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-user).
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
+MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
 
 // Campaign object is optional, but useful if you want to track ROI of acquisition channels
 // See https://www.moesif.com/docs/api#users for campaign schema
@@ -551,64 +552,107 @@ UserModel user = new UserBuilder()
           "}" +
         "}"))
     .build();
-
-filter.updateUser(user);
 ```
 
-## UpdateUsersBatch method
-
-Similar to UpdateUser, but used to update a list of users in one batch. 
-Only the `user_id` field is required.
-This method is a convenient helper that calls 
-the Moesif API lib. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
+### Update the user asynchronously
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
-List<UserModel> users = new ArrayList<UserModel>();
+APICallBack<Object> callBack = new APICallBack<Object>() {
+    public void onSuccess(HttpContext context, Object response) {
+      // Do something
+    }
 
-// Only userId is required
-// metadata can be any custom object
-UserModel userA = new UserBuilder()
-    .userId("12345")
-    .companyId("67890") // If set, associate user with a company object
-    .metadata(APIHelper.deserialize("{" +
-        "\"email\": \"johndoe@acmeinc.com\"," +
-        "\"first_name\": \"John\"," +
-        "\"last_name\": \"Doe\"," +
-        "\"title\": \"Software Engineer\"," +
-        "\"sales_info\": {" +
-            "\"stage\": \"Customer\"," +
-            "\"lifetime_value\": 24000," +
-            "\"account_owner\": \"mary@contoso.com\"" +
-          "}" +
-        "}"))
-    .build();
+    public void onFailure(HttpContext context, Throwable error) {
+      // Do something else
+    }
+};
 
-// Only userId is required
-// metadata can be any custom object
-UserModel userB = new UserBuilder()
-    .userId("54321")
-    .companyId("67890") // If set, associate user with a company object
-    .metadata(APIHelper.deserialize("{" +
-        "\"email\": \"mary@acmeinc.com\"," +
-        "\"first_name\": \"Mary\"," +
-        "\"last_name\": \"Jane\"," +
-        "\"title\": \"Software Engineer\"," +
-        "\"sales_info\": {" +
-            "\"stage\": \"Customer\"," +
-            "\"lifetime_value\": 48000," +
-            "\"account_owner\": \"mary@contoso.com\"" +
-          "}" +
-        "}"))
-    .build();
-
-users.add(userA);
-users.add(userB);
-
-filter.updateUsersBatch(users);
+apiClient.updateUserAsync(user, callBack);
 ```
 
-## UpdateCompany method
+### Update the user synchronously
+
+```java
+apiClient.updateUser(user);
+```
+
+## Update Users in Batch
+
+Similar to UpdateUser, but used to update a list of users in one batch. 
+Only the `userId` field is required.
+This method is a convenient helper that calls the Moesif API lib.
+For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
+
+You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+
+```java
+MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+
+List<UserModel> users = new ArrayList<UserModel>();
+
+UserModel userA = new UserBuilder()
+        .userId("12345")
+        .companyId("67890")
+        .campaign(campaign)
+        .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"first_name\": \"John\"," +
+            "\"last_name\": \"Doe\"," +
+            "\"title\": \"Software Engineer\"," +
+            "\"sales_info\": {" +
+                "\"stage\": \"Customer\"," +
+                "\"lifetime_value\": 24000," +
+                "\"account_owner\": \"mary@contoso.com\"" +
+              "}" +
+            "}"))
+        .build();
+users.add(userA);
+
+UserModel userB = new UserBuilder()
+        .userId("54321")
+        .companyId("67890")
+        .campaign(campaign)
+        .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"first_name\": \"John\"," +
+            "\"last_name\": \"Doe\"," +
+            "\"title\": \"Software Engineer\"," +
+            "\"sales_info\": {" +
+                "\"stage\": \"Customer\"," +
+                "\"lifetime_value\": 24000," +
+                "\"account_owner\": \"mary@contoso.com\"" +
+              "}" +
+            "}"))
+        .build();
+users.add(userB);
+```
+
+### Update the users asynchronously
+
+
+```java
+APICallBack<Object> callBack = new APICallBack<Object>() {
+    public void onSuccess(HttpContext context, Object response) {
+      // Do something
+    }
+
+    public void onFailure(HttpContext context, Throwable error) {
+      // Do something else
+    }
+};
+
+// Asynchronous call to update users
+apiClient.updateUsersBatchAsync(users, callBack);
+
+```
+
+### Update the users synchronously
+
+```java
+apiClient.updateUsersBatch(users, callBack);
+```
+
+## Update a Single Company
 
 Create or update a company profile in Moesif.
 The metadata field can be any company demographic or other info you want to store.
@@ -617,7 +661,7 @@ This method is a convenient helper that calls the Moesif API lib.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-company).
 
 ```java
-MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
+MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
 
 // Campaign object is optional, but useful if you want to track ROI of acquisition channels
 // See https://www.moesif.com/docs/api#update-a-company for campaign schema
@@ -646,26 +690,62 @@ CompanyModel company = new CompanyBuilder()
           "}" +
         "}"))
     .build();
-
-filter.updateCompany(company);
 ```
 
-## UpdateCompaniesBatch method
+### Update the company asynchronously
 
-Similar to UpdateCompany, but used to update a list of companies in one batch. 
+```java
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
+APIController api = client.getAPI();
+
+APICallBack<Object> callBack = new APICallBack<Object>() {
+    public void onSuccess(HttpContext context, Object response) {
+      // Do something
+    }
+
+    public void onFailure(HttpContext context, Throwable error) {
+      // Do something else
+    }
+};
+
+apiClient.updateCompanyAsync(company, callBack);
+```
+
+### Update the company synchronously
+
+```java
+apiClient.updateCompany(company);
+```
+
+## Update Companies in Batch
+
+Similar to updateCompany, but used to update a list of companies in one batch. 
 Only the `company_id` field is required.
 This method is a convenient helper that calls the Moesif API lib.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-companies-in-batch).
 
+
+You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+
 ```java
-MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
-List<CompanyModel> companies = new ArrayList<CompanyModel>();
+MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
+
+// Campaign object is optional, but useful if you want to track ROI of acquisition channels
+// See https://www.moesif.com/docs/api#update-a-company for campaign schema
+CampaignModel campaign = new CampaignBuilder()
+        .utmSource("google")
+        .utmCampaign("cpc")
+        .utmMedium("adwords")
+        .utmTerm("api+tooling")
+        .utmContent("landing")
+        .build();
 
 // Only companyId is required
 // metadata can be any custom object
-CompanyModel companyA = new CompanyBuilder()
+CompanyModel company = new CompanyBuilder()
     .companyId("67890")
     .companyDomain("acmeinc.com") // If set, Moesif will enrich your profiles with publicly available info 
+    .campaign(campaign) 
     .metadata(APIHelper.deserialize("{" +
         "\"org_name\": \"Acme, Inc\"," +
         "\"plan_name\": \"Free\"," +
@@ -677,28 +757,28 @@ CompanyModel companyA = new CompanyBuilder()
           "}" +
         "}"))
     .build();
+```
 
-// Only companyId is required
-// metadata can be any custom object
-CompanyModel companyB = new CompanyBuilder()
-    .companyId("09876")
-    .companyDomain("contoso.com") // If set, Moesif will enrich your profiles with publicly available info 
-    .metadata(APIHelper.deserialize("{" +
-        "\"org_name\": \"Contoso, Inc\"," +
-        "\"plan_name\": \"Free\"," +
-        "\"deal_stage\": \"Lead\"," +
-        "\"mrr\": 48000," +
-        "\"demographics\": {" +
-            "\"alexa_ranking\": 500000," +
-            "\"employee_count\": 53" +
-          "}" +
-        "}"))
-    .build();
+### Update the companies asynchronously
 
-  companies.add(companyA);
-  companies.add(companyB);
+```java
+APICallBack<Object> callBack = new APICallBack<Object>() {
+    public void onSuccess(HttpContext context, Object response) {
+      // Do something
+    }
 
-  filter.updateCompaniesBatch(companies);
+    public void onFailure(HttpContext context, Throwable error) {
+      // Do something else
+    }
+};
+
+apiClient.updateCompaniesBatchAsync(companies, callBack);
+```
+
+### Update the companies synchronously
+
+```java
+apiClient.updateCompaniesBatch(companies);
 ```
 
 ## How to test

@@ -487,6 +487,7 @@ public class MoesifFilter implements Filter {
 
         // Compare percentage to send event
         if (samplingPercentage >= randomPercentage) {
+            maskedEvent.setWeight(moesifApi.getAPI().calculateWeight(samplingPercentage));
         	// Send Event
         	Map<String, String> eventApiResponse = moesifApi.getAPI().createEvent(maskedEvent);
         	// Get the etag from event api response

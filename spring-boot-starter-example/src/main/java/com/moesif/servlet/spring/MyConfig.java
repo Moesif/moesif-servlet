@@ -18,6 +18,7 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan
 public class MyConfig extends WebMvcConfigurerAdapter {
 
+    public String applicationId = "Your Moesif Application Id";
     @Bean
     public Filter moesifFilter() {
 
@@ -42,7 +43,7 @@ public class MyConfig extends WebMvcConfigurerAdapter {
             }
         };
 
-        MoesifFilter moesifFilter = new MoesifFilter("Your Moesif Application Id", config, true);
+        MoesifFilter moesifFilter = new MoesifFilter(applicationId, config, true);
 
         // Set flag to log request and response body
         moesifFilter.setLogBody(true);

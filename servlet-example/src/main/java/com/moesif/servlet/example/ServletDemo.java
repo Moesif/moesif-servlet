@@ -37,6 +37,7 @@ public class ServletDemo extends HttpServlet{
     response.setHeader("X-Head-3", "Value3a, Value3b");
     response.setHeader("X-Head-4", "value4");
     response.setHeader("Content-Type", "application/json");
+    response.setStatus(201);
     PrintWriter out = response.getWriter();
     String json = "{"
             + "\"field_a\": {"

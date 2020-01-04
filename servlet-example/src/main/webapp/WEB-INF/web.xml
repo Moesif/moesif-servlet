@@ -9,7 +9,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>Your Application Id</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>
@@ -35,4 +35,34 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <servlet-name>Servlet Example</servlet-name>
     <url-pattern>/api/demo</url-pattern>
   </servlet-mapping>
+
+
+  <servlet>
+    <servlet-name>Users Servlet Example</servlet-name>
+    <servlet-class>com.moesif.servlet.example.UsersServlet</servlet-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>Your Moesif Application Id</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Users Servlet Example</servlet-name>
+    <url-pattern>/api/users/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Companies Servlet Example</servlet-name>
+    <servlet-class>com.moesif.servlet.example.CompaniesServlet</servlet-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>Your Moesif Application Id</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Companies Servlet Example</servlet-name>
+    <url-pattern>/api/companies/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>

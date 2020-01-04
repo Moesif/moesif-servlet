@@ -5,6 +5,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Root resource (exposed at "demo" path)
@@ -42,12 +43,12 @@ public class JerseyDemo {
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String postIt() {
-        return  "{"
+    public Response postIt() {
+        return Response.status(Response.Status.CREATED).entity("{"
                 + "\"field_a\": {"
                 +     "\"id\": 123456,"
                 +     "\"msg\": \"Hello World.\""
                 +   "}"
-                + "}";
+                + "}").build();
     }
 }

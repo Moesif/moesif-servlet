@@ -11,6 +11,8 @@ import java.util.List;
 public class MoesifHttpClient {
   private RestTemplate template;
 
+  public String applicationId = "Your Moesif Application Id";
+
   public MoesifHttpClient() {
     template = new RestTemplate();
 
@@ -22,7 +24,7 @@ public class MoesifHttpClient {
     requestConfig.logBody = true;
 
     interceptors.add(new MoesifSpringRequestInterceptor(
-      "Enter your Moesif AppId here",
+      applicationId,
       requestConfig
     ));
 

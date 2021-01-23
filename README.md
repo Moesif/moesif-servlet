@@ -7,11 +7,10 @@
 
 ## Introduction
 
-`moesif-servlet` is a Java Servlet Filter that logs API calls and sends to [Moesif](https://www.moesif.com) for API analytics and log analysis.
+`moesif-servlet` is a Java Servlet Filter that logs _incoming_ API calls and sends to [Moesif](https://www.moesif.com) for API analytics and monitoring.
 
 The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
-without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html)
-such as Spring, Struts, Jersey, etc can use this SDK with minimal configuration.
+without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html) such as Spring, Struts, Jersey, etc can use this SDK with minimal configuration.
 
 [Source Code on GitHub](https://github.com/moesif/moesif-servlet)
 
@@ -443,12 +442,22 @@ request to Moesif i.e. to skip boring requests like health probes.
   }
 ```
 
-### 2. `public EventModel maskContent(EventModel eventModel)`
-If you want to remove any sensitive data in the HTTP headers or body before sending to Moesif, you can do so with `maskContent`
+### 2. `public Object getMetadata(HttpServletRequest request, HttpServletResponse response)`
+Return a Java Object that allows you to add custom metadata to the event like instanceId or traceId.
+The metadata must be a simple Java object that can be converted to JSON.
+
+```java
+public Object getMetadata(HttpRequest request, ClientHttpResponse response) {
+  Map<String, Object> customMetadata = new HashMap<String, Object>();
+  customMetadata.put("service_name", System.getProperty("app_name"));
+  return customMetadata;
+}
+```
 
 ### 3. `public String identifyUser(HttpServletRequest request, HttpServletResponse response)`
-Highly recommended. Even though Moesif automatically detects the end userId if possible, setting this configuration
-ensures the highest accuracy with user attribution.
+Highly recommended. Returns a userId as a String. 
+This enables Moesif to attribute API requests to individual users so you can understand who calling your API. 
+This can be used simultaneously with `identifyCompany` to track both individual customers and the companies that they are a part of.
 
 ```java
   @Override
@@ -461,7 +470,8 @@ ensures the highest accuracy with user attribution.
 ```
 
 ### 4. `public String identifyCompany(HttpServletRequest request, HttpServletResponse response)`
-You can set this configuration to add company Id to the event.
+Returns a companyId as a String. 
+If your business is B2B, this enables Moesif to attribute API requests to specific companies or organizations so you can understand which accounts are calling your API. This can be used simultaneously with identifyUser to track both individual customers and the companies their a part of.
 
 ```java
   @Override
@@ -481,21 +491,15 @@ Moesif automatically detects the end user's session token or API key, but you ca
   }
 ```
 
-A second example if want to use servlet sessions
+A second example if want to use the session id
 ```java
   @Override
   public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
     return request.getRequestedSessionId();
   }
 ```
-
-### 6. `public String getTags(HttpServletRequest request, HttpServletResponse response)`
-You can add any additional tags as needed
-to the event.
-
-### 7. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
-You can optionally add an API version
-to the event.
+### 6. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
+Returns a String to tag requests with a specific version of your API.
 
 ```java
   @Override
@@ -503,6 +507,10 @@ to the event.
     return request.getHeader("X-Api-Version");
   }
 ```
+
+### 7. `public EventModel maskContent(EventModel eventModel)`
+If you want to remove any sensitive data in the HTTP headers or body before sending to Moesif, you can do so with `maskContent`
+
 
 ## Building moesif-servlet locally
 If you are contributing to moesif-servlet, you can build it locally and install in local Maven Repo:

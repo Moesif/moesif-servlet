@@ -22,17 +22,10 @@ Add the Moesif dependency to your project's pom.xml file:
 
 ```xml
 <!-- Include jcenter repository if you don't already have it. -->
-<repositories>
-    <repository>
-        <id>jcenter</id>
-        <url>https://jcenter.bintray.com/</url>
-    </repository>
-</repositories>
-    
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.6.9</version>
+    <version>1.6.10</version>
 </dependency>
 ```
 
@@ -41,20 +34,10 @@ Add the Moesif dependency to your project's pom.xml file:
 Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
-// Include jcenter repository if you don't already have it.
-repositories {
-    jcenter()
-}
- 
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.6.9'
+    compile 'com.moesif.servlet:moesif-servlet:1.6.10'
 }
 ```
-
-#### Others
-
-The jars are available from a public [Bintray Jcenter](https://bintray.com/moesif/maven/moesif-servlet) repository.
-
 
 ## How to use
 

@@ -6,7 +6,7 @@
     <groupId>com.moesif.servlet.spark</groupId>
     <artifactId>spark-servlet-example</artifactId>
     <packaging>war</packaging>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <name>spark-servlet-example</name>
 
     <build>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.moesif.servlet</groupId>
             <artifactId>moesif-servlet</artifactId>
-            <version>1.6.9</version>
+            <version>1.6.10</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -74,10 +74,4 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
-        </repository>
-    </repositories>
 </project>

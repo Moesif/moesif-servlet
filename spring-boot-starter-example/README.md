@@ -30,13 +30,6 @@ mvn -v
 	```
 
 4. Run spring-boot-starter-example (from the spring-boot-starter-example dir)
-
-	```sh
-	java -jar target/moesif-spring-boot-starter-example.jar
-	```
-
-	Alternatively:
-
 	```sh
 	mvn spring-boot:run
 	```

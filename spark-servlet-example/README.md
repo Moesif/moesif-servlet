@@ -51,6 +51,11 @@ mvn -v
 	```sh
 	vim spark-servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
+  and add it to `new MoesifAPIClient("")`
+  ```sh
+  vim spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java
+  ```
+
 3. Compile the example
 
 	```sh

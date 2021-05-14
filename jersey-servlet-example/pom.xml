@@ -6,7 +6,7 @@
     <groupId>com.moesif.servlet.jersey</groupId>
     <artifactId>jersey-servlet-example</artifactId>
     <packaging>war</packaging>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <name>jersey-servlet-example</name>
 
     <build>
@@ -66,18 +66,11 @@
         <dependency>
             <groupId>com.moesif.servlet</groupId>
             <artifactId>moesif-servlet</artifactId>
-            <version>1.6.9</version>
+            <version>1.6.10</version>
         </dependency>
     </dependencies>
     <properties>
         <jersey.version>2.26-b03</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
-        </repository>
-    </repositories>
 </project>

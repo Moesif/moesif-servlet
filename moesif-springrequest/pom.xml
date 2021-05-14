@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.springrequest</groupId>
   <artifactId>moesif-springrequest</artifactId>
-  <version>1.0.9</version>
+  <version>1.0.10</version>
   <packaging>jar</packaging>
   <name>moesif-springrequest</name>
   <description>Moesif SDK for Java to log and analyze outgoing API calls</description>
@@ -56,12 +56,12 @@
     <dependency>
       <groupId>com.moesif.api</groupId>
       <artifactId>moesifapi</artifactId>
-      <version>1.6.9</version>
+      <version>1.6.12</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>5.1.6.RELEASE</version>
+      <version>5.1.18.RELEASE</version>
       <scope>provided</scope>
     </dependency>
 
@@ -92,31 +92,13 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>bintray</name>
-      <url>http://dl.bintray.com/moesif/maven</url>
-    </repository>
-    <repository>
-      <id>spring-releases</id>
-      <url>https://repo.spring.io/libs-release</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>spring-releases</id>
-      <url>https://repo.spring.io/libs-release</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <finalName>moesif-springrequest</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.8.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -125,7 +107,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -153,7 +135,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.6</version>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -171,13 +153,21 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
+        <extensions>false</extensions>
+        <executions>
+          <execution>
+            <id>injected-nexus-deploy</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  <distributionManagement>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>moesif-maven</name>
-      <url>https://api.bintray.com/maven/moesif/maven/moesif-springrequest/;publish=1</url>
-    </repository>
-  </distributionManagement>
 </project>

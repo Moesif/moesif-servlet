@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.servlet</groupId>
   <artifactId>moesif-servlet</artifactId>
-  <version>1.6.9</version>
+  <version>1.6.10</version>
   <packaging>jar</packaging>
   <name>moesif-servlet</name>
   <description>Moesif SDK for Java Servlet to log and analyze API calls</description>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>com.moesif.api</groupId>
       <artifactId>moesifapi</artifactId>
-      <version>1.6.9</version>
+      <version>1.6.12</version>
     </dependency>
     <dependency>
 	  <groupId>com.fasterxml.jackson.core</groupId>
@@ -106,31 +106,13 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>bintray</name>
-      <url>http://dl.bintray.com/moesif/maven</url>
-    </repository>
-    <repository>
-      <id>spring-releases</id>
-      <url>https://repo.spring.io/libs-release</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>spring-releases</id>
-      <url>https://repo.spring.io/libs-release</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <finalName>moesif-servlet</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.8.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -151,7 +133,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -166,7 +148,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.6</version>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -184,13 +166,21 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
+        <extensions>false</extensions>
+        <executions>
+          <execution>
+            <id>injected-nexus-deploy</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  <distributionManagement>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>moesif-maven</name>
-      <url>https://api.bintray.com/maven/moesif/maven/moesif-servlet/;publish=1</url>
-    </repository>
-  </distributionManagement>
 </project>

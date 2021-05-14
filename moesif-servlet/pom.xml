@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.servlet</groupId>
   <artifactId>moesif-servlet</artifactId>
-  <version>1.6.10</version>
+  <version>1.6.11</version>
   <packaging>jar</packaging>
   <name>moesif-servlet</name>
   <description>Moesif SDK for Java Servlet to log and analyze API calls</description>

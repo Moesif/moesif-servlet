@@ -18,7 +18,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.springrequest</groupId>
     <artifactId>moesif-springrequest</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.11</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.springrequest:moesif-springrequest:1.0.10'
+    compile 'com.moesif.springrequest:moesif-springrequest:1.0.11'
 }
 ```
 

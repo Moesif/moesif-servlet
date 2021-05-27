@@ -1,10 +1,10 @@
 package com.moesif.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
 import java.lang.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -190,8 +190,9 @@ public class MoesifFilter implements Filter {
         String responseConfigEtag = configApiResponse.getHeaders().get("x-moesif-config-etag");
 
         // Read the response body
-        ObjectMapper mapper = new ObjectMapper();
-        AppConfigModel newConfig = mapper.readValue(configApiResponse.getRawBody(), AppConfigModel.class);
+        InputStream respBodyIs = configApiResponse.getRawBody();
+        AppConfigModel newConfig = APIController.parseAppConfigModel(respBodyIs);
+        respBodyIs.close();
 
         this.appConfigModel = newConfig;
         this.cachedConfigEtag = responseConfigEtag;

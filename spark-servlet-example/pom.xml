@@ -6,7 +6,7 @@
     <groupId>com.moesif.servlet.spark</groupId>
     <artifactId>spark-servlet-example</artifactId>
     <packaging>war</packaging>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <name>spark-servlet-example</name>
 
     <build>
@@ -15,7 +15,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>3.8.1</version>
                 <inherited>true</inherited>
                 <configuration>
                     <source>1.8</source>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.moesif.servlet</groupId>
             <artifactId>moesif-servlet</artifactId>
-            <version>1.6.11</version>
+            <version>1.6.12</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

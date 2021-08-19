@@ -147,7 +147,9 @@ mvn -v
 	```
 
 
-5. Go to `http://localhost:8080/api` or the port that Spring Boot is running on.
+5. Using Postman or CURL, make a few API calls to `http://localhost:8080/api` or the port that Spring Boot is running on.
+   
+6. Verify the API calls are logged to your [Moesif account](https://www.moesif.com)
 
 ### Spring MVC (Java Config)
 

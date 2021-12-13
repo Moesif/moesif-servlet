@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.servlet</groupId>
   <artifactId>moesif-servlet</artifactId>
-  <version>1.6.12</version>
+  <version>1.6.13</version>
   <packaging>jar</packaging>
   <name>moesif-servlet</name>
   <description>Moesif SDK for Java Servlet to log and analyze API calls</description>
@@ -77,6 +77,16 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.15.0</version>
     </dependency>
 
     <!-- testing -->

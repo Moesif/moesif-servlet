@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.moesif.servlet</groupId>
   <artifactId>servlet-example</artifactId>
-  <version>1.3.3</version>
+  <version>1.3.4</version>
   <packaging>war</packaging>
   <name>servlet-example</name>
 
@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>moesif-servlet</artifactId>
-      <version>1.6.13</version>
+      <version>1.6.15</version>
     </dependency>
   </dependencies>
 

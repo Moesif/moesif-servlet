@@ -3,6 +3,7 @@ package com.moesif.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.lang.*;
 
@@ -43,13 +44,20 @@ public class MoesifFilter implements Filter {
   private String cachedConfigEtag;
   private Date lastUpdatedTime = new Date(0);
 
+  private BatchProcessor batchProcessor = null; // Manages queue & provides a taskRunner to send events in batches.
+  private int sendBatchJobALiveCounter = 0;     // counter to check scheduled job is alive or not.
+
+  // Timer for various tasks
+  Timer updateConfigTimer = null;
+  Timer sendBatchEventTimer = null;
+
   /**
    * Default Constructor, please set ApplicationId before use.
    */
   public MoesifFilter() {
-    this.config = new MoesifConfigurationAdapter();
-    this.debug = false;
-    this.logBody = true;
+    this.setDebug(false);
+    this.setLogBody(true);
+    this.setConfigure( new MoesifConfigurationAdapter() );
   }
 
   /**
@@ -57,11 +65,10 @@ public class MoesifFilter implements Filter {
    * @param    applicationId   Required parameter: obtained from your moesif Account.
    */
   public MoesifFilter(String applicationId) {
-    this.applicationId = applicationId;
-    this.config = new MoesifConfigurationAdapter();
-    this.moesifApi = new MoesifAPIClient(applicationId);
-    this.debug = false;
-    this.logBody = true;
+    this.setDebug(false);
+    this.setLogBody(true);
+    this.setConfigure( new MoesifConfigurationAdapter() );
+    this.setApplicationId(applicationId);
   }
 
   /**
@@ -70,11 +77,10 @@ public class MoesifFilter implements Filter {
    * @param    debug Flag for turning debug messages on.
    */
   public MoesifFilter(String applicationId, boolean debug) {
-    this.applicationId = applicationId;
-    this.config = new MoesifConfigurationAdapter();
-    this.moesifApi = new MoesifAPIClient(applicationId);
-    this.debug = debug;
-    this.logBody = true;
+    this.setDebug(debug);
+    this.setLogBody(true);
+    this.setConfigure( new MoesifConfigurationAdapter() );
+    this.setApplicationId(applicationId);
   }
 
   /**
@@ -83,11 +89,10 @@ public class MoesifFilter implements Filter {
    * @param    config MoesifConfiguration Object.
    */
   public MoesifFilter(String applicationId, MoesifConfiguration config) {
-    this.applicationId = applicationId;
-    this.config = config;
-    this.moesifApi = new MoesifAPIClient(applicationId);
-    this.debug = false;
-    this.logBody = true;
+    this.setDebug(false);
+    this.setLogBody(true);
+    this.setConfigure(config);
+    this.setApplicationId(applicationId);
   }
 
   /**
@@ -97,11 +102,10 @@ public class MoesifFilter implements Filter {
    * @param    debug boolean
    */
   public MoesifFilter(String applicationId, MoesifConfiguration config, boolean debug) {
-    this.applicationId = applicationId;
-    this.config = config;
-    this.moesifApi = new MoesifAPIClient(applicationId);
-    this.debug = debug;
-    this.logBody = true;
+    this.setDebug(debug);
+    this.setLogBody(true);
+    this.setConfigure(config);
+    this.setApplicationId(applicationId);
   }
 
   /**
@@ -110,7 +114,14 @@ public class MoesifFilter implements Filter {
    */
   public void setApplicationId(String applicationId) {
     this.applicationId = applicationId;
-    this.moesifApi = new MoesifAPIClient(applicationId);
+    this.createMoesifApiClient();
+  }
+
+  /***
+   * Creates Moesif API client for given application id.
+   */
+  private void createMoesifApiClient() {
+    this.moesifApi = new MoesifAPIClient(this.applicationId);
   }
 
   /**
@@ -154,33 +165,39 @@ public class MoesifFilter implements Filter {
 
     String appId = filterConfig.getInitParameter("application-id");
     if (appId != null) {
-      this.applicationId = appId;
-      this.moesifApi = new MoesifAPIClient(this.applicationId);
+      this.setApplicationId(appId);
     }
     String debug = filterConfig.getInitParameter("debug");
     if (debug != null) {
       if (debug.equals("true")) {
-        this.debug = true;
+        this.setDebug(true);
       }
     }
 
     String logBody = filterConfig.getInitParameter("logBody");
     if (logBody != null) {
       if (logBody.equals("false")) {
-        this.logBody = false;
+        this.setLogBody(false);
       }
     }
 
-    getAndUpdateAppConfig();
+    getAndUpdateAppConfig(); // load the app config on init.
+
+    // Initialize the batch event processor and timer tasks.
+    this.initBatchProcessorAndStartJobs();
   }
 
   @Override
   public void destroy() {
+
+    // Drain the queue and stop the timer tasks.
+    this.drainQueueAndStopJobs();
+
     if (debug) {
       logger.info("Destroyed Moesif filter");
     }
   }
-  
+
   // Get Config. called only when configEtagChange is detected
   public void getAndUpdateAppConfig() {
 	  try {
@@ -427,6 +444,143 @@ public class MoesifFilter implements Filter {
     return eventResponseBuilder.build();
   }
 
+  /***
+   * Method to initialize the batch event processor and create jobs for automatic update of
+   * app config and send events in batches.
+   * Batch event processor maintains batch queue and a taskRunner method to
+   * run scheduled task periodically to send events in batches.
+   */
+  public void initBatchProcessorAndStartJobs() {
+
+    // Create event batch processor for queueing and batching the events.
+    this.batchProcessor = new BatchProcessor(this.moesifApi, this.config, this.debug);
+
+    // Initialize the timer tasks - Create scheduled jobs
+    this.scheduleAppConfigJob();
+    this.scheduleBatchEventsJob();
+  }
+
+  /***
+   * Method to stop the scheduled jobs and drain the batch queue.
+   * Batch event processor sends the leftover events present in queue
+   * before stopping the scheduled jobs.
+   */
+  public void drainQueueAndStopJobs() {
+
+    // Cleanup/transfer the leftover queue events, if any before destroying the filter.
+    this.batchProcessor.run();  // it's ok to run in main thread on destroy.
+
+    // Stop the scheduled jobs
+    try {
+      if (debug) {
+        logger.info("Stopping scheduled jobs.");
+      }
+      this.resetJobTimer(this.updateConfigTimer);
+      this.resetJobTimer(this.sendBatchEventTimer);
+    } catch (Exception e) {
+      // ignore the error.
+    }
+  }
+
+  /**
+   * Method to create scheduled job for updating config periodically.
+   */
+  private void scheduleAppConfigJob() {
+    // Make sure there is none before creating the timer
+    this.resetJobTimer(this.updateConfigTimer);
+
+    this.updateConfigTimer = new Timer("moesif_update_config_job");
+    updateConfigTimer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        // get and update config.
+        getAndUpdateAppConfig();
+      }
+    }, 0, (long) this.batchProcessor.getUpdateConfigTimeInMin() * 60 * 1000);
+  }
+
+  /**
+   * Method to create scheduled job for sending batch events periodically.
+   */
+  private void scheduleBatchEventsJob() {
+    // Make sure there is none before creating the timer
+    this.resetJobTimer(this.sendBatchEventTimer);
+
+    this.sendBatchEventTimer = new Timer("moesif_events_batch_job");
+    sendBatchEventTimer.schedule(
+            this.batchProcessor,
+            0,
+            (long) this.batchProcessor.getBatchMaxTimeInSec() * 1000
+    );
+  }
+
+  /**
+   * Method to reset scheduled job timer.
+   * @param timer : Timer
+   */
+  private void resetJobTimer(Timer timer) {
+    if (timer != null) {
+      timer.cancel();
+      timer.purge();
+      timer = null;
+    }
+  }
+
+  private void rescheduleSendEventsJobIfNeeded() {
+
+    // Check if batchJob is already running then return
+    if (this.batchProcessor.isJobRunning()) {
+      if (debug) {
+        String msg = String.format("Send event job is in-progress.");
+        logger.info(msg);
+      }
+      return;
+    }
+
+    // Check if we need to reschedule job to send batch events
+    // if the last job runtime is more than 5 minutes.
+    final long MAX_TARDINESS_SEND_EVENT_JOB = this.config.batchMaxTimeInSec * 60;      // in seconds
+    final long diff = new Date().getTime() - this.batchProcessor.scheduledExecutionTime();
+    final long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
+
+    // Check Event job
+    if (seconds > MAX_TARDINESS_SEND_EVENT_JOB) {
+      if (debug) {
+        String msg = String.format("Last send event job was executed %d minutes ago. Rescheduling job..", seconds/60);
+        logger.info(msg);
+      }
+      // Restart send batch event job.
+      scheduleBatchEventsJob();
+
+    }
+
+    if (debug) {
+      String msg = String.format("Last send event job was executed %d seconds ago.", seconds);
+      logger.info(msg);
+    }
+
+  }
+  /***
+   * Method to add event into a queue for batch-based event transfer.
+   * The method can be used to just send the batched events, by passing EventModel as null.
+   * @param maskedEvent: EventModel
+   */
+  private void addEventToQueue(EventModel maskedEvent) {
+    try {
+      this.batchProcessor.addEvent(maskedEvent);
+      sendBatchJobALiveCounter++;
+
+      // Check send batchEvent job periodically based on counter if rescheduling is needed.
+      if (sendBatchJobALiveCounter > 100) {
+        this.rescheduleSendEventsJobIfNeeded();
+        sendBatchJobALiveCounter = 0;
+      }
+
+    } catch (Throwable e) {
+      logger.warning("Failed to add event to the queue. " + e.toString());
+    }
+  }
+
   private void sendEvent(EventRequestModel eventRequestModel,
                            EventResponseModel eventResponseModel,
                            String userId,
@@ -489,22 +643,8 @@ public class MoesifFilter implements Filter {
         // Compare percentage to send event
         if (samplingPercentage >= randomPercentage) {
             maskedEvent.setWeight(moesifApi.getAPI().calculateWeight(samplingPercentage));
-        	// Send Event
-        	Map<String, String> eventApiResponse = moesifApi.getAPI().createEvent(maskedEvent);
-        	// Get the etag from event api response
-        	String eventResponseConfigEtag = eventApiResponse.get("x-moesif-config-etag");
-        	
-        	// Check if needed to call the getConfig api to update samplingPercentage
-        	if (eventResponseConfigEtag != null 
-        			&& !(eventResponseConfigEtag.equals(cachedConfigEtag)) 
-        			&& new Date().after(new Date(this.lastUpdatedTime.getTime() + 5 * 60 * 1000))) {
-        		// Call api to update samplingPercentage
-        		getAndUpdateAppConfig();
-        	}
-        	
-        	if (debug) {
-                logger.info("Event successfully sent to Moesif");
-              }
+        	// Add the event to queue for batch-based transfer
+            this.addEventToQueue(maskedEvent);
         } 
         else {
         	if(debug) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moesif.api.MoesifAPIClient;
@@ -13,7 +14,6 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.models.EventModel;
-import com.sun.corba.se.impl.orbutil.threadpool.TimeoutException;
 
 /***
  * TimerTask to maintain the events queue and send it to moesif periodically.

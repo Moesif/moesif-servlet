@@ -43,9 +43,10 @@ public class MoesifFilter implements Filter {
   private AppConfigModel appConfigModel = new AppConfigModel();
   private String cachedConfigEtag;
   private Date lastUpdatedTime = new Date(0);
+  private boolean isUpdateConfigJobRunning = false; // to avoid running multiple job
 
   private BatchProcessor batchProcessor = null; // Manages queue & provides a taskRunner to send events in batches.
-  private int sendBatchJobALiveCounter = 0;     // counter to check scheduled job is alive or not.
+  private int sendBatchJobAliveCounter = 0;     // counter to check scheduled job is alive or not.
 
   // Timer for various tasks
   Timer updateConfigTimer = null;
@@ -200,7 +201,14 @@ public class MoesifFilter implements Filter {
 
   // Get Config. called only when configEtagChange is detected
   public void getAndUpdateAppConfig() {
+      // Return immediately, if job is already in-progress.
+      if (isUpdateConfigJobRunning) {
+        return;
+      }
+
 	  try {
+        isUpdateConfigJobRunning = true;
+
         // Calling the api
         HttpResponse configApiResponse = moesifApi.getAPI().getAppConfig();
         // Fetch the response ETag
@@ -217,6 +225,8 @@ public class MoesifFilter implements Filter {
         logger.warning("Fetched configuration failed; using default configuration " + e.toString());
         this.appConfigModel = new AppConfigModel();
         this.appConfigModel.setSampleRate(100);
+      } finally {
+        isUpdateConfigJobRunning = false;
       }
     this.lastUpdatedTime = new Date();
   }
@@ -539,14 +549,14 @@ public class MoesifFilter implements Filter {
 
     // Check if we need to reschedule job to send batch events
     // if the last job runtime is more than 5 minutes.
-    final long MAX_TARDINESS_SEND_EVENT_JOB = this.config.batchMaxTimeInSec * 60;      // in seconds
+    final long MAX_TARDINESS_SEND_EVENT_JOB = this.config.batchMaxTime * 60;      // in seconds
     final long diff = new Date().getTime() - this.batchProcessor.scheduledExecutionTime();
     final long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
 
     // Check Event job
     if (seconds > MAX_TARDINESS_SEND_EVENT_JOB) {
       if (debug) {
-        String msg = String.format("Last send event job was executed %d minutes ago. Rescheduling job..", seconds/60);
+        String msg = String.format("Last send batchEvents job was executed %d minutes ago. Rescheduling job..", seconds/60);
         logger.info(msg);
       }
       // Restart send batch event job.
@@ -555,7 +565,7 @@ public class MoesifFilter implements Filter {
     }
 
     if (debug) {
-      String msg = String.format("Last send event job was executed %d seconds ago.", seconds);
+      String msg = String.format("Last send batchEvents job was executed %d seconds ago.", seconds);
       logger.info(msg);
     }
 
@@ -568,12 +578,15 @@ public class MoesifFilter implements Filter {
   private void addEventToQueue(EventModel maskedEvent) {
     try {
       this.batchProcessor.addEvent(maskedEvent);
-      sendBatchJobALiveCounter++;
+      sendBatchJobAliveCounter++;
 
       // Check send batchEvent job periodically based on counter if rescheduling is needed.
-      if (sendBatchJobALiveCounter > 100) {
+      if (sendBatchJobAliveCounter > 100) {
+        if (this.debug) {
+          logger.info("Check for liveness of taskRunner.");
+        }
         this.rescheduleSendEventsJobIfNeeded();
-        sendBatchJobALiveCounter = 0;
+        sendBatchJobAliveCounter = 0;
       }
 
     } catch (Throwable e) {

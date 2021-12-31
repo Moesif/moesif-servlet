@@ -25,7 +25,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.6.17</version>
+    <version>1.7.0</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.6.17'
+    compile 'com.moesif.servlet:moesif-servlet:1.7.0'
 }
 ```
 
@@ -414,6 +414,19 @@ To configure the filter, extend the `MoesifConfigurationAdapter` class to overri
 `MoesifConfiguration` interface.
 Both will achieve similar results.
 
+### Parameters
+Override the following parameters, if needed.
+
+
+Name | Required | Type & Default Value | Description |
+--------- | -------- | -----------|-----------------|
+|batchSize | False | Type: `number` Default `100` | BatchSize of API events that will trigger flushing of queue and sending the data to Moesif. |
+|batchMaxTime| False | Type: `number in seconds` Default `5`. | This is the maximum wait time (approximately) before triggering flushing of the queue and sending to Moesif.|
+|queueSize | False | Type: `number` Default `5000` | Maximum queue capacity to hold events in memory. |
+|updateConfigTime | False | Type: `number` Default: `300` | This is the maximum wait time (approximately) to pull the latest app config and update the cache.|
+
+### Interface methods
+Override following methods, if needed.
 
 ### 1. `public boolean skip(HttpServletRequest request, HttpServletResponse response)`
 Return `true` if you want to skip logging a

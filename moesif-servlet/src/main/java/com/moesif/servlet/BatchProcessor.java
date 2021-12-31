@@ -40,15 +40,15 @@ public class BatchProcessor extends TimerTask {
         this.debug = debug;
 
         // Initialize the queue with queue size capacity.
-        this.batchQueue = new ArrayBlockingQueue<>(this.moesifConfig.eventQueueSize);
+        this.batchQueue = new ArrayBlockingQueue<>(this.moesifConfig.queueSize);
     }
 
     public int getBatchMaxTimeInSec() {
-        return this.moesifConfig.batchMaxTimeInSec;
+        return this.moesifConfig.batchMaxTime;
     }
 
     public int getUpdateConfigTimeInMin() {
-        return this.moesifConfig.updateConfigTimeInMin;
+        return this.moesifConfig.updateConfigTime;
     }
 
     /***
@@ -66,8 +66,6 @@ public class BatchProcessor extends TimerTask {
                 logger.info(msg);
             }
 
-        } catch (InterruptedException e) {
-            logger.warning("Add event failed. " + e.toString());
         } catch (Exception e) {
             logger.warning("Add event failed. " + e.toString());
         }
@@ -81,6 +79,41 @@ public class BatchProcessor extends TimerTask {
      */
     public boolean isJobRunning() {
         return this.jobRunning;
+    }
+
+    private void sendBatchEvents(final List<EventModel> curEventList) {
+
+        // callback for async createBatchEvents
+        APICallBack<com.moesif.api.http.response.HttpResponse> callBack = new APICallBack<com.moesif.api.http.response.HttpResponse>() {
+
+            @Override
+            public void onSuccess(HttpContext httpContext, HttpResponse httpResponse) {
+                final int status = httpContext.getResponse().getStatusCode();
+                if (status != 201) {
+                    if (debug) {
+                        logger.warning("Status is not 201");
+                    }
+                }
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+
+                if (debug) {
+                    String msg = String.format("send to Moesif error. %s", error);
+                    logger.info(msg);
+                    logger.info( error.toString());
+                }
+            }
+        };
+
+        try {
+            this.moesifApi.getAPI().createEventsBatchAsync(curEventList, callBack);
+        } catch(JsonProcessingException e) {
+            logger.warning("Failed to send batch events. " + e.toString());
+        } catch(Exception e) {
+            logger.warning("Failed to send batch events. " + e.toString());
+        }
+
     }
 
     /***
@@ -104,19 +137,6 @@ public class BatchProcessor extends TimerTask {
             return;
         }
 
-        // callback for async createBatchEvents
-        APICallBack<com.moesif.api.http.response.HttpResponse> callBack = new APICallBack<com.moesif.api.http.response.HttpResponse>() {
-
-            @Override
-            public void onSuccess(HttpContext httpContext, HttpResponse httpResponse) {
-                // ignore
-            }
-
-            public void onFailure(HttpContext context, Throwable error) {
-                // ignore
-            }
-        };
-
         try {
             // Get all the Events till now
             List<EventModel> allEventList = new ArrayList<>();
@@ -124,14 +144,10 @@ public class BatchProcessor extends TimerTask {
 
             // Prepare batches and send them.
             int batchCount = 0;
-            for(int i=0; i< allEventList.size(); i += this.moesifConfig.eventBatchSize, batchCount +=1) {
-                final int endIndex = Math.min(allEventList.size(), i + this.moesifConfig.eventBatchSize);
+            for(int i=0; i< allEventList.size(); i += this.moesifConfig.batchSize, batchCount +=1) {
+                final int endIndex = Math.min(allEventList.size(), i + this.moesifConfig.batchSize);
                 List<EventModel> curEventList = allEventList.subList(i, endIndex);
-                try {
-                    this.moesifApi.getAPI().createEventsBatchAsync(curEventList, callBack);
-                } catch(JsonProcessingException e) {
-                    logger.warning("Failed to send batch events. " + e.toString());
-                }
+                this.sendBatchEvents(curEventList);
             }
 
             if (this.debug) {

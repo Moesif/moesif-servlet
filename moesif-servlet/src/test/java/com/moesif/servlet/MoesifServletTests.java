@@ -244,7 +244,7 @@ public class MoesifServletTests extends TestCase {
 
 	public void testGetAppConfig() throws Throwable{
 		filter.init(filterConfig);
-		int sampleRate = filter.getSampleRateToUse(null, null);
+		int sampleRate = AppConfigManager.getInstance().getSampleRate(null, null);
 		assertTrue("Sample Rate should be less than equal to 100", 100 >= sampleRate);
 	}
 }

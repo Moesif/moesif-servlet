@@ -47,8 +47,9 @@ public class MoesifConfiguration {
 
   public boolean disableTransactionId = false;
   public int batchSize = 100;         // batch size to chunk the queued events before transfer to moesif.
-  public int queueSize = 5000;        // maximum queue capacity to hold events.
   public int batchMaxTime = 5;        // in seconds - time to send batch events periodically.
+  public int queueSize = 5000;        // maximum queue capacity to hold events.
+  public int retry = 0;               // how many times to retry, if fails to post events.ß
   public int updateConfigTime = 5*60; // in seconds - time to update app config periodically.
 
   @Deprecated

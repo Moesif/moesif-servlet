@@ -13,6 +13,7 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.models.EventModel;
+import com.sun.corba.se.impl.orbutil.threadpool.TimeoutException;
 
 /***
  * TimerTask to maintain the events queue and send it to moesif periodically.
@@ -43,11 +44,19 @@ public class BatchProcessor extends TimerTask {
         this.batchQueue = new ArrayBlockingQueue<>(this.moesifConfig.queueSize);
     }
 
-    public int getBatchMaxTimeInSec() {
+    /***
+     * Returns time in seconds
+     * @return
+     */
+    public int getBatchMaxTime() {
         return this.moesifConfig.batchMaxTime;
     }
 
-    public int getUpdateConfigTimeInMin() {
+    /***
+     * Returns time in seconds
+     * @return
+     */
+    public int getUpdateConfigTime() {
         return this.moesifConfig.updateConfigTime;
     }
 
@@ -67,7 +76,7 @@ public class BatchProcessor extends TimerTask {
             }
 
         } catch (Exception e) {
-            logger.warning("Add event failed. " + e.toString());
+            logger.warning("Add event failed. " + e);
         }
 
     }
@@ -81,7 +90,9 @@ public class BatchProcessor extends TimerTask {
         return this.jobRunning;
     }
 
-    private void sendBatchEvents(final List<EventModel> curEventList) {
+    private void sendBatch(final List<EventModel> curEventList) {
+        final boolean[] done = {false};
+        int retry = 0;
 
         // callback for async createBatchEvents
         APICallBack<com.moesif.api.http.response.HttpResponse> callBack = new APICallBack<com.moesif.api.http.response.HttpResponse>() {
@@ -89,30 +100,47 @@ public class BatchProcessor extends TimerTask {
             @Override
             public void onSuccess(HttpContext httpContext, HttpResponse httpResponse) {
                 final int status = httpContext.getResponse().getStatusCode();
-                if (status != 201) {
-                    if (debug) {
-                        logger.warning("Status is not 201");
+                // No need to retry. Mark call done.
+                done[0] = true;
+                if (status == 201) {
+                    // Fetch the response ETag to check if we need to update appConfig.
+                    String responseConfigEtag = httpResponse.getHeaders().get("x-moesif-config-etag");
+                    if (responseConfigEtag != null) {
+                        AppConfigManager.getInstance().updateIfStale(responseConfigEtag);
                     }
+                } else if (debug) {
+                    logger.warning("Status is " + status);
                 }
             }
 
-            public void onFailure(HttpContext context, Throwable error) {
+            public void onFailure(HttpContext httpContext, Throwable error) {
+                final int status = httpContext.getResponse().getStatusCode();
 
-                if (debug) {
-                    String msg = String.format("send to Moesif error. %s", error);
-                    logger.info(msg);
-                    logger.info( error.toString());
+                if (error != null) {
+                    // Not done, if failed because of 500 or timeout
+                    if (error instanceof TimeoutException || status == 500) {
+                        done[0] = false;
+                    } else {
+                        // No need to retry. Mark call done.
+                        done[0] = true;
+                        // Print the error
+                        if (debug) {
+                            String msg = String.format("send to Moesif error. %s", error);
+                            logger.warning(msg);
+                        }
+                    }
                 }
             }
         };
 
-        try {
-            this.moesifApi.getAPI().createEventsBatchAsync(curEventList, callBack);
-        } catch(JsonProcessingException e) {
-            logger.warning("Failed to send batch events. " + e.toString());
-        } catch(Exception e) {
-            logger.warning("Failed to send batch events. " + e.toString());
-        }
+        // Try to send batch events multiple times based on retries
+        do {
+            try {
+                this.moesifApi.getAPI().createEventsBatchAsync(curEventList, callBack);
+            } catch (Exception e) {
+                logger.warning("Failed to send batch events. " + e);
+            }
+        } while (!done[0] && retry < this.moesifConfig.retry);
 
     }
 
@@ -147,7 +175,7 @@ public class BatchProcessor extends TimerTask {
             for(int i=0; i< allEventList.size(); i += this.moesifConfig.batchSize, batchCount +=1) {
                 final int endIndex = Math.min(allEventList.size(), i + this.moesifConfig.batchSize);
                 List<EventModel> curEventList = allEventList.subList(i, endIndex);
-                this.sendBatchEvents(curEventList);
+                this.sendBatch(curEventList);
             }
 
             if (this.debug) {

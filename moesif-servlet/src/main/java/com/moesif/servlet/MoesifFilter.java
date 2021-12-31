@@ -1,7 +1,6 @@
 package com.moesif.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -22,7 +21,6 @@ import com.moesif.api.models.*;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
-import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.controllers.APIController;
 import com.moesif.api.IpAddress;
 import com.moesif.api.BodyParser;
@@ -40,11 +38,6 @@ public class MoesifFilter implements Filter {
   private MoesifAPIClient moesifApi;
   private boolean debug;
   private boolean logBody;
-  private AppConfigModel appConfigModel = new AppConfigModel();
-  private String cachedConfigEtag;
-  private Date lastUpdatedTime = new Date(0);
-  private boolean isUpdateConfigJobRunning = false; // to avoid running multiple job
-
   private BatchProcessor batchProcessor = null; // Manages queue & provides a taskRunner to send events in batches.
   private int sendBatchJobAliveCounter = 0;     // counter to check scheduled job is alive or not.
 
@@ -182,7 +175,9 @@ public class MoesifFilter implements Filter {
       }
     }
 
-    getAndUpdateAppConfig(); // load the app config on init.
+    // Setup app config manager and run it immediately to load app config.
+    AppConfigManager.getInstance().setMoesifApiClient(this.moesifApi, this.debug);
+     AppConfigManager.getInstance().run();
 
     // Initialize the batch event processor and timer tasks.
     this.initBatchProcessorAndStartJobs();
@@ -197,38 +192,6 @@ public class MoesifFilter implements Filter {
     if (debug) {
       logger.info("Destroyed Moesif filter");
     }
-  }
-
-  // Get Config. called only when configEtagChange is detected
-  public void getAndUpdateAppConfig() {
-      // Return immediately, if job is already in-progress.
-      if (isUpdateConfigJobRunning) {
-        return;
-      }
-
-	  try {
-        isUpdateConfigJobRunning = true;
-
-        // Calling the api
-        HttpResponse configApiResponse = moesifApi.getAPI().getAppConfig();
-        // Fetch the response ETag
-        String responseConfigEtag = configApiResponse.getHeaders().get("x-moesif-config-etag");
-
-        // Read the response body
-        InputStream respBodyIs = configApiResponse.getRawBody();
-        AppConfigModel newConfig = APIController.parseAppConfigModel(respBodyIs);
-        respBodyIs.close();
-
-        this.appConfigModel = newConfig;
-        this.cachedConfigEtag = responseConfigEtag;
-      } catch(Throwable e) {
-        logger.warning("Fetched configuration failed; using default configuration " + e.toString());
-        this.appConfigModel = new AppConfigModel();
-        this.appConfigModel.setSampleRate(100);
-      } finally {
-        isUpdateConfigJobRunning = false;
-      }
-    this.lastUpdatedTime = new Date();
   }
 
   public void updateUser(UserModel userModel) throws Throwable{
@@ -460,7 +423,7 @@ public class MoesifFilter implements Filter {
    * Batch event processor maintains batch queue and a taskRunner method to
    * run scheduled task periodically to send events in batches.
    */
-  public void initBatchProcessorAndStartJobs() {
+  private void initBatchProcessorAndStartJobs() {
 
     // Create event batch processor for queueing and batching the events.
     this.batchProcessor = new BatchProcessor(this.moesifApi, this.config, this.debug);
@@ -500,13 +463,11 @@ public class MoesifFilter implements Filter {
     this.resetJobTimer(this.updateConfigTimer);
 
     this.updateConfigTimer = new Timer("moesif_update_config_job");
-    updateConfigTimer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        // get and update config.
-        getAndUpdateAppConfig();
-      }
-    }, 0, (long) this.batchProcessor.getUpdateConfigTimeInMin() * 60 * 1000);
+    updateConfigTimer.schedule(
+        AppConfigManager.getInstance(),
+        0,
+        (long) this.batchProcessor.getUpdateConfigTime() * 1000
+    );
   }
 
   /**
@@ -518,9 +479,9 @@ public class MoesifFilter implements Filter {
 
     this.sendBatchEventTimer = new Timer("moesif_events_batch_job");
     sendBatchEventTimer.schedule(
-            this.batchProcessor,
-            0,
-            (long) this.batchProcessor.getBatchMaxTimeInSec() * 1000
+        this.batchProcessor,
+        0,
+        (long) this.batchProcessor.getBatchMaxTime() * 1000
     );
   }
 
@@ -651,7 +612,7 @@ public class MoesifFilter implements Filter {
         // Generate random number
         double randomPercentage = Math.random() * 100;
 
-        int samplingPercentage = getSampleRateToUse(userId, companyId);
+        int samplingPercentage = AppConfigManager.getInstance().getSampleRate(userId, companyId);
 
         // Compare percentage to send event
         if (samplingPercentage >= randomPercentage) {
@@ -667,23 +628,13 @@ public class MoesifFilter implements Filter {
 
       } catch(Throwable e) {
         if (debug) {
-          logger.warning("send to Moesif failed " + e.toString());
+          logger.warning("add event to queue failed " + e);
         }
       }
 
     } else {
       logger.warning("The application Id should be set before using MoesifFilter");
     }
-  }
-
-  public int getSampleRateToUse(String userId, String companyId) {
-    int sampleRate = appConfigModel.getSampleRate();
-    if (userId != null && appConfigModel.getUserSampleRate().containsKey(userId)) {
-      sampleRate = appConfigModel.getUserSampleRate().get(userId);
-    } else if (companyId != null && appConfigModel.getCompanySampleRate().containsKey(companyId)) {
-      sampleRate = appConfigModel.getCompanySampleRate().get(companyId);
-    }
-    return sampleRate;
   }
 
   static String getFullURL(HttpServletRequest request) {

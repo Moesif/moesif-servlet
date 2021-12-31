@@ -136,6 +136,7 @@ public class BatchProcessor extends TimerTask {
         // Try to send batch events multiple times based on retries
         do {
             try {
+                retry++;
                 this.moesifApi.getAPI().createEventsBatchAsync(curEventList, callBack);
             } catch (Exception e) {
                 logger.warning("Failed to send batch events. " + e);

@@ -465,7 +465,7 @@ public class MoesifFilter implements Filter {
     this.updateConfigTimer = new Timer("moesif_update_config_job");
     updateConfigTimer.schedule(
         AppConfigManager.getInstance(),
-        0,
+        (long) this.batchProcessor.getUpdateConfigTime() * 1000, // Trigger this job every X seconds since we're already fetching the app config on init.
         (long) this.batchProcessor.getUpdateConfigTime() * 1000
     );
   }

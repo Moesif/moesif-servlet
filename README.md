@@ -9,7 +9,7 @@
 
 `moesif-servlet` is a Java Servlet Filter that logs _incoming_ API calls and sends to [Moesif](https://www.moesif.com) for API analytics and monitoring.
 
-The SDK is implemented as a Java EE [Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
+The SDK is implemented as a [Java Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
 without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html) such as Spring, Struts, Jersey, etc can use this SDK with minimal configuration.
 
 [Source Code on GitHub](https://github.com/moesif/moesif-servlet)
@@ -720,6 +720,6 @@ To view more documentation on integration options, please visit __[the Integrati
 [ico-source]: https://img.shields.io/github/last-commit/moesif/moesif-servlet.svg?style=social
 
 [link-built-for]: https://en.wikipedia.org/wiki/Java_servlet
-[link-package]: https://img.shields.io/maven-central/v/com.moesif.servlet/moesif-servlet
+[link-package]: https://search.maven.org/artifact/com.moesif.servlet/moesif-servlet
 [link-license]: https://raw.githubusercontent.com/Moesif/moesif-servlet/master/LICENSE
 [link-source]: https://github.com/moesif/moesif-servlet

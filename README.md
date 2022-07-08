@@ -702,6 +702,32 @@ CompanyModel company = new CompanyBuilder()
 filter.updateCompaniesBatch(companies);
 ```
 
+## Troubleshooting
+
+### How to print debug logs
+
+If you need to print debugs logs, you can set the debug switch when initializing the MoesifFilter object.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", debug)
+```
+
+If you are using XML configuration, you can set the debug switch like below:
+
+```xml
+    <filter-name>MoesifFilter</filter-name>
+    <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>Your Moesif Application Id</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+```
+
 ## How to test
 
 1. Manually clone the git repo

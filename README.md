@@ -263,8 +263,8 @@ mvn -v
 
 	```sh
 	cd jersey-servlet-example
-  mvn clean install
-  java -jar target/dependency/webapp-runner.jar target/*.war
+	mvn clean install
+	java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
@@ -332,8 +332,8 @@ mvn -v
 
 	```sh
 	cd spark-servlet-example
-  mvn clean install
-  java -jar target/dependency/webapp-runner.jar target/*.war
+	mvn clean install
+	java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
@@ -401,8 +401,8 @@ mvn -v
 
 	```sh
 	cd servlet-example
-  mvn clean install
-  java -jar target/dependency/webapp-runner.jar target/*.war
+	mvn clean install
+	java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.

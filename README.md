@@ -263,10 +263,11 @@ mvn -v
 
 	```sh
 	cd jersey-servlet-example
-	mvn tomcat7:run
+  mvn clean install
+  java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
-4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 
@@ -331,10 +332,11 @@ mvn -v
 
 	```sh
 	cd spark-servlet-example
-	mvn tomcat7:run
+  mvn clean install
+  java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
-4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 
@@ -399,10 +401,11 @@ mvn -v
 
 	```sh
 	cd servlet-example
-	mvn tomcat7:run
+  mvn clean install
+  java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
-4. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
+4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see event logged and monitored.
 

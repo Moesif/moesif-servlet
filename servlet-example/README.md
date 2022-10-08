@@ -63,10 +63,10 @@ mvn -v
 4. Run servlet-example
 
 	```sh
-	mvn tomcat7:run
+ 	java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
-5. Go to `http://localhost:3099/api/demo` or the port that Tomcat is running on.
+5. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
 In your Moesif Account, you should see API calls logged under API Analytics -> Live Event Stream.
 

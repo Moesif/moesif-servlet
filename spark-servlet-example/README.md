@@ -66,7 +66,7 @@ mvn -v
 4. Run spark-servlet-example
 
 	```sh
-  java -jar target/dependency/webapp-runner.jar target/*.war
+ 	java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
 5. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.

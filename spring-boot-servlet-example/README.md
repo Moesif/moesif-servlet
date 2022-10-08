@@ -31,9 +31,9 @@ mvn -v
 
 4. Run spring-boot-servlet-example (from the spring-boot-servlet-example dir)
 
-  ```sh
-  java -jar target/dependency/webapp-runner.jar target/*.war
-  ```
+	```sh
+ 	java -jar target/dependency/webapp-runner.jar target/*.war
+	```
 
 
 5. Using Postman or CURL, make a few API calls to `http://localhost:8080/api` or the port that Spring Boot is running on.

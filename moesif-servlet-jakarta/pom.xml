@@ -1,0 +1,188 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.moesif.servlet</groupId>
+  <artifactId>moesif-servlet-jakarta</artifactId>
+  <version>2.0-beta-1</version>
+  <packaging>jar</packaging>
+  <name>moesif-servlet-jakarta</name>
+  <description>Moesif SDK for Java Servlet to log and analyze API calls</description>
+  <url>https://www.moesif.com/docs/server-integration/servlet/</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/Moesif/moesif-servlet.git</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>moesif</id>
+      <name>Moesif API Analytics</name>
+      <email>support@moesif.com</email>
+      <url>https://www.moesif.com</url>
+      <organization>Moesif, Inc.</organization>
+      <organizationUrl>https://www.moesif.com</organizationUrl>
+      <roles>
+        <role>owner</role>
+        <role>developer</role>
+      </roles>
+      <timezone>America/Los_Angeles</timezone>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.7</java.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.moesif.api</groupId>
+      <artifactId>moesifapi</artifactId>
+      <version>1.6.17</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.19.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.19.0</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.23.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>4.9.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>moesif-servlet</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.0.1</version>
+        
+        <configuration>
+            <skip>true</skip>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <configuration>
+              <!-- This is necessary for gpg to not try to use the pinentry programs -->
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.13</version>
+        <extensions>false</extensions>
+        <executions>
+          <execution>
+            <id>injected-nexus-deploy</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

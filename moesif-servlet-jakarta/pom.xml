@@ -5,7 +5,7 @@
   <artifactId>moesif-servlet-jakarta</artifactId>
   <version>2.0-alpha-1</version>
   <packaging>jar</packaging>
-  <name>moesif-servlet</name>
+  <name>moesif-servlet-jakarta</name>
   <description>Moesif SDK for Java Servlet to log and analyze API calls using jakarta</description>
   <url>https://www.moesif.com/docs/server-integration/servlet/</url>
 

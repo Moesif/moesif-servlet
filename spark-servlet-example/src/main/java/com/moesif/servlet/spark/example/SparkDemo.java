@@ -2,7 +2,6 @@ package com.moesif.servlet.spark.example;
 
 import java.util.*;
 import java.io.*;
-import javax.servlet.*;
 import com.moesif.api.APIHelper;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.controllers.APIController;

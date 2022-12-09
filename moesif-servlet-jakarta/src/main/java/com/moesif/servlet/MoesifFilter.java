@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import java.lang.*;
-
-
 
 import com.moesif.api.models.*;
 
@@ -149,7 +146,7 @@ public class MoesifFilter implements Filter {
   }
 
   @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
+  public void init(FilterConfig filterConfig) {
     logger.info("Initialized Moesif filter");
 
     String appId = filterConfig.getInitParameter("application-id");

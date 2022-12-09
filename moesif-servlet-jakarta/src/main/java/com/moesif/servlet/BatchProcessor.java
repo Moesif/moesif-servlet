@@ -8,7 +8,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;

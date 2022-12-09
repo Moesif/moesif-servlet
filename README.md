@@ -25,7 +25,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.7.5</version>
+    <version>1.7.6</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.7.5'
+    compile 'com.moesif.servlet:moesif-servlet:1.7.6'
 }
 ```
 
@@ -72,7 +72,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.http.converter.*;
 
 @Configuration
-public class MyConfig extends WebMvcConfigurerAdapter {
+public class MyConfig implements WebMvcConfigurer {
 
   @Bean
   public Filter moesifFilter() {
@@ -87,7 +87,7 @@ For details regarding `MoesifConfiguration`, see the [configuration options](#co
 
 ```java
 @Configuration
-public class MyConfig extends WebMvcConfigurerAdapter {
+public class MyConfig implements WebMvcConfigurer {
 
   MoesifConfiguration config = new MoesifConfigurationAdapter() {
     @Override
@@ -124,20 +124,20 @@ mvn -v
 (Register for an account on [moesif.com](https://www.moesif.com))
 
 	```sh
-	vim spring-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
+	vim spring-boot-starter-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
 	```
 
 3. Compile the example
 
 	```sh
-	cd spring-example
+	cd spring-boot-starter-example
 	mvn clean install
 	```
 
-4. Run spring-example (from the spring-example dir)
+4. Run it
 
 	```sh
-	java -jar target/moesif-spring-example.jar
+	java -jar target/spring-boot-starter-example*.jar
 	```
 
 	Alternatively:
@@ -318,7 +318,7 @@ mvn -v
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
-  cd moesif-servlet
+	cd moesif-servlet
 	```
 
 2. Update web.xml to use your own Moesif ApplicationId
@@ -327,6 +327,10 @@ mvn -v
 	```sh
 	vim spark-servlet-example/src/main/webapp/WEB-INF/web.xml
 	```
+  and add it to `new MoesifAPIClient("")`
+  ```sh
+  vim spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java
+  ```
 
 3. Run spark-servlet-example
 

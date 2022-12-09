@@ -1,6 +1,6 @@
-#### Spring Boot Jakarta example using the Spring Boot Starter Parent
+#### Spring Boot 3.0 Jakarta example using the Spring Boot Starter Parent
 
-In order to run this example you will need to have Java 7+ and Maven installed.
+In order to run this example you will need to have Java 17+ and Maven installed.
 
 Before starting, check that your maven version is 3.0.x or above:
 

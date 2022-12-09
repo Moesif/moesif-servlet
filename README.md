@@ -9,8 +9,11 @@
 
 `moesif-servlet` is a Java Servlet Filter that logs _incoming_ API calls and sends to [Moesif](https://www.moesif.com) for API analytics and monitoring.
 
-The SDK is implemented as a [Java Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
+The SDK is implemented as a [JavaX Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
 without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html) such as Spring, Struts, Jersey, etc can use this SDK with minimal configuration.
+
+
+`moesif-servlet-jakarta` is an identical implementation that uses the newer [Jakarta Servlet API](https://tomcat.apache.org/tomcat-10.0-doc/servletapi/jakarta/servlet/Servlet.html) and works with Java 17+ [Tomcat 10](https://tomcat.apache.org/tomcat-10.0-doc/index.html) and [Spring Boot 3.0](https://spring.io/projects/spring-boot). The source code is located in folder[`moesif-servlet-jakarta`](moesif-servlet-jakarta)
 
 [Source Code on GitHub](https://github.com/moesif/moesif-servlet)
 
@@ -21,11 +24,17 @@ without importing framework specific dependencies. Any framework built on Java [
 Add the Moesif dependency to your project's pom.xml file:
 
 ```xml
-<!-- Include jcenter repository if you don't already have it. -->
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
     <version>1.7.5</version>
+</dependency>
+
+<!-- OR for newer Jakarta-->
+<dependency>
+    <groupId>com.moesif.servlet</groupId>
+    <artifactId>moesif-servlet-jakarta</artifactId>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -36,6 +45,11 @@ Add the Moesif dependency to your project's build.gradle file:
 ```gradle
 dependencies {   
     compile 'com.moesif.servlet:moesif-servlet:1.7.5'
+}
+
+// OR for newer Jakarta
+dependencies {   
+    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.0.0'
 }
 ```
 
@@ -49,6 +63,7 @@ Go to your specific framework's instructions below:
 - [Jersey Servlet](#jersey-servlet)
 - [Spark Servlet](#spark-servlet)
 - [Generic Java Servlet](#generic-java-servlet)
+- [Spring Boot 3.0.0 using Jakarta](examples/spring-boot-starter-example-jakarta)
 
 
 Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).

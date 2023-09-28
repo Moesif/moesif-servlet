@@ -27,7 +27,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.7.6</version>
+    <version>1.7.8</version>
 </dependency>
 
 <!-- OR for newer Jakarta-->

@@ -44,7 +44,7 @@ Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.7.6'
+    compile 'com.moesif.servlet:moesif-servlet:1.7.8'
 }
 
 // OR for newer Jakarta
@@ -443,8 +443,8 @@ Override the following parameters, if needed.
 Name | Required | Type & Default Value | Description |
 --------- | -------- | -----------|-----------------|
 |batchSize | False | Type: `number` Default `100` | BatchSize of API events that will trigger flushing of queue and sending the data to Moesif. |
-|batchMaxTime| False | Type: `number in seconds` Default `5`. | This is the maximum wait time (approximately) before triggering flushing of the queue and sending to Moesif.|
-|queueSize | False | Type: `number` Default `5000` | Maximum queue capacity to hold events in memory. |
+|batchMaxTime| False | Type: `number in seconds` Default `2`. | This is the maximum wait time (approximately) before triggering flushing of the queue and sending to Moesif.|
+|queueSize | False | Type: `number` Default `1000000` | Maximum queue capacity to hold events in memory. |
 |retry | False | Type: `number` Default: `0` | Number of time to retry if fails to post to Moesif. If set, must be a number between 0 to 3. |
 |updateConfigTime | False | Type: `number` Default: `300` | This is the maximum wait time (approximately) to pull the latest app config and update the cache.|
 

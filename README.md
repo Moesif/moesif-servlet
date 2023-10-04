@@ -34,7 +34,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet-jakarta</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
@@ -49,7 +49,7 @@ dependencies {
 
 // OR for newer Jakarta
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.0.0'
+    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.0.2'
 }
 ```
 

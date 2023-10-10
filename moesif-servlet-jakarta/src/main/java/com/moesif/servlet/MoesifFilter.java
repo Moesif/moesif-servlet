@@ -604,7 +604,7 @@ public class MoesifFilter implements Filter {
         // Generate random number
         double randomPercentage = Math.random() * 100;
 
-        int samplingPercentage = AppConfigManager.getInstance().getSampleRate(maskedEvent);
+        int samplingPercentage = AppConfigManager.getInstance().getSampleRate(event);
 
         // Compare percentage to send event
         if (samplingPercentage >= randomPercentage) {

@@ -4,6 +4,7 @@ import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.controllers.APIController;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.models.AppConfigModel;
+import com.moesif.api.models.EventModel;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -46,14 +47,8 @@ public class AppConfigManager extends TimerTask {
     private AppConfigManager() {
     }
 
-    public int getSampleRate(String userId, String companyId) {
-        int sampleRate = appConfigModel.getSampleRate();
-        if (userId != null && appConfigModel.getUserSampleRate().containsKey(userId)) {
-            sampleRate = appConfigModel.getUserSampleRate().get(userId);
-        } else if (companyId != null && appConfigModel.getCompanySampleRate().containsKey(companyId)) {
-            sampleRate = appConfigModel.getCompanySampleRate().get(companyId);
-        }
-        return sampleRate;
+    public int getSampleRate(EventModel eventModel) {
+      return moesifApi.getAPI().getSampleRateToUse(eventModel, appConfigModel);
     }
 
     /***

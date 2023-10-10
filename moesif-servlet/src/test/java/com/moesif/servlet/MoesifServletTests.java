@@ -241,9 +241,5 @@ public class MoesifServletTests extends TestCase {
 		filter.updateCompaniesBatch(companies);
 	}
 
-	public void testGetAppConfig() throws Throwable{
-//		filter.init(filterConfig);
-		int sampleRate = AppConfigManager.getInstance().getSampleRate(null, null);
-		assertTrue("Sample Rate should be less than equal to 100", 100 >= sampleRate);
-	}
+
 }

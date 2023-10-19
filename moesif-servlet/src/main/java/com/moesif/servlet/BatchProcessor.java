@@ -101,15 +101,6 @@ public class BatchProcessor extends TimerTask {
                 final int status = httpContext.getResponse().getStatusCode();
                 // No need to retry. Mark call done.
                 done[0] = true;
-                if (status == 201) {
-                    // Fetch the response ETag to check if we need to update appConfig.
-                    String responseConfigEtag = httpResponse.getHeaders().get("x-moesif-config-etag");
-                    if (responseConfigEtag != null) {
-                        AppConfigManager.getInstance().updateIfStale(responseConfigEtag);
-                    }
-                } else if (debug) {
-                    logger.warning("Status is " + status);
-                }
             }
 
             public void onFailure(HttpContext httpContext, Throwable error) {

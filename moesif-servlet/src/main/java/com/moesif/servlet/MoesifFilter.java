@@ -1,33 +1,21 @@
 package com.moesif.servlet;
 
+import com.moesif.api.BodyParser;
+import com.moesif.api.IpAddress;
+import com.moesif.api.MoesifAPIClient;
+import com.moesif.api.controllers.APIController;
+import com.moesif.api.models.*;
+import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
+import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import java.lang.*;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.moesif.api.models.*;
-
-import com.moesif.api.MoesifAPIClient;
-import com.moesif.api.http.client.APICallBack;
-import com.moesif.api.http.client.HttpContext;
-import com.moesif.api.controllers.APIController;
-import com.moesif.api.IpAddress;
-import com.moesif.api.BodyParser;
-
-import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
-import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
-import org.apache.commons.lang3.StringUtils;
 
 public class MoesifFilter implements Filter {
 
@@ -174,10 +162,6 @@ public class MoesifFilter implements Filter {
         this.setLogBody(false);
       }
     }
-
-    // Setup app config manager and run it immediately to load app config.
-    AppConfigManager.getInstance().setMoesifApiClient(this.moesifApi, this.debug);
-     AppConfigManager.getInstance().run();
 
     // Initialize the batch event processor and timer tasks.
     this.initBatchProcessorAndStartJobs();
@@ -343,6 +327,33 @@ public class MoesifFilter implements Filter {
     EventRequestModel eventRequestModel = getEventRequestModel(requestWrapper,
         startDate, config.getApiVersion(httpRequest, httpResponse), transactionId);
 
+    EventModel event = createEvent(eventRequestModel,
+            config.identifyUser(httpRequest, null),
+            config.identifyCompany(httpRequest, null),
+            config.getSessionToken(httpRequest, null),
+            config.getTags(httpRequest, null),
+            config.getMetadata(httpRequest, null)
+    );
+
+    if(moesifApi.getAPI().isBlockedByGovernanceRules(event)) {
+      EventResponseModel responseModel = event.getResponse();
+      if (transactionId != null) {
+        responseModel.getHeaders().put("X-Moesif-Transaction-Id", transactionId);
+      }
+
+      EventModel maskedEvent = config.maskContent(event);
+      this.addEventToQueue(maskedEvent);
+      Map<String, String> headers = responseModel.getHeaders();
+      headers.forEach((key, value) -> {
+        httpResponse.setHeader(key, value);
+      });
+      httpResponse.setStatus(responseModel.getStatus());
+      httpResponse.setContentType(responseModel.getTransferEncoding());
+      httpResponse.getWriter().write(responseModel.getBody().toString());
+      return;
+    }
+
+
     // pass to next step in the chain.
     try {
       filterChain.doFilter(requestWrapper, responseWrapper);
@@ -429,7 +440,7 @@ public class MoesifFilter implements Filter {
     this.batchProcessor = new BatchProcessor(this.moesifApi, this.config, this.debug);
 
     // Initialize the timer tasks - Create scheduled jobs
-    this.scheduleAppConfigJob();
+//    this.scheduleAppConfigJob();
     this.scheduleBatchEventsJob();
   }
 
@@ -455,20 +466,6 @@ public class MoesifFilter implements Filter {
     }
   }
 
-  /**
-   * Method to create scheduled job for updating config periodically.
-   */
-  private void scheduleAppConfigJob() {
-    // Make sure there is none before creating the timer
-    this.resetJobTimer(this.updateConfigTimer);
-
-    this.updateConfigTimer = new Timer("moesif_update_config_job");
-    updateConfigTimer.schedule(
-        AppConfigManager.getInstance(),
-        (long) this.batchProcessor.getUpdateConfigTime() * 1000, // Trigger this job every X seconds since we're already fetching the app config on init.
-        (long) this.batchProcessor.getUpdateConfigTime() * 1000
-    );
-  }
 
   /**
    * Method to create scheduled job for sending batch events periodically.
@@ -555,6 +552,34 @@ public class MoesifFilter implements Filter {
     }
   }
 
+  private EventModel createEvent(EventRequestModel eventRequestModel,
+                           String userId,
+                           String companyId,
+                           String sessionToken,
+                           String tags,
+                           Object metadata) {
+
+    EventBuilder eb = new EventBuilder();
+    eb.request(eventRequestModel);
+    eb.direction("Incoming");
+    if (userId != null) {
+      eb.userId(userId);
+    }
+    if (companyId != null) {
+      eb.companyId(companyId);
+    }
+    if (sessionToken != null) {
+      eb.sessionToken(sessionToken);
+    }
+    if (tags != null) {
+      eb.tags(tags);
+    }
+    if (metadata != null) {
+      eb.metadata(metadata);
+    }
+    return eb.build();
+  }
+
   private void sendEvent(EventRequestModel eventRequestModel,
                            EventResponseModel eventResponseModel,
                            String userId,
@@ -585,22 +610,7 @@ public class MoesifFilter implements Filter {
     EventModel event = eb.build();
 
     if (this.moesifApi != null) {
-      // actually send the event here.
 
-      APICallBack<Object> callBack = new APICallBack<Object>() {
-        public void onSuccess(HttpContext context, Object response) {
-          if (debug) {
-            logger.info("send to Moesif success");
-          }
-        }
-
-        public void onFailure(HttpContext context, Throwable error) {
-          if (debug) {
-            logger.info("send to Moesif error ");
-            logger.info( error.toString());
-          }
-        }
-      };
 
       try {
 
@@ -612,7 +622,7 @@ public class MoesifFilter implements Filter {
         // Generate random number
         double randomPercentage = Math.random() * 100;
 
-        int samplingPercentage = AppConfigManager.getInstance().getSampleRate(userId, companyId);
+        int samplingPercentage = moesifApi.getAPI().getSampleRateToUse(event);
 
         // Compare percentage to send event
         if (samplingPercentage >= randomPercentage) {

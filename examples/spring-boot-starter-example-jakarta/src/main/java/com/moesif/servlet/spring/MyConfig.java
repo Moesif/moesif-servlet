@@ -23,15 +23,21 @@ public class MyConfig implements WebMvcConfigurer {
 
             @Override
             public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
-                if (request.getUserPrincipal() == null) {
-                    return null;
-                }
-                return request.getUserPrincipal().getName();
+                return request.getHeader("X-User-Id");
+//                if (request.getUserPrincipal() == null) {
+//                    return null;
+//                }
+//                return request.getUserPrincipal().getName();
             }
 
             @Override
             public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
                 return request.getHeader("Authorization");
+            }
+
+            @Override
+            public String identifyCompany(HttpServletRequest request, HttpServletResponse response) {
+                return request.getHeader("X-Company-Id");
             }
 
             @Override

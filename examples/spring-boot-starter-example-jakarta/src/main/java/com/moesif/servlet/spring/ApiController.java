@@ -27,6 +27,36 @@ public class ApiController {
     return new Greeting(counter.incrementAndGet(), "Hello There!");
   }
 
+  @GetMapping("gov/no_italy")
+  public String noItaly() {
+    return "{\"success\" : true}";
+  }
+
+  @GetMapping("gov/company1")
+  public String company1() {
+    return "{\"success\" : true}";
+  }
+
+  @GetMapping("gov/canada")
+  public String canada() {
+    return "{\"success\" : true}";
+  }
+
+  @GetMapping("gov/cairo")
+  public String cairo() {
+    return "{\"success\" : true}";
+  }
+
+  @GetMapping("gov/for_companies_in_japan_only")
+  public String forCompaniesInJapanOnly() {
+    return "{\"success\" : true}";
+  }
+
+  @GetMapping("gov/random")
+  public String random() {
+    return "{\"success\" : true}";
+  }
+
   @RequestMapping("/api/text")
   @ResponseBody
   public String simpleString() {

@@ -45,8 +45,6 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     public MoesifSpringRequestInterceptor(MoesifAPIClient moesifApi) {
         this.moesifApi = moesifApi;
         this.config = new MoesifRequestConfiguration();
-
-        this.moesifApi.getAPI().setShouldSyncAppConfig(true);
     }
 
     /**
@@ -56,8 +54,6 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     public MoesifSpringRequestInterceptor(String applicationId) {
         this.moesifApi = new MoesifAPIClient(applicationId);
         this.config = new MoesifRequestConfiguration();
-
-        this.moesifApi.getAPI().setShouldSyncAppConfig(true);
     }
 
     /**
@@ -185,6 +181,28 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         IOException queryException = null;
         EventRequestModel eventRequestModel = buildEventRequestModel(request, body);
+
+        EventModel event = createEvent(eventRequestModel,
+                config.identifyUser(request, null),
+                config.identifyCompany(request, null),
+                config.getSessionToken(request, null),
+                config.getMetadata(request, null)
+        );
+
+        if (moesifApi.getAPI().isBlockedByGovernanceRules(event)) {
+            EventResponseModel responseModel = event.getResponse();
+            if (!config.skip(request, null)) {
+                EventModel maskedEvent = config.maskContent(event);
+                try {
+                    moesifApi.getAPI().createEvent(maskedEvent);
+                } catch (Throwable e) {
+                    warn(e);
+                }
+            }
+            MoesifBlockedClientHttpResponse response = new MoesifBlockedClientHttpResponse(responseModel);
+            return response;
+        }
+
         EventResponseModel eventResponseModel = null;
 
         MoesifClientHttpResponse response = null;
@@ -252,6 +270,31 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
         if (config.debug) {
             logger.warning("Warning:\n" + e.toString());
         }
+    }
+
+    private EventModel createEvent(EventRequestModel eventRequestModel,
+                                   String userId,
+                                   String companyId,
+                                   String sessionToken,
+                                   Object metadata) {
+
+        EventBuilder eb = new EventBuilder();
+        eb.request(eventRequestModel);
+        eb.direction("Incoming");
+        if (userId != null) {
+            eb.userId(userId);
+        }
+        if (companyId != null) {
+            eb.companyId(companyId);
+        }
+        if (sessionToken != null) {
+            eb.sessionToken(sessionToken);
+        }
+
+        if (metadata != null) {
+            eb.metadata(metadata);
+        }
+        return eb.build();
     }
 }
 

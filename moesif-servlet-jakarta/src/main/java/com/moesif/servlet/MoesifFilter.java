@@ -34,7 +34,7 @@ public class MoesifFilter implements Filter {
   private int sendBatchJobAliveCounter = 0;     // counter to check scheduled job is alive or not.
 
   // Timer for various tasks
-  Timer updateConfigTimer = null;
+//  Timer updateConfigTimer = null;
   Timer sendBatchEventTimer = null;
 
   /**
@@ -167,9 +167,6 @@ public class MoesifFilter implements Filter {
       }
     }
 
-    // Setup app config manager and run it immediately to load app config.
-    AppConfigManager.getInstance().setMoesifApiClient(this.moesifApi, this.debug);
-     AppConfigManager.getInstance().run();
 
     // Initialize the batch event processor and timer tasks.
     this.initBatchProcessorAndStartJobs();
@@ -335,6 +332,35 @@ public class MoesifFilter implements Filter {
     EventRequestModel eventRequestModel = getEventRequestModel(requestWrapper,
         startDate, config.getApiVersion(httpRequest, httpResponse), transactionId);
 
+    EventModel event = createEvent(eventRequestModel,
+            config.identifyUser(httpRequest, null),
+            config.identifyCompany(httpRequest, null),
+            config.getSessionToken(httpRequest, null),
+            config.getTags(httpRequest, null),
+            config.getMetadata(httpRequest, null)
+    );
+
+    if(moesifApi.getAPI().isBlockedByGovernanceRules(event)) {
+      logger.warning("Blocked by governance rules" + event.getBlockedBy());
+      EventResponseModel responseModel = event.getResponse();
+      if (transactionId != null) {
+        responseModel.getHeaders().put("X-Moesif-Transaction-Id", transactionId);
+      }
+
+      EventModel maskedEvent = config.maskContent(event);
+      this.addEventToQueue(maskedEvent);
+
+      //short circuit the filter chain
+      Map<String, String> headers = responseModel.getHeaders();
+      headers.forEach((key, value) -> {
+        httpResponse.setHeader(key, value);
+      });
+      httpResponse.setStatus(responseModel.getStatus());
+      httpResponse.setContentType(responseModel.getTransferEncoding());
+      httpResponse.getWriter().write(responseModel.getBody().toString());
+      return;
+    }
+
     // pass to next step in the chain.
     try {
       filterChain.doFilter(requestWrapper, responseWrapper);
@@ -421,7 +447,6 @@ public class MoesifFilter implements Filter {
     this.batchProcessor = new BatchProcessor(this.moesifApi, this.config, this.debug);
 
     // Initialize the timer tasks - Create scheduled jobs
-    this.scheduleAppConfigJob();
     this.scheduleBatchEventsJob();
   }
 
@@ -440,27 +465,13 @@ public class MoesifFilter implements Filter {
       if (debug) {
         logger.info("Stopping scheduled jobs.");
       }
-      this.resetJobTimer(this.updateConfigTimer);
+//      this.resetJobTimer(this.updateConfigTimer);
       this.resetJobTimer(this.sendBatchEventTimer);
     } catch (Exception e) {
       // ignore the error.
     }
   }
 
-  /**
-   * Method to create scheduled job for updating config periodically.
-   */
-  private void scheduleAppConfigJob() {
-    // Make sure there is none before creating the timer
-    this.resetJobTimer(this.updateConfigTimer);
-
-    this.updateConfigTimer = new Timer("moesif_update_config_job");
-    updateConfigTimer.schedule(
-        AppConfigManager.getInstance(),
-        (long) this.batchProcessor.getUpdateConfigTime() * 1000, // Trigger this job every X seconds since we're already fetching the app config on init.
-        (long) this.batchProcessor.getUpdateConfigTime() * 1000
-    );
-  }
 
   /**
    * Method to create scheduled job for sending batch events periodically.
@@ -604,7 +615,7 @@ public class MoesifFilter implements Filter {
         // Generate random number
         double randomPercentage = Math.random() * 100;
 
-        int samplingPercentage = AppConfigManager.getInstance().getSampleRate(event);
+        int samplingPercentage = moesifApi.getAPI().getSampleRateToUse(event);
 
         // Compare percentage to send event
         if (samplingPercentage >= randomPercentage) {
@@ -640,5 +651,33 @@ public class MoesifFilter implements Filter {
     } else {
       return requestURL.append('?').append(queryString).toString();
     }
+  }
+
+  private EventModel createEvent(EventRequestModel eventRequestModel,
+                                 String userId,
+                                 String companyId,
+                                 String sessionToken,
+                                 String tags,
+                                 Object metadata) {
+
+    EventBuilder eb = new EventBuilder();
+    eb.request(eventRequestModel);
+    eb.direction("Incoming");
+    if (userId != null) {
+      eb.userId(userId);
+    }
+    if (companyId != null) {
+      eb.companyId(companyId);
+    }
+    if (sessionToken != null) {
+      eb.sessionToken(sessionToken);
+    }
+    if (tags != null) {
+      eb.tags(tags);
+    }
+    if (metadata != null) {
+      eb.metadata(metadata);
+    }
+    return eb.build();
   }
 }

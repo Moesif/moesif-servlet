@@ -7,11 +7,10 @@ import com.moesif.servlet.MoesifConfiguration;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.context.annotation.*;
 import com.moesif.servlet.MoesifFilter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 
 @Configuration
-public class MyConfig extends WebMvcConfigurerAdapter {
+public class MyConfig implements WebMvcConfigurer {
 
     public String applicationId = "Your Moesif Application Id";
     @Bean

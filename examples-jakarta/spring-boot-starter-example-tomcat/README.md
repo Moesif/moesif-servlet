@@ -12,7 +12,7 @@ mvn -v
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
-    cd moesif-servlet/examples/spring-boot-starter-example-jakarta
+    cd moesif-servlet/examples-jakarta/spring-boot-starter-example-tomcat
 	```
 
 2. Update MyConfig to use your own Moesif ApplicationId

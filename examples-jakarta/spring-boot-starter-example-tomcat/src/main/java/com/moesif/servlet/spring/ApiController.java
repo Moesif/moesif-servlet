@@ -57,6 +57,11 @@ public class ApiController {
     return "{\"success\" : true}";
   }
 
+  @GetMapping("gov/multiple_match")
+  public String multiple_match() {
+    return "{\"success\" : true}";
+  }
+
   @RequestMapping("/api/text")
   @ResponseBody
   public String simpleString() {

@@ -63,7 +63,9 @@ Go to your specific framework's instructions below:
 - [Jersey Servlet](#jersey-servlet)
 - [Spark Servlet](#spark-servlet)
 - [Generic Java Servlet](#generic-java-servlet)
-- [Spring Boot 3.0.0 using Jakarta](examples/spring-boot-starter-example-jakarta)
+- Spring Boot 3.x using Jakarta
+  - [Spring Boot 3.0 Jakarta with Tomcat](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-tomcat)
+  - [Spring Boot 3.2 Jakarta with Undertow](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-undertow)
 
 
 Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).

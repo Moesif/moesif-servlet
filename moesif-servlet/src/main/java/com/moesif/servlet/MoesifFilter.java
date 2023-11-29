@@ -335,12 +335,15 @@ public class MoesifFilter implements Filter {
             config.getMetadata(httpRequest, null)
     );
 
-    if(moesifApi.getAPI().isBlockedByGovernanceRules(event)) {
+    BlockedByGovernanceRulesResponse blockResponse = moesifApi.getAPI().getBlockedByGovernanceRulesResponse(event);
+    if(blockResponse.isBlocked) {
+      logger.warning("Blocked by governance rules" + blockResponse.blockedBy);
+      event.setBlockedBy(blockResponse.blockedBy);
+      event.setResponse(blockResponse.response);
       EventResponseModel responseModel = event.getResponse();
       if (transactionId != null) {
         responseModel.getHeaders().put("X-Moesif-Transaction-Id", transactionId);
       }
-
       EventModel maskedEvent = config.maskContent(event);
       this.addEventToQueue(maskedEvent);
       Map<String, String> headers = responseModel.getHeaders();

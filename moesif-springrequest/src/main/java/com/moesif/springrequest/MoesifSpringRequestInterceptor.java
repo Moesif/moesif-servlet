@@ -188,8 +188,8 @@ public class MoesifSpringRequestInterceptor implements ClientHttpRequestIntercep
                 config.getSessionToken(request, null),
                 config.getMetadata(request, null)
         );
-
-        if (moesifApi.getAPI().isBlockedByGovernanceRules(event)) {
+        BlockedByGovernanceRulesResponse blockResponse = moesifApi.getAPI().getBlockedByGovernanceRulesResponse(event);
+        if (blockResponse.isBlocked) {
             EventResponseModel responseModel = event.getResponse();
             if (!config.skip(request, null)) {
                 EventModel maskedEvent = config.maskContent(event);

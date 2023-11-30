@@ -27,14 +27,14 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.7.9</version>
+    <version>1.7.10</version>
 </dependency>
 
 <!-- OR for newer Jakarta-->
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet-jakarta</artifactId>
-    <version>2.0.3</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 

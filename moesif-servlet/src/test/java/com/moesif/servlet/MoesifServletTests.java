@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.moesif.api.APIHelper;
 import com.moesif.api.models.CompanyBuilder;
 import com.moesif.api.models.CompanyModel;
+import com.moesif.api.models.SubscriptionBuilder;
+import com.moesif.api.models.SubscriptionModel;
 import com.moesif.api.models.UserBuilder;
 import junit.framework.TestCase;
 import org.mockito.Mockito;
@@ -241,5 +243,60 @@ public class MoesifServletTests extends TestCase {
 		filter.updateCompaniesBatch(companies);
 	}
 
+	public void testUpdateSubscription() throws Throwable {
 
+		// Only subscriptionId, companyId, and status
+		// metadata can be any custom object
+		SubscriptionModel subscription = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+
+		filter.updateSubscription(subscription);
+	}
+
+	public void testUpdateSubscriptionsBatch() throws Throwable {
+		List<SubscriptionModel> subscriptions = new ArrayList<SubscriptionModel>();
+
+        SubscriptionModel subscriptionA = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .build();
+        subscriptions.add(subscriptionA);
+
+        SubscriptionModel subscriptionB = new SubscriptionBuilder()
+                .subscriptionId("sub_54321")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+        subscriptions.add(subscriptionB);
+
+		filter.updateSubscriptionsBatch(subscriptions);
+	}
 }

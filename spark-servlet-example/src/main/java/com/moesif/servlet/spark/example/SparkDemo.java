@@ -150,6 +150,42 @@ public class SparkDemo implements spark.servlet.SparkApplication {
             }
         );
 
+        Spark.post("/api/subscriptions/:id",
+            (Request request, Response response) -> {
+
+                // Only subscriptionId, companyId, and status are required
+                // metadata can be any custom object
+                SubscriptionModel subscription = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+
+                try {
+                    apiClient.updateSubscription(subscription);
+                } catch (Throwable t) {
+                    System.out.println("Error while updating the subscription profile.");
+                }
+
+                response.header("Content-Type", "application/json");
+                response.status(201);
+                return "{"
+                        + "\"updated_subscription\": true"
+                        + "}";
+            }
+        );
+
 
         Spark.post("/api/upload/file", (req, res) -> {
             final File upload = new File("/tmp");

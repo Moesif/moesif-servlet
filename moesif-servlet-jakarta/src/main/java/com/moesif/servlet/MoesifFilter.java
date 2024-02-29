@@ -285,6 +285,69 @@ public class MoesifFilter implements Filter {
     }
   }
 
+  public void updateSubscription(SubscriptionModel subscriptionModel) throws Throwable{
+
+    if (this.moesifApi != null) {
+      String subscriptionId = subscriptionModel.getSubscriptionId();
+      String companyId = subscriptionModel.getCompanyId();
+      String status = subscriptionModel.getStatus();
+
+      if (subscriptionId != null && !subscriptionId.isEmpty() 
+          || companyId != null && !companyId.isEmpty()
+          || status != null && !status.isEmpty()
+          ) {
+        try {
+          moesifApi.getAPI().updateSubscription(subscriptionModel);
+        }
+        catch(Exception e) {
+          if (debug) {
+            logger.warning("Update Subscription to Moesif failed " + e.toString());
+          }
+        }
+      }
+      else {
+        throw new IllegalArgumentException("To update a subscription, the subscriptionId, companyId, and status fields are required");
+      }
+    }
+    else {
+      logger.warning("The application Id should be set before using MoesifFilter");
+    }
+  }
+
+  public void updateSubscriptionsBatch(List<SubscriptionModel> subscriptionsModel) throws Throwable{
+
+    List<SubscriptionModel> subscriptions = new ArrayList<SubscriptionModel>();
+    if (this.moesifApi != null) {
+      for (SubscriptionModel subscription : subscriptionsModel) {
+        String subscriptionId = subscription.getSubscriptionId();
+        String companyId = subscription.getCompanyId();
+        String status = subscription.getStatus();
+
+        if (subscriptionId != null && !subscriptionId.isEmpty() 
+            || companyId != null && !companyId.isEmpty()
+            || status != null && !status.isEmpty()
+            ) {
+          subscriptions.add(subscription);
+        } else {
+          throw new IllegalArgumentException("To update a subscription, the subscriptionId, companyId, and status fields are required");
+        }
+      }
+    }
+    else {
+      logger.warning("The application Id should be set before using MoesifFilter");
+    }
+
+    if (!subscriptions.isEmpty()) {
+      try {
+        moesifApi.getAPI().updateSubscriptionsBatch(subscriptions);
+      } catch (Exception e) {
+        if (debug) {
+          logger.warning("Update Subscriptions to Moesif failed " + e.toString());
+        }
+      }
+    }
+  }
+
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
     if (debug) {

@@ -16,6 +16,8 @@ import com.moesif.api.models.UserModel;
 import com.moesif.api.models.CampaignModel;
 import com.moesif.api.models.CampaignBuilder;
 import static org.mockito.Mockito.when;
+import com.moesif.api.models.SubscriptionBuilder;
+import com.moesif.api.models.SubscriptionModel;
 
 
 public class MoesifServletTests extends TestCase {
@@ -241,5 +243,67 @@ public class MoesifServletTests extends TestCase {
 		filter.updateCompaniesBatch(companies);
 	}
 
+	public void testUpdateSubscription() throws Throwable {
+
+		// Only subscriptionId is required
+		// metadata can be any custom object
+		SubscriptionModel subscription = new SubscriptionBuilder()
+				.subscriptionId("sub_12345")
+				.companyId("67890")
+				.currentPeriodStart(new Date())
+				.currentPeriodEnd(new Date())
+				.status("active")
+				.metadata(APIHelper.deserialize("{" +
+						"\"email\": \"test@test.com\"," +
+						"\"string_field\": \"value_1\"," +
+						"\"number_field\": 0," +
+						"\"object_field\": {" +
+						"\"field_1\": \"value_1\"," +
+						"\"field_2\": \"value_2\"" +
+						"}" +
+						"}"))
+				.build();
+
+		filter.updateSubscription(subscription);
+	}
+
+	public void testUpdateSubscriptionsBatch() throws Throwable {
+
+		List<SubscriptionModel> subscriptions = new ArrayList<SubscriptionModel>();
+
+		HashMap<String, Object> metadata = new HashMap<String, Object>();
+		metadata = APIHelper.deserialize("{" +
+		"\"email\": \"test@test.com\"," +
+		"\"string_field\": \"value_1\"," +
+		"\"number_field\": 0," +
+		"\"object_field\": {" +
+		"\"field_1\": \"value_1\"," +
+		"\"field_2\": \"value_2\"" +
+		"}" +
+		"}");
+
+		SubscriptionModel subscriptionA = new SubscriptionBuilder()
+				.subscriptionId("sub_12345")
+				.companyId("67890")
+				.currentPeriodStart(new Date())
+				.currentPeriodEnd(new Date())
+				.status("active")
+				.metadata(metadata)
+				.build();
+
+		SubscriptionModel subscriptionB = new SubscriptionBuilder()
+				.subscriptionId("sub_67890")
+				.companyId("12345")
+				.currentPeriodStart(new Date())
+				.currentPeriodEnd(new Date())
+				.status("active")
+				.metadata(metadata)
+				.build();
+
+		subscriptions.add(subscriptionA);
+		subscriptions.add(subscriptionB);
+
+		filter.updateSubscriptionsBatch(subscriptions);
+	}
 
 }

@@ -31,7 +31,7 @@
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>moesif-servlet</artifactId>
-      <version>1.7.11</version>
+      <version>1.8.0</version>
     </dependency>
   </dependencies>
 

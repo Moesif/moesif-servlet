@@ -726,6 +726,63 @@ CompanyModel company = new CompanyBuilder()
 filter.updateCompaniesBatch(companies);
 ```
 
+## Update a Single Subscription
+
+Create or update a subscription profile in Moesif. The metadata field can store any subscription-related information you wish to keep. The `subscription_id`, `company_id`, and `status` fields are all required. This method is a convenient helper that calls the Moesif API library. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-subscription).
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
+
+// Only subscriptionId, companyId, and status are required
+// metadata can be any custom object
+SubscriptionModel subscription = new SubscriptionBuilder()
+    .subscriptionId("sub_12345")
+    .companyId("67890")
+    .status("active")
+    .metadata(APIHelper.deserialize("{" +
+        "\"email\": \"johndoe@acmeinc.com\"," +
+        "\"string_field\": \"value_1\"," +
+        "\"number_field\": 0," +
+        "\"object_field\": {" +
+        "\"field_1\": \"value_1\"," +
+        "\"field_2\": \"value_2\"" +
+        "}" +
+        "}"))
+    .build();
+
+filter.updateSubscription(subscription);
+```
+
+## Update Subscriptions in Batch
+
+Similar to `updateSubscription`, but used to update a list of subscriptions in one batch. The `subscription_id`, `company_id`, and `status` fields are required for each subscription in the list. This method is a convenient helper that calls the Moesif API library. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-subscriptions-in-batch).
+
+You can update subscriptions _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
+
+List<SubscriptionModel> subscriptions = new ArrayList<>();
+subscriptions.add(new SubscriptionBuilder()
+    .subscriptionId("sub_12345")
+    .companyId("67890")
+    .status("active")
+    .metadata(APIHelper.deserialize("{" +
+        "\"email\": \"johndoe@acmeinc.com\"," +
+        "\"string_field\": \"value_1\"," +
+        "\"number_field\": 0," +
+        "\"object_field\": {" +
+        "\"field_1\": \"value_1\"," +
+        "\"field_2\": \"value_2\"" +
+        "}" +
+        "}"))
+    .build());
+
+// Add more subscriptions as needed
+
+filter.updateSubscriptionsBatch(subscriptions);
+```
+
 ## Troubleshooting
 
 ### How to print debug logs

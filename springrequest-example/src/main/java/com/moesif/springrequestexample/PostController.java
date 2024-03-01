@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 public class PostController {
@@ -112,5 +113,37 @@ public class PostController {
     }
 
     return "{ \"update_company\": true }";
+  }
+
+  @RequestMapping(value = "/api/subscriptions/{id}", method = RequestMethod.POST)
+  @ResponseBody
+  @ResponseStatus(code = HttpStatus.CREATED)
+  public String updateSubscription(@PathVariable("id") String id) throws IOException {
+    // Only subscriptionId, companyId, and status are required
+    // metadata can be any custom object
+    SubscriptionModel subscription = new SubscriptionBuilder()
+        .subscriptionId("sub_12345")
+        .companyId("67890")
+        .currentPeriodStart(new Date())
+        .currentPeriodEnd(new Date())
+        .status("active")
+        .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"string_field\": \"value_1\"," +
+            "\"number_field\": 0," +
+            "\"object_field\": {" +
+            "\"field_1\": \"value_1\"," +
+            "\"field_2\": \"value_2\"" +
+            "}" +
+            "}"))
+        .build();
+
+    try {
+      apiClient.updateSubscription(subscription);
+    } catch (Throwable t) {
+      System.out.println("Error while updating the subscription profile.");
+    }
+
+    return "{ \"update_subscription\": true }";
   }
 }

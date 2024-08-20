@@ -254,7 +254,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 
 ```
 
-#### Running the Jersey Servlet example
+#### Running the Jersey Servlet Example
 To run `jersey-servlet-example`, make sure you have the following installed:
 
 - Java 7+
@@ -386,7 +386,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 
 ```
 
-#### Running the Generic Servlet example
+#### Running the Generic Servlet Example
 
 `servlet-example` implements the Servlet Filter directly in a generic servlet app rather than using a higher level framework like Spring MVC or Spring Boot.
 
@@ -635,7 +635,7 @@ Override the following parameters, if needed.
   </tr>
 </table>
 
-### Interface methods
+### Interface Methods
 Override following methods, if needed.
 
 ### `public boolean skip(HttpServletRequest request, HttpServletResponse response)`

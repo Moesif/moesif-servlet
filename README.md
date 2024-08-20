@@ -1,27 +1,39 @@
-# Moesif Servlet SDK
+# Moesif Servlet SDK Documentation
+by [Moesif](https://moesif.com), the [API analytics](https://www.moesif.com/features/api-analytics) and [API monetization](https://www.moesif.com/solutions/metered-api-billing) platform.
 
  [![Built For][ico-built-for]][link-built-for]
  [![Latest Version][ico-version]][link-package]
  [![Software License][ico-license]][link-license]
  [![Source Code][ico-source]][link-source]
 
-## Introduction
+`moesif-servlet` is a Java servlet filter that logs incoming API calls and sends to [Moesif](https://www.moesif.com) for API analytics and monitoring.
 
-`moesif-servlet` is a Java Servlet Filter that logs _incoming_ API calls and sends to [Moesif](https://www.moesif.com) for API analytics and monitoring.
+## Overview
+We've implemented the SDK as a [Javax servlet filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
+without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html) such as Spring, Struts, and Jersey can use this SDK with minimal configuration.
 
-The SDK is implemented as a [JavaX Servlet Filter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Filter.html)
-without importing framework specific dependencies. Any framework built on Java [Servlet API](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/Servlet.html) such as Spring, Struts, Jersey, etc can use this SDK with minimal configuration.
+An identical implementation `moesif-servlet-jakarta` uses the newer [Jakarta Servlet API](https://tomcat.apache.org/tomcat-10.0-doc/servletapi/jakarta/servlet/Servlet.html). This implementation works with Java 17+ [Tomcat 10](https://tomcat.apache.org/tomcat-10.0-doc/index.html) and [Spring Boot 3.0](https://spring.io/projects/spring-boot). You can find its source code in the [`moesif-servlet-jakarta`](moesif-servlet-jakarta) folder.
 
+## Prerequisites
+Before using this SDK, make sure you have the following:
 
-`moesif-servlet-jakarta` is an identical implementation that uses the newer [Jakarta Servlet API](https://tomcat.apache.org/tomcat-10.0-doc/servletapi/jakarta/servlet/Servlet.html) and works with Java 17+ [Tomcat 10](https://tomcat.apache.org/tomcat-10.0-doc/index.html) and [Spring Boot 3.0](https://spring.io/projects/spring-boot). The source code is located in folder[`moesif-servlet-jakarta`](moesif-servlet-jakarta)
+- [An active Moesif account](https://moesif.com/wrap)
+- [A Moesif Application ID](#get-your-moesif-application-id)
 
-[Source Code on GitHub](https://github.com/moesif/moesif-servlet)
+### Get Your Moesif Application ID
+After you log into [Moesif Portal](https://www.moesif.com/wrap), you can get your Moesif Application ID during the onboarding steps. You can always access the Application ID any time by following these steps from Moesif Portal after logging in:
 
-## How to install
+1. Select the account icon to bring up the settings menu.
+2. Select **Installation** or **API Keys**.
+3. Copy your Moesif Application ID from the **Collector Application ID** field.
 
-#### Maven users
+<img class="lazyload blur-up" src="images/app_id.png" width="700" alt="Accessing the settings menu in Moesif Portal">
 
-Add the Moesif dependency to your project's pom.xml file:
+## Install the SDK
+
+### Maven Users
+
+Add the Moesif dependency to your project's `pom.xml` file:
 
 ```xml
 <dependency>
@@ -38,9 +50,9 @@ Add the Moesif dependency to your project's pom.xml file:
 </dependency>
 ```
 
-#### Gradle users
+### Gradle Users
 
-Add the Moesif dependency to your project's build.gradle file:
+Add the Moesif dependency to your project's `build.gradle` file:
 
 ```gradle
 dependencies {   
@@ -53,10 +65,10 @@ dependencies {
 }
 ```
 
-## How to use
+## How to Use
 
-Different Java web frameworks have different way of configuring filters. 
-Go to your specific framework's instructions below:
+Different Java web frameworks have different way of configuring servlet filters. 
+The following sections describe the instructions for different frameworks:
 
 - [Spring Boot](#spring-boot)
 - [Spring MVC](#spring-mvc-java-config)
@@ -67,17 +79,9 @@ Go to your specific framework's instructions below:
   - [Spring Boot 3.0 Jakarta with Tomcat](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-tomcat)
   - [Spring Boot 3.2 Jakarta with Undertow](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-undertow)
 
-
-Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).
-After signing up for a Moesif account, your Moesif Application Id will be displayed during the onboarding steps. 
-
-You can always find your Moesif Application Id at any time by logging 
-into the [_Moesif Portal_](https://www.moesif.com/), click on the top right menu,
-and then clicking _Installation_.
-
 ### Spring Boot
 
-In your Spring configuration file, install the Moesif Filter object.
+In your Spring configuration file, install the `MoesifFilter` object.
 
 ```java
 
@@ -99,8 +103,7 @@ public class MyConfig implements WebMvcConfigurer {
 ```
 
 To customize the filter, pass in a object that implements `MoesifConfiguration` such
-as `MoesifConfigurationAdapter`
-For details regarding `MoesifConfiguration`, see the [configuration options](#configuration-options).
+as `MoesifConfigurationAdapter`. 
 
 ```java
 @Configuration
@@ -120,15 +123,22 @@ public class MyConfig implements WebMvcConfigurer {
 }
 ```
 
-#### Running the Spring Boot example
+For for more information about `MoesifConfiguration`, see the [configuration options](#configuration-options).
 
-In order to run this example you will need to have Java 7+ and Maven installed.
 
-Before starting, check that your maven version is 3.0.x or above:
+#### Running the Spring Boot Starter Example
+
+To run `spring-boot-starter-example`, make sure you have the following installed:
+
+- Java 7+
+- Maven version 3.0.x or above.
+
+You can check Maven version with the following command:
 
 ```sh
 mvn -v
 ```
+Then follow these steps:
 
 1. Clone the repository
 
@@ -137,21 +147,16 @@ mvn -v
   cd moesif-servlet
 	```
 
-2. Update MyConfig to use your own Moesif ApplicationId
-(Register for an account on [moesif.com](https://www.moesif.com))
+1. In the `spring-boot-starter-example/src/main/java/com/moesif/servlet/spring/MyConfig.java` file, specify [your Moesif Application ID](#get-your-moesif-application-id) in the `applicationId` variable.
 
-	```sh
-	vim spring-boot-starter-example/src/main/java/com/moesif/servlet/spring/MyConfig.java
-	```
-
-3. Compile the example
+2. Compile:
 
 	```sh
 	cd spring-boot-starter-example
 	mvn clean install
 	```
 
-4. Run it
+3. Run:
 
 	```sh
 	java -jar target/spring-boot-starter-example*.jar
@@ -164,9 +169,9 @@ mvn -v
 	```
 
 
-5. Using Postman or CURL, make a few API calls to `http://localhost:8080/api` or the port that Spring Boot is running on.
+5. Using Postman or cURL, make a few API calls to `http://localhost:8080/api` or the port that Spring Boot is running on.
    
-6. Verify the API calls are logged to your [Moesif account](https://www.moesif.com)
+6. Verify that the API calls log to [your Moesif account web portal](https://www.moesif.com/wrap).
 
 ### Spring MVC (Java Config)
 
@@ -191,9 +196,7 @@ public class MyWebInitializer extends
 
 ### Spring MVC (XML Config)
 
-In Spring MVC + XML configuration, you can register the filters via web.xml
-
-In `web.xml` file:
+In Spring MVC + XML configuration, you can register the filters using `web.xml` file:
 
 ```xml
 
@@ -217,16 +220,15 @@ In `web.xml` file:
     <filter-name>MoesifFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-
-
 ```
-You may have to override `onStartup()` to pass in the MoesifConfiguration object.
+
+You may have to override `onStartup()` to pass in the `MoesifConfiguration` object.
 
 ### Jersey Servlet
 
-There are multiple ways to run Jersey, as a Java Servlet or embedded with a Java NIO framework like Grizzly. This subsection focuses on running Jersey as a Servlet.
+You can run Jersey in multiple ways, as a Java servlet or embedded with a Java NIO framework like Grizzly. This subsection focuses on running Jersey as a servlet.
 
-Edit the web.xml file to add your Moesif Application Id that you obtained from your Moesif Account.
+Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
 
 ```xml
   <filter>
@@ -234,7 +236,7 @@ Edit the web.xml file to add your Moesif Application Id that you obtained from y
     <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>Your Moesif Application Id</param-value>
+      <param-value>Your Application Id</param-value>
     </init-param>
     <init-param>
       <param-name>debug</param-name>
@@ -253,30 +255,30 @@ Edit the web.xml file to add your Moesif Application Id that you obtained from y
 ```
 
 #### Running the Jersey Servlet example
+To run `jersey-servlet-example`, make sure you have the following installed:
 
-In order to run this example you will need to have Java 7+ and Maven installed.
+- Java 7+
+- Maven version 3.0.x or above.
 
-Before starting, check that your maven version is 3.0.x or above:
+You can check Maven version with the following command:
 
 ```sh
 mvn -v
 ```
 
-1. Clone the repository
+Then follow these steps:
+
+1. Clone the repository:
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
-  cd moesif-servlet
+  cd moesif-servlet/
 	```
 
-2. Update web.xml to use your own Moesif ApplicationId
-(Register for an account on [moesif.com](https://www.moesif.com))
+2. Edit the `jersey-servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
 
-	```sh
-	vim jersey-servlet-example/src/main/webapp/WEB-INF/web.xml
-	```
 
-3. Run jersey-servlet-example
+3. Compile and run:
 
 	```sh
 	cd jersey-servlet-example
@@ -286,15 +288,15 @@ mvn -v
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
-In your Moesif Account, you should see event logged and monitored.
+In your [Moesif account web portal](https://moesif.com/wrap), you should see events logged and monitored.
 
-Shut it down manually with Ctrl-C.
+You can shut down the server manually by pressing <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 
 ### Spark Servlet
 
-There are multiple ways to run Spark, as a Java Servlet or embedded with a server like Jetty. This subsection focuses on running Spark as a Servlet.
+You can run Spark in multiple ways, as a Java servlet or embedded with a server like Jetty. This subsection focuses on running Spark as a servlet.
 
-Edit the web.xml file to add your Moesif Application Id that you obtained from your Moesif Account.
+Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
 
 ```xml
   <filter>
@@ -320,36 +322,30 @@ Edit the web.xml file to add your Moesif Application Id that you obtained from y
 
 ```
 
+#### Running the Spark Servlet Example
+To run `spark-servlet-example`, make sure you have the following installed:
 
-#### Running the Spark Servlet example
+- Java 7+
+- Maven version 3.0.x or above.
 
-In order to run this example you will need to have Java 8+ and Maven installed.
-
-Before starting, check that your maven version is 3.0.x or above:
+You can check Maven version with the following command:
 
 ```sh
 mvn -v
 ```
 
-1. Clone the repository
+Then follow these steps:
+
+1. Clone the repository:
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
 	cd moesif-servlet
 	```
 
-2. Update web.xml to use your own Moesif ApplicationId
-(Register for an account on [moesif.com](https://www.moesif.com))
+2. Edit the `spark-servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id) there. In the [`spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java` file](https://github.com/Moesif/moesif-servlet/blob/ab1565d66ec6eff2076ca1e193506d0dc8de7163/spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java#L24), add your Moesif Application ID as an argument to `MoesifAPIClient` object.
 
-	```sh
-	vim spark-servlet-example/src/main/webapp/WEB-INF/web.xml
-	```
-  and add it to `new MoesifAPIClient("")`
-  ```sh
-  vim spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java
-  ```
-
-3. Run spark-servlet-example
+3. Compile and run:
 
 	```sh
 	cd spark-servlet-example
@@ -359,13 +355,12 @@ mvn -v
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
-In your Moesif Account, you should see event logged and monitored.
+In your [Moesif account web portal](https://moesif.com/wrap), you should see event logged and monitored.
 
-Shut it down manually with Ctrl-C.
+You can shut down the server manually by pressing <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 
 ### Generic Java Servlet
-
-Edit the web.xml file to add your Moesif Application Id that you obtained from your Moesif Account.
+Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
 
 ```xml
   <filter>
@@ -393,32 +388,31 @@ Edit the web.xml file to add your Moesif Application Id that you obtained from y
 
 #### Running the Generic Servlet example
 
-This example implements the Servlet Filter directly in a generic Servlet app rather than using a higher level
-framework like Spring MVC or Spring Boot.
+`servlet-example` implements the Servlet Filter directly in a generic servlet app rather than using a higher level framework like Spring MVC or Spring Boot.
 
-In order to run this example you will need to have Java 7+ and Maven installed.
+To run this example, make sure you have the following installed:
 
-Before starting, check that your maven version is 3.0.x or above:
+- Java 7+
+- Maven version 3.0.x or above.
+
+You can check Maven version with the following command:
 
 ```sh
 mvn -v
 ```
 
-1. Clone the repository
+Then follow these steps:
+
+1. Clone the repository:
 
 	```sh
 	git clone https://github.com/Moesif/moesif-servlet
   cd moesif-servlet
 	```
 
-2. Update web.xml to use your own Moesif ApplicationId
-(Register for an account on [moesif.com](https://www.moesif.com))
+1. Edit the `servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id) there.
 
-	```sh
-	vim servlet-example/src/main/webapp/WEB-INF/web.xml
-	```
-
-3. Run servlet-example
+2. Compile and run:
 
 	```sh
 	cd servlet-example
@@ -426,36 +420,227 @@ mvn -v
 	java -jar target/dependency/webapp-runner.jar target/*.war
 	```
 
-4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
+3. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
-In your Moesif Account, you should see event logged and monitored.
+In your [Moesif account web portal](https://moesif.com/wrap), you should see event logged and monitored.
 
-Shut it down manually with Ctrl-C.
+You can shut down the server manually by pressing <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 
-## Configuration options
+## Troubleshoot
+For a general troubleshooting guide that can help you solve common problems, see [Server Troubleshooting Guide](https://www.moesif.com/docs/troubleshooting/server-troubleshooting-guide/). To print debug logs to help troubleshooting, follow the instructions in [How to Print Debug Logs](#how-to-print-debug-logs).
 
-To configure the filter, extend the `MoesifConfigurationAdapter` class to override a few config params or implement the entire
-`MoesifConfiguration` interface.
-Both will achieve similar results.
+Other troubleshooting supports:
+
+- [FAQ](https://www.moesif.com/docs/faq/)
+- [Moesif support email](mailto:support@moesif.com)
+
+### How to Print Debug Logs
+
+If you need to print debugs logs, you can set the debug switch when initializing the MoesifFilter object.
+
+```java
+MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", debug)
+```
+
+If you are using XML configuration, you can set the debug switch like below:
+
+```xml
+    <filter-name>MoesifFilter</filter-name>
+    <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
+    <init-param>
+      <param-name>application-id</param-name>
+      <param-value>Your Moesif Application Id</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+```
+
+## How to Test
+
+1. Manually clone this repository.
+2. Enter `moesif-servlet` and run `mvn clean install -U -Dgpg.skip` if you haven't done so.
+3. Add your own application id to `src/test/java/com/moesif/servlet/MoesifServletTests.java`. You can find your Moesif Application Id from [_Moesif Dashboard_](https://www.moesif.com/) -> _Top Right Menu_ -> _Installation_
+4. From terminal/cmd navigate to the root directory of the moesif-servlet.
+5. Invoke `mvn -Dtest=MoesifServletTests test` to run the tests.
+
+
+## Configuration Options
+
+To configure the filter, extend the `MoesifConfigurationAdapter` class to override a few configuration parameters
+ or implement the entire `MoesifConfiguration` interface. Both will achieve similar results.
 
 ### Parameters
 Override the following parameters, if needed.
 
+#### `batchSize`
+<table>
+  <tr>
+   <th scope="col">
+    Required
+   </th>
+   <th scope="col">
+    Type
+   </th>
+   <th scope="col">
+    Default value
+   </th>
+   <th scope="col">
+    Description
+   </th>
+  </tr>
+  <tr>
+   <td>
+    No.
+   </td>
+   <td>
+    <code>number</code>
+   </td>
+   <td>
+    <code>100</code>
+   </td>
+   <td>
+    The batch size of API events that triggers flushing of queue and sending the data to Moesif.
+   </td>
+  </tr>
+</table>
 
-Name | Required | Type & Default Value | Description |
---------- | -------- | -----------|-----------------|
-|batchSize | False | Type: `number` Default `100` | BatchSize of API events that will trigger flushing of queue and sending the data to Moesif. |
-|batchMaxTime| False | Type: `number in seconds` Default `2`. | This is the maximum wait time (approximately) before triggering flushing of the queue and sending to Moesif.|
-|queueSize | False | Type: `number` Default `1000000` | Maximum queue capacity to hold events in memory. |
-|retry | False | Type: `number` Default: `0` | Number of time to retry if fails to post to Moesif. If set, must be a number between 0 to 3. |
-|updateConfigTime | False | Type: `number` Default: `300` | This is the maximum wait time (approximately) to pull the latest app config and update the cache.|
+#### `batchMaxTime`
+<table>
+  <tr>
+   <th scope="col">
+    Required
+   </th>
+   <th scope="col">
+    Type
+   </th>
+   <th scope="col">
+    Default value
+   </th>
+   <th scope="col">
+    Description
+   </th>
+  </tr>
+  <tr>
+   <td>
+    No.
+   </td>
+   <td>
+    <code>number</code> (seconds)
+   </td>
+   <td>
+    <code>2</code>
+   </td>
+   <td>
+    The maximum wait time (approximately) before the SDK triggers flushing of the queue and sends data to Moesif.
+   </td>
+  </tr>
+</table>
+
+#### `queueSize`
+<table>
+  <tr>
+   <th scope="col">
+    Required
+   </th>
+   <th scope="col">
+    Type
+   </th>
+   <th scope="col">
+    Default value
+   </th>
+   <th scope="col">
+    Description
+   </th>
+  </tr>
+  <tr>
+   <td>
+    No.
+   </td>
+   <td>
+    <code>number</code>
+   </td>
+   <td>
+    <code>1000000</code>
+   </td>
+   <td>
+    Maximum queue capacity to hold events in memory.
+   </td>
+  </tr>
+</table>
+
+#### `retry`
+<table>
+  <tr>
+   <th scope="col">
+    Required
+   </th>
+   <th scope="col">
+    Type
+   </th>
+   <th scope="col">
+    Default value
+   </th>
+   <th scope="col">
+    Description
+   </th>
+  </tr>
+  <tr>
+   <td>
+    No.
+   </td>
+   <td>
+    <code>number</code>
+   </td>
+   <td>
+    <code>0</code>
+   </td>
+   <td>
+    Number of time to retry if the SDK fails to send data to Moesif. Set the value between <code>0</code> to <code>3</code>.
+   </td>
+  </tr>
+</table>
+
+#### `updateConfigTime`
+<table>
+  <tr>
+   <th scope="col">
+    Required
+   </th>
+   <th scope="col">
+    Type
+   </th>
+   <th scope="col">
+    Default value
+   </th>
+   <th scope="col">
+    Description
+   </th>
+  </tr>
+  <tr>
+   <td>
+    No.
+   </td>
+   <td>
+    <code>number</code> (seconds)
+   </td>
+   <td>
+    <code>300</code> (seconds)
+   </td>
+   <td>
+    The maximum wait time (approximately) to pull the latest app configuration and update the cache.
+   </td>
+  </tr>
+</table>
 
 ### Interface methods
 Override following methods, if needed.
 
-### 1. `public boolean skip(HttpServletRequest request, HttpServletResponse response)`
+### `public boolean skip(HttpServletRequest request, HttpServletResponse response)`
 Return `true` if you want to skip logging a
-request to Moesif i.e. to skip boring requests like health probes.
+request to Moesif. For example, you may skip requests like health probes.
 
 ```java
   @Override
@@ -478,9 +663,11 @@ public Object getMetadata(HttpRequest request, ClientHttpResponse response) {
 ```
 
 ### 3. `public String identifyUser(HttpServletRequest request, HttpServletResponse response)`
-Highly recommended. Returns a userId as a String. 
-This enables Moesif to attribute API requests to individual users so you can understand who calling your API. 
-This can be used simultaneously with `identifyCompany` to track both individual customers and the companies that they are a part of.
+Highly recommended. 
+
+Returns a user ID as a String. This enables Moesif to attribute API requests to individual users so you can understand who is calling your API. 
+
+You can use this function simultaneously with [`identifyCompany()`](#4-public-string-identifycompanyhttpservletrequest-request-httpservletresponse-response) to track both individual customers and the companies that they are a part of.
 
 ```java
   @Override
@@ -493,8 +680,9 @@ This can be used simultaneously with `identifyCompany` to track both individual 
 ```
 
 ### 4. `public String identifyCompany(HttpServletRequest request, HttpServletResponse response)`
-Returns a companyId as a String. 
-If your business is B2B, this enables Moesif to attribute API requests to specific companies or organizations so you can understand which accounts are calling your API. This can be used simultaneously with identifyUser to track both individual customers and the companies their a part of.
+Returns a company ID as a String.
+
+If you have a B2B business, this enables Moesif to attribute API requests to specific companies or organizations so you can understand which accounts are calling your API. You can use this function simultaneously with [`identifyUser()`](#3-public-string-identifyuserhttpservletrequest-request-httpservletresponse-response) to track both individual customers and the companies they are a part of.
 
 ```java
   @Override
@@ -514,15 +702,17 @@ Moesif automatically detects the end user's session token or API key, but you ca
   }
 ```
 
-A second example if want to use the session id
+The following example uses the session ID:
+
 ```java
   @Override
   public String getSessionToken(HttpServletRequest request, HttpServletResponse response) {
     return request.getRequestedSessionId();
   }
 ```
+
 ### 6. `public String getApiVersion(HttpServletRequest request, HttpServletResponse response)`
-Returns a String to tag requests with a specific version of your API.
+Returns a string to tag requests with a specific version of your API.
 
 ```java
   @Override
@@ -532,25 +722,23 @@ Returns a String to tag requests with a specific version of your API.
 ```
 
 ### 7. `public EventModel maskContent(EventModel eventModel)`
-If you want to remove any sensitive data in the HTTP headers or body before sending to Moesif, you can do so with `maskContent`
+If you want to remove any sensitive data in the HTTP headers or body before sending to Moesif, use `maskContent`.
 
 
-## Building moesif-servlet locally
-If you are contributing to moesif-servlet, you can build it locally and install in local Maven Repo:
+## Building `moesif-servlet` Locally
+If you are contributing to `moesif-servlet`, you can build it locally and install in local Maven Repo:
 
 ```sh
 cd moesif-servlet
 mvn clean install
 ```
-**The below methods to update user and company are accessible via the Moesif Java API lib which Moesif Play Filter already imports as a dependency.**
+## Examples
+The following examples demonstrate how to add and update customer information.
 
-## Update a Single User
+The methods these examples use are accessible through the Moesif Java API library that this SDK already imports as a dependency.
 
-Create or update a user profile in Moesif.
-The metadata field can be any customer demographic or other info you want to store.
-Only the `userId` field is required.
-This method is a convenient helper that calls the Moesif API lib.
-For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-user).
+### Update a Single User
+To create or update a [user](https://www.moesif.com/docs/getting-started/users/) profile in Moesif, use the `updateUser()` function.
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -587,14 +775,13 @@ UserModel user = new UserBuilder()
 filter.updateUser(user);
 ```
 
-## Update Users in Batch
+The `metadata` field can contain any customer demographic or other info you want to store. Moesif only requires the `userId` field.
 
-Similar to UpdateUser, but used to update a list of users in one batch. 
-Only the `userId` field is required.
-This method is a convenient helper that calls the Moesif API lib.
-For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
+This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in [Moesif Java API reference](https://www.moesif.com/docs/api?java#update-a-user).
 
-You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+
+### Update Users in Batch
+To update a list of [users](https://www.moesif.com/docs/getting-started/users/) in one batch, use the `updateUsersBatch()` function. You can update users synchronously or asynchronously on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -640,13 +827,13 @@ users.add(userB);
 filter.updateUsersBatch(users, callBack);
 ```
 
-## Update a Single Company
+The `metadata` field can contain any customer demographic or other info you want to store. MOesif only requires the `userId` field.
 
-Create or update a company profile in Moesif.
-The metadata field can be any company demographic or other info you want to store.
-Only the `company_id` field is required.
-This method is a convenient helper that calls the Moesif API lib.
-For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-company).
+This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in 
+[Moesif Java API reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
+
+### Update a Single Company
+To update a single [company](https://www.moesif.com/docs/getting-started/companies/), use the `updateCompany()` function.
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -682,15 +869,12 @@ CompanyModel company = new CompanyBuilder()
 filter.updateCompany(company);
 ```
 
-## Update Companies in Batch
+The `metadata` field can contain any company demographic or other information you want to store. Moesif only requires the `companyId` field.
 
-Similar to updateCompany, but used to update a list of companies in one batch. 
-Only the `company_id` field is required.
-This method is a convenient helper that calls the Moesif API lib.
-For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-companies-in-batch).
+This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in [Moesif Java API reference](https://www.moesif.com/docs/api?java#update-a-company).
 
-
-You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+### Update Companies in Batch
+To update a list of [companies](https://www.moesif.com/docs/getting-started/companies/) in one batch, use the `updateCompaniesBatch()` function. You can update companies synchronously or asynchronously on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -726,9 +910,13 @@ CompanyModel company = new CompanyBuilder()
 filter.updateCompaniesBatch(companies);
 ```
 
-## Update a Single Subscription
+The `metadata` field can contain any company demographic or other information you want to store. Moesif only requires the `companyId` field.
 
-Create or update a subscription profile in Moesif. The metadata field can store any subscription-related information you wish to keep. The `subscription_id`, `company_id`, and `status` fields are all required. This method is a convenient helper that calls the Moesif API library. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-subscription).
+This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in [Moesif Java API reference](https://www.moesif.com/docs/api?java#update-companies-in-batch).
+
+### Update a Single Subscription
+
+To create or update a subscription profile in Moesif, use the `updateSubscription()` function. 
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -753,11 +941,13 @@ SubscriptionModel subscription = new SubscriptionBuilder()
 filter.updateSubscription(subscription);
 ```
 
+The metadata field can store any subscription-related information you wish to keep. The `subscription_id`, `company_id`, and `status` fields are all required. This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in [Moesif Java API reference](https://www.moesif.com/docs/api?java#update-a-subscription).
+
 ## Update Subscriptions in Batch
 
-Similar to `updateSubscription`, but used to update a list of subscriptions in one batch. The `subscription_id`, `company_id`, and `status` fields are required for each subscription in the list. This method is a convenient helper that calls the Moesif API library. For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-subscriptions-in-batch).
+To update a list of subscriptions in one batch, use the `updateSubscriptionsBatch()` function. 
 
-You can update subscriptions _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+You can update subscriptions synchronously or asynchronously on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -783,43 +973,17 @@ subscriptions.add(new SubscriptionBuilder()
 filter.updateSubscriptionsBatch(subscriptions);
 ```
 
-## Troubleshooting
+The `subscription_id`, `company_id`, and `status` fields are required for each subscription in the list. This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in [Moesif Java API reference](https://www.moesif.com/docs/api?java#update-subscriptions-in-batch).
 
-### How to print debug logs
+## How to Get Help
+If you face any issues using Moesif Servlet SDK, try the [troubheshooting guidelines](#troubleshoot). For further assistance, reach out to our [support team](mailto:support@moesif.com).
 
-If you need to print debugs logs, you can set the debug switch when initializing the MoesifFilter object.
+## Explore Other Integrations
 
-```java
-MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", debug)
-```
+Explore other integration options from Moesif:
 
-If you are using XML configuration, you can set the debug switch like below:
-
-```xml
-    <filter-name>MoesifFilter</filter-name>
-    <filter-class>com.moesif.servlet.MoesifFilter</filter-class>
-    <init-param>
-      <param-name>application-id</param-name>
-      <param-value>Your Moesif Application Id</param-value>
-    </init-param>
-    <init-param>
-      <param-name>debug</param-name>
-      <param-value>true</param-value>
-    </init-param>
-  </filter>
-```
-
-## How to test
-
-1. Manually clone the git repo
-2. Invoke `mvn clean install -U -Dgpg.skip` if you haven't done so.
-3. Add your own application id to 'src/test/java/com/moesif/servlet/MoesifServletTests.java'. You can find your Moesif Application Id from [_Moesif Dashboard_](https://www.moesif.com/) -> _Top Right Menu_ -> _Installation_
-4. From terminal/cmd navigate to the root directory of the moesif-servlet.
-5. Invoke `mvn -Dtest=MoesifServletTests test` to run the tests.
-
-## Other integrations
-
-To view more documentation on integration options, please visit __[the Integration Options Documentation](https://www.moesif.com/docs/getting-started/integration-options/).__
+- [Server integration options documentation](https://www.moesif.com/docs/server-integration//)
+- [Client integration options documentation](https://www.moesif.com/docs/client-integration/)
 
 [ico-built-for]: https://img.shields.io/badge/built%20for-servlet-blue.svg
 [ico-version]: https://img.shields.io/maven-central/v/com.moesif.servlet/moesif-servlet

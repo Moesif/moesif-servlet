@@ -42,7 +42,7 @@
     <dependency>
       <groupId>com.moesif.servlet</groupId>
       <artifactId>moesif-servlet</artifactId>
-      <version>1.8.0</version>
+      <version>1.8.1</version>
     </dependency>
 
 
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
-      <version>8.5.93</version>
+      <version>8.5.96</version>
     </dependency>
   </dependencies>
 

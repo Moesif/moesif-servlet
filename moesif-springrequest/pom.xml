@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>5.3.23</version>
+      <version>6.1.12</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -125,9 +125,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <additionalparam>-Xdoclint:none</additionalparam>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

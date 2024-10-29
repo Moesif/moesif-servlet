@@ -9,7 +9,7 @@
   <version>2.0.3</version>
 
   <properties>
-    <springframework.version>5.3.27</springframework.version>
+    <springframework.version>6.1.13</springframework.version>
     <springconfiguration.version>2.7.12</springconfiguration.version>
   </properties>
 

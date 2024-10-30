@@ -42,7 +42,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <servlet-class>com.moesif.servlet.example.UsersServlet</servlet-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>eyJhcHAiOiIxOTg6NzQ0IiwidmVyIjoiMi4xIiwib3JnIjoiNjQwOjEyOCIsImlhdCI6MTcyNzc0MDgwMH0.ckqMfkn4o0zgfLokgP_WvMIXAOYm77PV6ACbMAlzYC0</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
   </servlet>
 
@@ -56,7 +56,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <servlet-class>com.moesif.servlet.example.CompaniesServlet</servlet-class>
     <init-param>
       <param-name>application-id</param-name>
-      <param-value>eyJhcHAiOiIxOTg6NzQ0IiwidmVyIjoiMi4xIiwib3JnIjoiNjQwOjEyOCIsImlhdCI6MTcyNzc0MDgwMH0.ckqMfkn4o0zgfLokgP_WvMIXAOYm77PV6ACbMAlzYC0</param-value>
+      <param-value>Your Moesif Application Id</param-value>
     </init-param>
   </servlet>
 

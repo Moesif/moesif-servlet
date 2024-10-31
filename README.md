@@ -1,4 +1,4 @@
-# Moesif Servlet SDK Documentation
+# Moesif Servlet Integration Documentation
 by [Moesif](https://moesif.com), the [API analytics](https://www.moesif.com/features/api-analytics) and [API monetization](https://www.moesif.com/solutions/metered-api-billing) platform.
 
  [![Built For][ico-built-for]][link-built-for]
@@ -39,14 +39,14 @@ Add the Moesif dependency to your project's `pom.xml` file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.2</version>
 </dependency>
 
 <!-- OR for newer Jakarta-->
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet-jakarta</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2</version>
 </dependency>
 ```
 
@@ -56,12 +56,12 @@ Add the Moesif dependency to your project's `build.gradle` file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.8.0'
+    compile 'com.moesif.servlet:moesif-servlet:1.8.2'
 }
 
 // OR for newer Jakarta
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.2.0'
+    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.2.2'
 }
 ```
 

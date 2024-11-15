@@ -25,7 +25,6 @@ public class MoesifFilter implements Filter {
   private MoesifConfiguration config;
   private MoesifAPIClient moesifApi;
   private boolean debug;
-  private boolean logBody;
   private BatchProcessor batchProcessor = null; // Manages queue & provides a taskRunner to send events in batches.
   private int sendBatchJobAliveCounter = 0;     // counter to check scheduled job is alive or not.
 
@@ -127,7 +126,7 @@ public class MoesifFilter implements Filter {
    * @param    logBody boolean
    */
   public void setLogBody(boolean logBody) {
-    this.logBody = logBody;
+    this.config.logBody = logBody;
   }
 
   /**
@@ -366,8 +365,8 @@ public class MoesifFilter implements Filter {
         return;
     }
 
-    LoggingHttpServletRequestWrapper requestWrapper = new LoggingHttpServletRequestWrapper(httpRequest);
-    LoggingHttpServletResponseWrapper responseWrapper = new LoggingHttpServletResponseWrapper(httpResponse);
+    LoggingHttpServletRequestWrapper requestWrapper = new LoggingHttpServletRequestWrapper(httpRequest, config);
+    LoggingHttpServletResponseWrapper responseWrapper = new LoggingHttpServletResponseWrapper(httpResponse, config);
 
 
     // Initialize transactionId    
@@ -465,12 +464,14 @@ public class MoesifFilter implements Filter {
       eventRequestBuilder.apiVersion(apiVersion);
     }
 
-    String content = requestWrapper.getContent();
 
-    if (logBody && content != null  && !content.isEmpty()) {
-      BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
-      eventRequestBuilder.body(bodyWrapper.body);
-      eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
+    if (this.config.logBody) {
+      String content = requestWrapper.getContent();
+      if (content != null && !content.isEmpty()) {
+        BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
+        eventRequestBuilder.body(bodyWrapper.body);
+        eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
+      }
     }
 
     return eventRequestBuilder.build();
@@ -483,12 +484,14 @@ public class MoesifFilter implements Filter {
         .status(responseWrapper.getStatus())
         .headers(responseWrapper.getHeaders());
 
-    String content = responseWrapper.getContent();
 
-    if (logBody && content != null  && !content.isEmpty()) {
-      BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
-      eventResponseBuilder.body(bodyWrapper.body);
-      eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);
+    if (this.config.logBody) {
+      String content = responseWrapper.getContent();
+      if (content != null && !content.isEmpty()) {
+        BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
+        eventResponseBuilder.body(bodyWrapper.body);
+        eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);
+      }
     }
 
     return eventResponseBuilder.build();

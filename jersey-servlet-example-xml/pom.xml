@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.moesif.servlet.jersey</groupId>
-    <artifactId>jersey-servlet-example</artifactId>
+    <artifactId>jersey-servlet-example-xml</artifactId>
     <packaging>war</packaging>
     <version>1.3.2</version>
-    <name>jersey-servlet-example</name>
+    <name>jersey-servlet-example-xml</name>
 
     <build>
-        <finalName>jersey-servlet-example</finalName>
+        <finalName>jersey-servlet-example-xml</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

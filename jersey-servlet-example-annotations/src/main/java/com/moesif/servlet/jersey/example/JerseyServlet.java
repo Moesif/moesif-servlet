@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebInitParam;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 @WebServlet(
-    urlPatterns = {"/api/*"}, // Match your desired URL pattern
+    urlPatterns = {"/api/*"},
     initParams = {
         @WebInitParam(
             name = "javax.ws.rs.Application",

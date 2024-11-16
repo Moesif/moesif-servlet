@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class BodyHandler {
 
-  public static final int MAX_BODY_SIZE = 450 * 1024; // The Moesif API has a limit of 450KB for request and response body
+  public static final int MAX_BODY_SIZE = 1204 * 1024; // The Moesif API has a limit of 1 MB for request and response body
   public static boolean logBody = true;
 
   public static String encodeContent(byte[] content, String encoding) {

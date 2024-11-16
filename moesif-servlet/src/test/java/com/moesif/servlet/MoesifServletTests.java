@@ -39,7 +39,7 @@ public class MoesifServletTests extends TestCase {
 		config = new MoesifConfiguration();
 		config.disableTransactionId = true;
 		servletOutputStream = Mockito.mock(ServletOutputStream.class);
-		filter = new MoesifFilter("eyJhcHAiOiIxOTg6NzQ0IiwidmVyIjoiMi4xIiwib3JnIjoiNjQwOjEyOCIsImlhdCI6MTczMDQxOTIwMH0.duHFw2GFPGinL-RL_Bv2QyvxNzwO2oqtxnieO22P2B0", config);
+		filter = new MoesifFilter("Your Moesif Application Id", config);
 	}
 
 	public void testSendEvent() throws Exception {

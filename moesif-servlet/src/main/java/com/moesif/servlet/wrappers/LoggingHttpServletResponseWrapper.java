@@ -96,6 +96,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     try {
       flushBuffer();
       if (shouldSkipBody() || logStream == null || logStream.getBufferedStream() == null) {
+        bodySkipped = true;
         return null;
       }
       updateContentLength(logStream.getBufferedStream().size());

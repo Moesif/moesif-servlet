@@ -9,12 +9,7 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.*;
 import java.util.*;
 
 public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper {
@@ -23,14 +18,15 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   private static final String METHOD_POST = "POST";
   private final Map<String, String[]> parameterMap;
   private final HttpServletRequest delegate;
-
-  private byte[] content;
   public boolean bodySkipped = false;
   public long contentLength = 0;
+  private byte[] content;
+  private MoesifConfiguration config;
 
-  public LoggingHttpServletRequestWrapper(HttpServletRequest request) {
+  public LoggingHttpServletRequestWrapper(HttpServletRequest request, MoesifConfiguration config) {
     super(request);
     this.delegate = request;
+    this.config = config;
     if (isFormPost()) {
       this.parameterMap = request.getParameterMap();
     } else {
@@ -55,7 +51,7 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   private boolean shouldSkipBody() {
     readContentLength();
     // should skip if we are not logging body by config or content length is greater than max body size
-    return !BodyHandler.logBody || contentLength > BodyHandler.MAX_BODY_SIZE;
+    return !BodyHandler.logBody || contentLength > config.maxBodySize;
   }
 
   @Override
@@ -74,14 +70,14 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
       }
 
       if (this.parameterMap.isEmpty()) {
-        content = boundedStreamToArray(delegate.getInputStream(), BodyHandler.MAX_BODY_SIZE);
+        content = boundedStreamToArray(delegate.getInputStream(), config.maxBodySize);
         if (content == null) {
           bodySkipped = true;
           return null;
         }
       } else {
         content = getContentFromParameterMap(this.parameterMap);
-        if (content.length > BodyHandler.MAX_BODY_SIZE) {
+        if (content.length > config.maxBodySize) {
           bodySkipped = true;
           return null;
         }
@@ -167,21 +163,21 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   private byte[] getContentFromParameterMap(Map<String, String[]> parameterMap) {
 
     List<String> result = new ArrayList<String>();
-    for (Map.Entry<String, String[]>  e: parameterMap.entrySet()) {
+    for (Map.Entry<String, String[]> e : parameterMap.entrySet()) {
       String[] value = e.getValue();
       result.add(e.getKey() + "=" + (value.length == 1 ? value[0] : Arrays.toString(value)));
     }
     return StringUtils.join(result, "&").getBytes();
   }
-  
+
   // Wrapper function to addHeader
   public Map<String, String> addHeader(String headerKey, String headerValue) {
-	  Map<String, String> headers = new HashMap<String, String>(0);
-	  headers = getHeaders();
-	  headers.put(headerKey, headerValue);
-	  // Remove header as the case is not preserved
-	  headers.remove("x-moesif-transaction-id");
-	  return headers;
+    Map<String, String> headers = new HashMap<String, String>(0);
+    headers = getHeaders();
+    headers.put(headerKey, headerValue);
+    // Remove header as the case is not preserved
+    headers.remove("x-moesif-transaction-id");
+    return headers;
   }
 
   public Map<String, String> getHeaders() {
@@ -200,7 +196,7 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   public boolean isFormPost() {
     String contentType = getContentType();
     if (contentType != null && METHOD_POST.equalsIgnoreCase(getMethod())) {
-      for (String formType: FORM_CONTENT_TYPE) {
+      for (String formType : FORM_CONTENT_TYPE) {
         if (contentType.toLowerCase().contains(formType)) {
           return true;
         }

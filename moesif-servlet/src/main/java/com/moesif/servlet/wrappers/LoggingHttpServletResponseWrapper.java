@@ -1,5 +1,6 @@
 package com.moesif.servlet.wrappers;
 
+import com.moesif.servlet.MoesifConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletOutputStream;
@@ -20,9 +21,11 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
   private ServletOutputStream outputStream;
   private LoggingServletOutputStream logStream;
   private PrintWriter writer;
+  private MoesifConfiguration config;
 
-  public LoggingHttpServletResponseWrapper(HttpServletResponse response) {
+  public LoggingHttpServletResponseWrapper(HttpServletResponse response, MoesifConfiguration config) {
     super(response);
+    this.config = config;
   }
 
   @Override
@@ -92,7 +95,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
   private boolean shouldSkipBody() {
     readContentLength();
     // should skip if we are not logging body by config or content length is greater than max body size
-    return !BodyHandler.logBody || contentLength > BodyHandler.MAX_BODY_SIZE;
+    return !BodyHandler.logBody || contentLength > config.maxBodySize;
   }
 
   public String getContent() {
@@ -139,7 +142,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     public void write(int b) throws IOException {
       outputStream.write(b);
       if (!bufferExceeded) {
-        if (baos.size() < BodyHandler.MAX_BODY_SIZE) {
+        if (baos.size() < config.maxBodySize) {
           baos.write(b);
         } else {
           bufferExceeded = true;
@@ -153,7 +156,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     public void write(byte[] b, int off, int len) throws IOException {
       outputStream.write(b, off, len);
       if (!bufferExceeded) {
-        if (baos.size() + len <= BodyHandler.MAX_BODY_SIZE) {
+        if (baos.size() + len <= config.maxBodySize) {
           baos.write(b, off, len);
         } else {
           bufferExceeded = true;

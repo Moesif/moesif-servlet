@@ -143,7 +143,7 @@
             <id>sign-artifacts</id>
             <phase>verify</phase>
             <goals>
-<!--              <goal>sign</goal>-->
+              <goal>sign</goal>
             </goals>
             <configuration>
               <!-- This is necessary for gpg to not try to use the pinentry programs -->

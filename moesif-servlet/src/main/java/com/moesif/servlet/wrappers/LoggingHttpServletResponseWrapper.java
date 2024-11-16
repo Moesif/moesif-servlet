@@ -58,6 +58,9 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     if (writer != null) {
       writer.flush();
     } else if (outputStream != null) {
+      if (logStream.bufferExceeded) {
+        bodySkipped = true;
+      }
       logStream.flush();
     }
   }
@@ -96,7 +99,6 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     try {
       flushBuffer();
       if (shouldSkipBody() || logStream == null || logStream.getBufferedStream() == null) {
-        bodySkipped = true;
         return null;
       }
       updateContentLength(logStream.getBufferedStream().size());

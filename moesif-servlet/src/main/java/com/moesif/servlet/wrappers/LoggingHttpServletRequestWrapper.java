@@ -1,6 +1,7 @@
 package com.moesif.servlet.wrappers;
 
-import org.apache.commons.io.IOUtils;
+import com.moesif.servlet.MoesifConfiguration;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,14 +20,13 @@ import java.util.*;
 public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
   private static final List<String> FORM_CONTENT_TYPE = Arrays.asList("application/x-www-form-urlencoded", "multipart/form-data");
-
   private static final String METHOD_POST = "POST";
+  private final Map<String, String[]> parameterMap;
+  private final HttpServletRequest delegate;
 
   private byte[] content;
-
-  private final Map<String, String[]> parameterMap;
-
-  private final HttpServletRequest delegate;
+  public boolean bodySkipped = false;
+  public long contentLength = 0;
 
   public LoggingHttpServletRequestWrapper(HttpServletRequest request) {
     super(request);
@@ -38,12 +38,86 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
     }
   }
 
+  private void readContentLength() {
+    try {
+      this.contentLength = Long.parseLong(getHeader("Content-Length"));
+    } catch (NumberFormatException e) {
+      // ignore malformed content length
+    }
+  }
+
+  private void updateContentLength(long length) {
+    if (contentLength == 0) {
+      contentLength = length;
+    }
+  }
+
+  private boolean shouldSkipBody() {
+    readContentLength();
+    // should skip if we are not logging body by config or content length is greater than max body size
+    return !BodyHandler.logBody || contentLength > BodyHandler.MAX_BODY_SIZE;
+  }
+
   @Override
   public ServletInputStream getInputStream() throws IOException {
-    if (ArrayUtils.isEmpty(content)) {
+    if (bodySkipped || ArrayUtils.isEmpty(content)) {
       return delegate.getInputStream();
     }
     return new LoggingServletInputStream(content);
+  }
+
+  public String getContent() {
+    try {
+      if (shouldSkipBody()) {
+        bodySkipped = true;
+        return null;
+      }
+
+      if (this.parameterMap.isEmpty()) {
+        content = boundedStreamToArray(delegate.getInputStream(), BodyHandler.MAX_BODY_SIZE);
+        if (content == null) {
+          bodySkipped = true;
+          return null;
+        }
+      } else {
+        content = getContentFromParameterMap(this.parameterMap);
+        if (content.length > BodyHandler.MAX_BODY_SIZE) {
+          bodySkipped = true;
+          return null;
+        }
+      }
+
+      String normalizedContent = BodyHandler.encodeContent(content, getCharacterEncoding());
+      updateContentLength(normalizedContent.length());
+      return normalizedContent;
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new IllegalStateException();
+    }
+  }
+
+  private byte[] boundedStreamToArray(InputStream inputStream, long maxBytes) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      byte[] buffer = new byte[4096];
+      int totalBytesRead = 0;
+      int bytesRead;
+
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
+        totalBytesRead += bytesRead;
+        if (totalBytesRead > maxBytes) {
+          updateContentLength(totalBytesRead);
+          return null;
+        }
+        baos.write(buffer, 0, bytesRead);
+      }
+      updateContentLength(totalBytesRead);
+      return baos.toByteArray();
+    } catch (IOException e) {
+      // this is not expected but would typically represent a dropped connection which we should not handle here
+      e.printStackTrace();
+      return null;
+    }
   }
 
   @Override
@@ -88,23 +162,6 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
       return super.getParameterValues(name);
     }
     return this.parameterMap.get(name);
-  }
-
-  public String getContent() {
-    try {
-      if (this.parameterMap.isEmpty()) {
-        content = IOUtils.toByteArray(delegate.getInputStream());
-      } else {
-        content = getContentFromParameterMap(this.parameterMap);
-      }
-      String requestEncoding = delegate.getCharacterEncoding();
-      String normalizedContent = StringUtils.normalizeSpace(new String(content, requestEncoding != null ? requestEncoding : StandardCharsets.UTF_8.name()));
-      return normalizedContent;
-      // return StringUtils.isBlank(normalizedContent) ? "[EMPTY]" : normalizedContent;
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new IllegalStateException();
-    }
   }
 
   private byte[] getContentFromParameterMap(Map<String, String[]> parameterMap) {

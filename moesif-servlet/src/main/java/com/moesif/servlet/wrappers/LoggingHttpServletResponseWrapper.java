@@ -6,12 +6,17 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.*;
-import java.util.*;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrapper {
+  public long contentLength = 0;
+  public boolean bodySkipped = false;
   private ServletOutputStream outputStream;
   private LoggingServletOutputStream logStream;
   private PrintWriter writer;
@@ -61,7 +66,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     Map<String, String> headers = new HashMap<String, String>(0);
     Collection<String> headerNames = getHeaderNames();
 
-    for (String headerName: headerNames) {
+    for (String headerName : headerNames) {
       if (headerName != null) {
         if (headerName.equals("set-cookie")) {
           headers.put(headerName, getHeader(headerName));
@@ -73,30 +78,49 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     return headers;
   }
 
+  private void readContentLength() {
+    try {
+      this.contentLength = Long.parseLong(getHeader("Content-Length"));
+    } catch (NumberFormatException e) {
+      // ignore malformed content length
+    }
+  }
+
+  private boolean shouldSkipBody() {
+    readContentLength();
+    // should skip if we are not logging body by config or content length is greater than max body size
+    return !BodyHandler.logBody || contentLength > BodyHandler.MAX_BODY_SIZE;
+  }
+
   public String getContent() {
     try {
       flushBuffer();
-      if (logStream == null) {
+      if (shouldSkipBody() || logStream == null || logStream.getBufferedStream() == null) {
         return null;
       }
+      updateContentLength(logStream.getBufferedStream().size());
       String responseEncoding = getResponse().getCharacterEncoding();
-      return logStream.baos.toString(responseEncoding != null ? responseEncoding : UTF_8.name());
-    } catch (UnsupportedEncodingException e) {
-      return "[UNSUPPORTED ENCODING]";
+      return BodyHandler.encodeContent(logStream.getBufferedStream().toByteArray(), responseEncoding);
     } catch (IOException e) {
       return "[IO EXCEPTION]";
     }
   }
 
-  private class LoggingServletOutputStream extends ServletOutputStream {
-    public LoggingServletOutputStream(ServletOutputStream outputStream) {
-
-      this.outputStream = outputStream;
-      this.baos = new ByteArrayOutputStream(1024);
+  private void updateContentLength(long length) {
+    if (contentLength == 0) {
+      contentLength = length;
     }
+  }
 
+  public class LoggingServletOutputStream extends ServletOutputStream {
+    public boolean bufferExceeded = false;
     private ServletOutputStream outputStream;
     private ByteArrayOutputStream baos;
+
+    public LoggingServletOutputStream(ServletOutputStream outputStream) {
+      this.outputStream = outputStream;
+      this.baos = new ByteArrayOutputStream();
+    }
 
     @Override
     public boolean isReady() {
@@ -111,30 +135,47 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     @Override
     public void write(int b) throws IOException {
       outputStream.write(b);
-      baos.write(b);
-    }
-
-    @Override
-    public void write(byte[] b) throws IOException {
-      outputStream.write(b);
-      baos.write(b);
+      if (!bufferExceeded) {
+        if (baos.size() < BodyHandler.MAX_BODY_SIZE) {
+          baos.write(b);
+        } else {
+          bufferExceeded = true;
+          baos.close();
+          baos = null;
+        }
+      }
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
       outputStream.write(b, off, len);
-      baos.write(b, off, len);
+      if (!bufferExceeded) {
+        if (baos.size() + len <= BodyHandler.MAX_BODY_SIZE) {
+          baos.write(b, off, len);
+        } else {
+          bufferExceeded = true;
+          baos.close();
+          baos = null;
+        }
+      }
     }
 
     @Override
     public void flush() throws IOException {
       outputStream.flush();
-      baos.flush();
+      if (!bufferExceeded) {
+        baos.flush();
+      }
     }
 
+    @Override
     public void close() throws IOException {
       outputStream.close();
-      baos.close();
+      if (baos != null) baos.close();
+    }
+
+    public ByteArrayOutputStream getBufferedStream() {
+      return baos;
     }
   }
 }

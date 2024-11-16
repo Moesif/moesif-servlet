@@ -15,7 +15,7 @@ import java.util.logging.Logger;
     urlPatterns ="/*",
     initParams = {
         @WebInitParam(name = "application-id",
-            value = "Your Moesif Application Id"),
+            value = "eyJhcHAiOiIxOTg6NzQ0IiwidmVyIjoiMi4xIiwib3JnIjoiNjQwOjEyOCIsImlhdCI6MTczMDQxOTIwMH0.duHFw2GFPGinL-RL_Bv2QyvxNzwO2oqtxnieO22P2B0"),
         @WebInitParam(name = "logBody", value = "true")
     }
 )

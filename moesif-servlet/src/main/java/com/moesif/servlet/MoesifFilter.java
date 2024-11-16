@@ -477,7 +477,7 @@ public class MoesifFilter implements Filter {
         eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
       }
       if (requestWrapper.bodySkipped) {
-        eventRequestBuilder.body(BodyHandler.getLargeBodyError(requestWrapper.contentLength));
+        eventRequestBuilder.body(BodyHandler.getLargeBodyError(requestWrapper.contentLength, config.maxBodySize));
       }
     }
 
@@ -500,7 +500,7 @@ public class MoesifFilter implements Filter {
         eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);
       }
       if (responseWrapper.bodySkipped) {
-        eventResponseBuilder.body(BodyHandler.getLargeBodyError(responseWrapper.contentLength));
+        eventResponseBuilder.body(BodyHandler.getLargeBodyError(responseWrapper.contentLength, config.maxBodySize));
       }
     }
 

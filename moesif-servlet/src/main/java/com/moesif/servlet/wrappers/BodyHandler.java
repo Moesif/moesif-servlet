@@ -17,9 +17,9 @@ public class BodyHandler {
   }
 
   // a method that returns a simple java map representing an error message for large body meant to be serialized into json
-  public static Map<String, String> getLargeBodyError(long contentLength) {
+  public static Map<String, String> getLargeBodyError(long contentLength, long maxBodySize) {
     Map<String, String> error = new HashMap<>();
-    error.put("msg", "The body length " + contentLength + " exceeded the maximum allowed size of  " + MAX_BODY_SIZE + " bytes");
+    error.put("msg", "The body length " + contentLength + " exceeded the maximum allowed size of  " + maxBodySize + " bytes");
     return error;
   }
 

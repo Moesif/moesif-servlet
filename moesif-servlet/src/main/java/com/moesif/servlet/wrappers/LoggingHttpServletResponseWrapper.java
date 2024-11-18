@@ -95,7 +95,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
   private boolean shouldSkipBody() {
     readContentLength();
     // should skip if we are not logging body by config or content length is greater than max body size
-    return !BodyHandler.logBody || contentLength > config.maxBodySize;
+    return !BodyHandler.logBody || contentLength > config.responseMaxBodySize;
   }
 
   public String getContent() {
@@ -142,7 +142,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     public void write(int b) throws IOException {
       outputStream.write(b);
       if (!bufferExceeded) {
-        if (baos.size() < config.maxBodySize) {
+        if (baos.size() < config.responseMaxBodySize) {
           baos.write(b);
         } else {
           bufferExceeded = true;
@@ -156,7 +156,7 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     public void write(byte[] b, int off, int len) throws IOException {
       outputStream.write(b, off, len);
       if (!bufferExceeded) {
-        if (baos.size() + len <= config.maxBodySize) {
+        if (baos.size() + len <= config.responseMaxBodySize) {
           baos.write(b, off, len);
         } else {
           bufferExceeded = true;

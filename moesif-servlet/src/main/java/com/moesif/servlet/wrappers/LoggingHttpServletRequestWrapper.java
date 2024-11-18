@@ -21,7 +21,7 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   public boolean bodySkipped = false;
   public long contentLength = 0;
   private byte[] content;
-  private MoesifConfiguration config;
+  private final MoesifConfiguration config;
 
   public LoggingHttpServletRequestWrapper(HttpServletRequest request, MoesifConfiguration config) {
     super(request);
@@ -51,7 +51,7 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
   private boolean shouldSkipBody() {
     readContentLength();
     // should skip if we are not logging body by config or content length is greater than max body size
-    return !BodyHandler.logBody || contentLength > config.maxBodySize;
+    return !BodyHandler.logBody || contentLength > config.requestMaxBodySize;
   }
 
   @Override
@@ -70,14 +70,14 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
       }
 
       if (this.parameterMap.isEmpty()) {
-        content = boundedStreamToArray(delegate.getInputStream(), config.maxBodySize);
+        content = boundedStreamToArray(delegate.getInputStream(), config.requestMaxBodySize);
         if (content == null) {
           bodySkipped = true;
           return null;
         }
       } else {
         content = getContentFromParameterMap(this.parameterMap);
-        if (content.length > config.maxBodySize) {
+        if (content.length > config.requestMaxBodySize) {
           bodySkipped = true;
           return null;
         }

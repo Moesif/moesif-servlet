@@ -507,10 +507,16 @@ Override the following parameters, if needed.
 | -- | -- | -- | -- |
 | No | boolean | true | Whether to log request and response body to Moesif. |
 
-#### `maxBodySize`
-| Required | Type | Default Value | Description |
-| -- | -- | -- | -- |
-| No | Number | 10000 | The maximum request or response body size in bytes to log when sending the data to Moesif. |
+#### `requestMaxBodySize`
+| Required | Type | Default Value | Description                                                                                  |
+| -- | -- |---------------|----------------------------------------------------------------------------------------------|
+| No | Number | 1,048,576     | The maximum request body size in bytes to log when sending the data to Moesif. Default 1 MiB |
+
+#### `responseMaxBodySize`
+| Required | Type | Default Value | Description                                                                     |
+| -- | -- |---------------|---------------------------------------------------------------------------------|
+| No | Number | 1,048,576     | The maximum response body size in bytes to log when sending the data to Moesif. Default 1 MiB |
+
 
 ### Interface Methods
 Override following methods, if needed.

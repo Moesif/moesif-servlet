@@ -13,7 +13,10 @@ public class MoesifConfiguration {
   public int queueSize = 1000000;        // maximum queue capacity to hold events.
   public int retry = 0;               // how many times to retry, if fails to post events.ß
   public int updateConfigTime = 5 * 60; // in seconds - time to update app config periodically.
-  public long maxBodySize = 1024 * 1024; // in bytes - max body size to log.
+  // Maximum size of request/response body to be logged.  Events with a larger body will still be logged as normal,
+  // but the body contents are replaced with an indicator that the body was too large
+  public long requestMaxBodySize = 1024 * 1024; // in bytes
+  public long responseMaxBodySize = 1024 * 1024; // in bytes
 
   public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
     try {

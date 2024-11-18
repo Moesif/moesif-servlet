@@ -14,6 +14,7 @@ import com.moesif.api.controllers.APIController;
 import com.moesif.api.IpAddress;
 import com.moesif.api.BodyParser;
 
+import com.moesif.servlet.wrappers.BodyHandler;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
 import jakarta.servlet.*;
@@ -132,6 +133,7 @@ public class MoesifFilter implements Filter {
    */
   public void setLogBody(boolean logBody) {
     this.logBody = logBody;
+    BodyHandler.logBody = logBody;
   }
 
   /**
@@ -292,7 +294,7 @@ public class MoesifFilter implements Filter {
       String companyId = subscriptionModel.getCompanyId();
       String status = subscriptionModel.getStatus();
 
-      if (subscriptionId != null && !subscriptionId.isEmpty() 
+      if (subscriptionId != null && !subscriptionId.isEmpty()
           || companyId != null && !companyId.isEmpty()
           || status != null && !status.isEmpty()
           ) {
@@ -323,7 +325,7 @@ public class MoesifFilter implements Filter {
         String companyId = subscription.getCompanyId();
         String status = subscription.getStatus();
 
-        if (subscriptionId != null && !subscriptionId.isEmpty() 
+        if (subscriptionId != null && !subscriptionId.isEmpty()
             || companyId != null && !companyId.isEmpty()
             || status != null && !status.isEmpty()
             ) {
@@ -371,17 +373,17 @@ public class MoesifFilter implements Filter {
         return;
     }
 
-    LoggingHttpServletRequestWrapper requestWrapper = new LoggingHttpServletRequestWrapper(httpRequest);
-    LoggingHttpServletResponseWrapper responseWrapper = new LoggingHttpServletResponseWrapper(httpResponse);
+    LoggingHttpServletRequestWrapper requestWrapper = new LoggingHttpServletRequestWrapper(httpRequest, config);
+    LoggingHttpServletResponseWrapper responseWrapper = new LoggingHttpServletResponseWrapper(httpResponse, config);
 
 
     // Initialize transactionId    
     String transactionId = null;
 
     if (!config.disableTransactionId) {
-    	
-    	String reqTransId = requestWrapper.getHeader("X-Moesif-Transaction-Id"); 
-        
+
+    	String reqTransId = requestWrapper.getHeader("X-Moesif-Transaction-Id");
+
         if (reqTransId != null && !reqTransId.isEmpty()) {
         	transactionId = reqTransId;
         } else {
@@ -389,7 +391,7 @@ public class MoesifFilter implements Filter {
         }
 
         // Add Transaction Id to the response model and response sent to the client
-        responseWrapper.addHeader("X-Moesif-Transaction-Id", transactionId);	
+        responseWrapper.addHeader("X-Moesif-Transaction-Id", transactionId);
     }
 
     EventRequestModel eventRequestModel = getEventRequestModel(requestWrapper,
@@ -472,12 +474,16 @@ public class MoesifFilter implements Filter {
       eventRequestBuilder.apiVersion(apiVersion);
     }
 
-    String content = requestWrapper.getContent();
-
-    if (logBody && content != null  && !content.isEmpty()) {
-      BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
-      eventRequestBuilder.body(bodyWrapper.body);
-      eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
+    if (this.logBody) {
+      String content = requestWrapper.getContent();
+      if (content != null && !content.isEmpty()) {
+        BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(requestWrapper.getHeaders(), content);
+        eventRequestBuilder.body(bodyWrapper.body);
+        eventRequestBuilder.transferEncoding(bodyWrapper.transferEncoding);
+      }
+      if (requestWrapper.bodySkipped) {
+        eventRequestBuilder.body(BodyHandler.getLargeBodyError(requestWrapper.contentLength, config.requestMaxBodySize));
+      }
     }
 
     return eventRequestBuilder.build();
@@ -490,12 +496,16 @@ public class MoesifFilter implements Filter {
         .status(responseWrapper.getStatus())
         .headers(responseWrapper.getHeaders());
 
-    String content = responseWrapper.getContent();
-
-    if (logBody && content != null  && !content.isEmpty()) {
-      BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
-      eventResponseBuilder.body(bodyWrapper.body);
-      eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);
+    if (this.logBody) {
+      String content = responseWrapper.getContent();
+      if (content != null && !content.isEmpty()) {
+        BodyParser.BodyWrapper bodyWrapper = BodyParser.parseBody(responseWrapper.getHeaders(), content);
+        eventResponseBuilder.body(bodyWrapper.body);
+        eventResponseBuilder.transferEncoding(bodyWrapper.transferEncoding);
+      }
+      if (responseWrapper.bodySkipped) {
+        eventResponseBuilder.body(BodyHandler.getLargeBodyError(responseWrapper.contentLength, config.requestMaxBodySize));
+      }
     }
 
     return eventResponseBuilder.build();
@@ -688,7 +698,7 @@ public class MoesifFilter implements Filter {
             maskedEvent.setWeight(moesifApi.getAPI().calculateWeight(samplingPercentage));
         	// Add the event to queue for batch-based transfer
             this.addEventToQueue(maskedEvent);
-        } 
+        }
         else {
         	if(debug) {
         		logger.info("Skipped Event due to SamplingPercentage " + samplingPercentage + " and randomPercentage " + randomPercentage);

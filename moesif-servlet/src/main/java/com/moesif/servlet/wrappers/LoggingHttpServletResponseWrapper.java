@@ -167,6 +167,11 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     }
 
     @Override
+    public void write(byte[] b) throws IOException {
+      this.write(b, 0, b.length);
+    }
+
+    @Override
     public void flush() throws IOException {
       outputStream.flush();
       if (!bufferExceeded) {

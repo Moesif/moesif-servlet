@@ -24,7 +24,7 @@ Add the Moesif dependency to your project's pom.xml file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet-jakarta</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.3</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ Add the Moesif dependency to your project's build.gradle file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.2.0'
+    compile 'com.moesif.servlet:moesif-servlet-jakarta:2.2.3'
 }
 ```
 

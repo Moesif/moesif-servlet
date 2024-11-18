@@ -130,7 +130,7 @@ For for more information about `MoesifConfiguration`, see the [configuration opt
 
 To run `spring-boot-starter-example`, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -257,7 +257,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 #### Running the Jersey Servlet Example
 To run `jersey-servlet-example`, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -325,7 +325,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 #### Running the Spark Servlet Example
 To run `spark-servlet-example`, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -392,7 +392,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 
 To run this example, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:

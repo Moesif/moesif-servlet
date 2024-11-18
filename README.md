@@ -1,10 +1,10 @@
 # Moesif Servlet Integration Documentation
 by [Moesif](https://moesif.com), the [API analytics](https://www.moesif.com/features/api-analytics) and [API monetization](https://www.moesif.com/solutions/metered-api-billing) platform.
 
- [![Built For][ico-built-for]][link-built-for]
- [![Latest Version][ico-version]][link-package]
- [![Software License][ico-license]][link-license]
- [![Source Code][ico-source]][link-source]
+[![Built For][ico-built-for]][link-built-for]
+[![Latest Version][ico-version]][link-package]
+[![Software License][ico-license]][link-license]
+[![Source Code][ico-source]][link-source]
 
 `moesif-servlet` is a Java servlet filter that logs incoming API calls and sends to [Moesif](https://www.moesif.com) for API analytics and monitoring.
 
@@ -39,7 +39,7 @@ Add the Moesif dependency to your project's `pom.xml` file:
 <dependency>
     <groupId>com.moesif.servlet</groupId>
     <artifactId>moesif-servlet</artifactId>
-    <version>1.8.2</version>
+    <version>1.8.3</version>
 </dependency>
 
 <!-- OR for newer Jakarta-->
@@ -56,7 +56,7 @@ Add the Moesif dependency to your project's `build.gradle` file:
 
 ```gradle
 dependencies {   
-    compile 'com.moesif.servlet:moesif-servlet:1.8.2'
+    compile 'com.moesif.servlet:moesif-servlet:1.8.3'
 }
 
 // OR for newer Jakarta
@@ -67,7 +67,7 @@ dependencies {
 
 ## How to Use
 
-Different Java web frameworks have different way of configuring servlet filters. 
+Different Java web frameworks have different way of configuring servlet filters.
 The following sections describe the instructions for different frameworks:
 
 - [Spring Boot](#spring-boot)
@@ -76,8 +76,8 @@ The following sections describe the instructions for different frameworks:
 - [Spark Servlet](#spark-servlet)
 - [Generic Java Servlet](#generic-java-servlet)
 - Spring Boot 3.x using Jakarta
-  - [Spring Boot 3.0 Jakarta with Tomcat](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-tomcat)
-  - [Spring Boot 3.2 Jakarta with Undertow](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-undertow)
+	- [Spring Boot 3.0 Jakarta with Tomcat](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-tomcat)
+	- [Spring Boot 3.2 Jakarta with Undertow](https://github.com/Moesif/moesif-servlet/tree/master/examples-jakarta/spring-boot-starter-example-undertow)
 
 ### Spring Boot
 
@@ -103,7 +103,7 @@ public class MyConfig implements WebMvcConfigurer {
 ```
 
 To customize the filter, pass in a object that implements `MoesifConfiguration` such
-as `MoesifConfigurationAdapter`. 
+as `MoesifConfigurationAdapter`.
 
 ```java
 @Configuration
@@ -130,7 +130,7 @@ For for more information about `MoesifConfiguration`, see the [configuration opt
 
 To run `spring-boot-starter-example`, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -142,35 +142,35 @@ Then follow these steps:
 
 1. Clone the repository
 
-	```sh
-	git clone https://github.com/Moesif/moesif-servlet
-  cd moesif-servlet
-	```
+   ```sh
+   git clone https://github.com/Moesif/moesif-servlet
+cd moesif-servlet
+```
 
 1. In the `spring-boot-starter-example/src/main/java/com/moesif/servlet/spring/MyConfig.java` file, specify [your Moesif Application ID](#get-your-moesif-application-id) in the `applicationId` variable.
 
 2. Compile:
 
-	```sh
-	cd spring-boot-starter-example
-	mvn clean install
-	```
+   ```sh
+   cd spring-boot-starter-example
+   mvn clean install
+   ```
 
 3. Run:
 
-	```sh
-	java -jar target/spring-boot-starter-example*.jar
-	```
+   ```sh
+   java -jar target/spring-boot-starter-example*.jar
+   ```
 
-	Alternatively:
+   Alternatively:
 
-	```sh
-	mvn  spring-boot:run
-	```
+   ```sh
+   mvn  spring-boot:run
+   ```
 
 
 5. Using Postman or cURL, make a few API calls to `http://localhost:8080/api` or the port that Spring Boot is running on.
-   
+
 6. Verify that the API calls log to [your Moesif account web portal](https://www.moesif.com/wrap).
 
 ### Spring MVC (Java Config)
@@ -228,7 +228,7 @@ You may have to override `onStartup()` to pass in the `MoesifConfiguration` obje
 
 You can run Jersey in multiple ways, as a Java servlet or embedded with a Java NIO framework like Grizzly. This subsection focuses on running Jersey as a servlet.
 
-Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
+Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id).
 
 ```xml
   <filter>
@@ -257,7 +257,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 #### Running the Jersey Servlet Example
 To run `jersey-servlet-example`, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -270,21 +270,21 @@ Then follow these steps:
 
 1. Clone the repository:
 
-	```sh
-	git clone https://github.com/Moesif/moesif-servlet
-  cd moesif-servlet/
-	```
+   ```sh
+   git clone https://github.com/Moesif/moesif-servlet
+cd moesif-servlet/
+```
 
-2. Edit the `jersey-servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
+2. Edit the `jersey-servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id).
 
 
 3. Compile and run:
 
-	```sh
-	cd jersey-servlet-example
-	mvn clean install
-	java -jar target/dependency/webapp-runner.jar target/*.war
-	```
+   ```sh
+   cd jersey-servlet-example
+   mvn clean install
+   java -jar target/dependency/webapp-runner.jar target/*.war
+   ```
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
@@ -296,7 +296,7 @@ You can shut down the server manually by pressing <kbd>Ctrl</kbd> + <kbd>C</kbd>
 
 You can run Spark in multiple ways, as a Java servlet or embedded with a server like Jetty. This subsection focuses on running Spark as a servlet.
 
-Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
+Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id).
 
 ```xml
   <filter>
@@ -325,7 +325,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 #### Running the Spark Servlet Example
 To run `spark-servlet-example`, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -338,20 +338,20 @@ Then follow these steps:
 
 1. Clone the repository:
 
-	```sh
-	git clone https://github.com/Moesif/moesif-servlet
-	cd moesif-servlet
-	```
+   ```sh
+   git clone https://github.com/Moesif/moesif-servlet
+   cd moesif-servlet
+   ```
 
 2. Edit the `spark-servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id) there. In the [`spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java` file](https://github.com/Moesif/moesif-servlet/blob/ab1565d66ec6eff2076ca1e193506d0dc8de7163/spark-servlet-example/src/main/java/com/moesif/servlet/spark/example/SparkDemo.java#L24), add your Moesif Application ID as an argument to `MoesifAPIClient` object.
 
 3. Compile and run:
 
-	```sh
-	cd spark-servlet-example
-	mvn clean install
-	java -jar target/dependency/webapp-runner.jar target/*.war
-	```
+   ```sh
+   cd spark-servlet-example
+   mvn clean install
+   java -jar target/dependency/webapp-runner.jar target/*.war
+   ```
 
 4. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
@@ -360,7 +360,7 @@ In your [Moesif account web portal](https://moesif.com/wrap), you should see eve
 You can shut down the server manually by pressing <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 
 ### Generic Java Servlet
-Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id). 
+Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id).
 
 ```xml
   <filter>
@@ -392,7 +392,7 @@ Edit the `web.xml` file and add [your Moesif Application ID](#get-your-moesif-ap
 
 To run this example, make sure you have the following installed:
 
-- Java 7+
+- Java 8+
 - Maven version 3.0.x or above.
 
 You can check Maven version with the following command:
@@ -405,20 +405,20 @@ Then follow these steps:
 
 1. Clone the repository:
 
-	```sh
-	git clone https://github.com/Moesif/moesif-servlet
-  cd moesif-servlet
-	```
+   ```sh
+   git clone https://github.com/Moesif/moesif-servlet
+cd moesif-servlet
+```
 
 1. Edit the `servlet-example/src/main/webapp/WEB-INF/web.xml` file and add [your Moesif Application ID](#get-your-moesif-application-id) there.
 
 2. Compile and run:
 
-	```sh
-	cd servlet-example
-	mvn clean install
-	java -jar target/dependency/webapp-runner.jar target/*.war
-	```
+   ```sh
+   cd servlet-example
+   mvn clean install
+   java -jar target/dependency/webapp-runner.jar target/*.war
+   ```
 
 3. Go to `http://localhost:8080/api/demo` or the port that Tomcat is running on.
 
@@ -470,170 +470,53 @@ If you are using XML configuration, you can set the debug switch like below:
 ## Configuration Options
 
 To configure the filter, extend the `MoesifConfigurationAdapter` class to override a few configuration parameters
- or implement the entire `MoesifConfiguration` interface. Both will achieve similar results.
+or implement the entire `MoesifConfiguration` interface. Both will achieve similar results.
 
 ### Parameters
 Override the following parameters, if needed.
 
 #### `batchSize`
-<table>
-  <tr>
-   <th scope="col">
-    Required
-   </th>
-   <th scope="col">
-    Type
-   </th>
-   <th scope="col">
-    Default value
-   </th>
-   <th scope="col">
-    Description
-   </th>
-  </tr>
-  <tr>
-   <td>
-    No.
-   </td>
-   <td>
-    <code>number</code>
-   </td>
-   <td>
-    <code>100</code>
-   </td>
-   <td>
-    The batch size of API events that triggers flushing of queue and sending the data to Moesif.
-   </td>
-  </tr>
-</table>
+
+| Required | Type | Default Value | Description |
+| -- | -- | -- | -- |
+| No | Number | 100 | The batch size of API events that triggers flushing of queue and sending the data to Moesif. |
 
 #### `batchMaxTime`
-<table>
-  <tr>
-   <th scope="col">
-    Required
-   </th>
-   <th scope="col">
-    Type
-   </th>
-   <th scope="col">
-    Default value
-   </th>
-   <th scope="col">
-    Description
-   </th>
-  </tr>
-  <tr>
-   <td>
-    No.
-   </td>
-   <td>
-    <code>number</code> (seconds)
-   </td>
-   <td>
-    <code>2</code>
-   </td>
-   <td>
-    The maximum wait time (approximately) before the SDK triggers flushing of the queue and sends data to Moesif.
-   </td>
-  </tr>
-</table>
+
+| Required | Type | Default Value | Description |
+| -- | -- | -- | -- |
+| No | Number (seconds) | 2 | The maximum wait time (approximately) before the SDK triggers flushing of the queue and sends data to Moesif. |
 
 #### `queueSize`
-<table>
-  <tr>
-   <th scope="col">
-    Required
-   </th>
-   <th scope="col">
-    Type
-   </th>
-   <th scope="col">
-    Default value
-   </th>
-   <th scope="col">
-    Description
-   </th>
-  </tr>
-  <tr>
-   <td>
-    No.
-   </td>
-   <td>
-    <code>number</code>
-   </td>
-   <td>
-    <code>1000000</code>
-   </td>
-   <td>
-    Maximum queue capacity to hold events in memory.
-   </td>
-  </tr>
-</table>
+| Required | Type | Default Value | Description |
+| -- | -- | -- | -- |
+| No | Number | 1000000 | Maximum queue capacity to hold events in memory. |
 
 #### `retry`
-<table>
-  <tr>
-   <th scope="col">
-    Required
-   </th>
-   <th scope="col">
-    Type
-   </th>
-   <th scope="col">
-    Default value
-   </th>
-   <th scope="col">
-    Description
-   </th>
-  </tr>
-  <tr>
-   <td>
-    No.
-   </td>
-   <td>
-    <code>number</code>
-   </td>
-   <td>
-    <code>0</code>
-   </td>
-   <td>
-    Number of time to retry if the SDK fails to send data to Moesif. Set the value between <code>0</code> to <code>3</code>.
-   </td>
-  </tr>
-</table>
+| Required | Type | Default Value | Description |
+| -- | -- | -- | -- |
+| No | Number | 0 | Number of time to retry if the SDK fails to send data to Moesif. Set the value between 0 to 3. |
 
 #### `updateConfigTime`
-<table>
-  <tr>
-   <th scope="col">
-    Required
-   </th>
-   <th scope="col">
-    Type
-   </th>
-   <th scope="col">
-    Default value
-   </th>
-   <th scope="col">
-    Description
-   </th>
-  </tr>
-  <tr>
-   <td>
-    No.
-   </td>
-   <td>
-    <code>number</code> (seconds)
-   </td>
-   <td>
-    <code>300</code> (seconds)
-   </td>
-   <td>
-    The maximum wait time (approximately) to pull the latest app configuration and update the cache.
-   </td>
-  </tr>
-</table>
+| Required | Type | Default Value | Description |
+| -- | -- | -- | -- |
+| No | Number (seconds) | 300 (seconds) | The maximum wait time (approximately) to pull the latest app configuration and update the cache. |
+
+#### `logBody`
+| Required | Type | Default Value | Description |
+| -- | -- | -- | -- |
+| No | boolean | true | Whether to log request and response body to Moesif. |
+
+#### `requestMaxBodySize`
+| Required | Type | Default Value | Description                                                                                  |
+| -- | -- |---------------|----------------------------------------------------------------------------------------------|
+| No | Number | 1,048,576     | The maximum request body size in bytes to log when sending the data to Moesif. Default 1 MiB |
+
+#### `responseMaxBodySize`
+| Required | Type | Default Value | Description                                                                     |
+| -- | -- |---------------|---------------------------------------------------------------------------------|
+| No | Number | 1,048,576     | The maximum response body size in bytes to log when sending the data to Moesif. Default 1 MiB |
+
 
 ### Interface Methods
 Override following methods, if needed.
@@ -663,9 +546,9 @@ public Object getMetadata(HttpRequest request, ClientHttpResponse response) {
 ```
 
 ### 3. `public String identifyUser(HttpServletRequest request, HttpServletResponse response)`
-Highly recommended. 
+Highly recommended.
 
-Returns a user ID as a String. This enables Moesif to attribute API requests to individual users so you can understand who is calling your API. 
+Returns a user ID as a String. This enables Moesif to attribute API requests to individual users so you can understand who is calling your API.
 
 You can use this function simultaneously with [`identifyCompany()`](#4-public-string-identifycompanyhttpservletrequest-request-httpservletresponse-response) to track both individual customers and the companies that they are a part of.
 
@@ -829,7 +712,7 @@ filter.updateUsersBatch(users, callBack);
 
 The `metadata` field can contain any customer demographic or other info you want to store. MOesif only requires the `userId` field.
 
-This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in 
+This method is a convenient helper that calls the Moesif API library. For more information, see the function documentation in
 [Moesif Java API reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
 
 ### Update a Single Company
@@ -916,7 +799,7 @@ This method is a convenient helper that calls the Moesif API library. For more i
 
 ### Update a Single Subscription
 
-To create or update a subscription profile in Moesif, use the `updateSubscription()` function. 
+To create or update a subscription profile in Moesif, use the `updateSubscription()` function.
 
 ```java
 MoesifFilter filter = new MoesifFilter("Your Moesif Application Id", new MoesifConfiguration());
@@ -945,7 +828,7 @@ The metadata field can store any subscription-related information you wish to ke
 
 ## Update Subscriptions in Batch
 
-To update a list of subscriptions in one batch, use the `updateSubscriptionsBatch()` function. 
+To update a list of subscriptions in one batch, use the `updateSubscriptionsBatch()` function.
 
 You can update subscriptions synchronously or asynchronously on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 

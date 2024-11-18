@@ -37,7 +37,7 @@ overridedb.*
 .factorypath
 dump.rdb
 transaction-logs
-.idea/workspace.xml
+.java-version
 
 # Created by https://www.gitignore.io/api/java,osx,windows,intellij,maven,gradle
 

@@ -26,7 +26,7 @@ Edit the web.xml file to add your application id that you obtained from your Moe
 
 #### Running the Jersey Servlet example
 
-In order to run this example you will need to have Java 7+ and Maven installed.
+In order to run this example you will need to have Java 11+ and Maven installed.
 
 Before starting, check that your maven version is 3.0.x or above:
 

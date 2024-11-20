@@ -537,10 +537,12 @@ The `MoesifConfiguration` class provides several methods that you can override t
 The above methods are called at different times during the processing of each HTTP request and response.
 
 *On Request Only*
+
 - `skip`, this is called first before the Moesif filter processes the request any further.  If true, the MoesifFilter immediately continues the request through the filter chain without logging or any further processing by Moesif.
 - `getApiVersion`, called on request only
 
 *On Request and On Response*
+
 Each of the following interface methods is called **twice** per HTTP request/response cycle to expose information from the request, the response, or both, depending on your needs.
 - `getMetadata`
 - `identifyUser`
@@ -553,6 +555,7 @@ Each of the following interface methods is called **twice** per HTTP request/res
 **Note:** If you need to use these callbacks for governance features, such as transforming or blocking requests, the necessary information must be available in the **request** phase. This is because request governance operates before the response is generated.
 
 *After Request/Response Processing*
+
 - `maskContent`, is called twice but at each point, after all of the above methods are called, and this method gets the partial then the final Moesif Event model that would eventually be sent. This method allows you to remove sensitive data from the HTTP headers or body or inspect/change any Event property in general before sending to Moesif
 
 

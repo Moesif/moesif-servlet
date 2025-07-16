@@ -18,6 +18,7 @@ import com.moesif.api.models.UserModel;
 import com.moesif.api.models.CampaignModel;
 import com.moesif.api.models.CampaignBuilder;
 import static org.mockito.Mockito.when;
+import com.moesif.servlet.EnvVars;
 
 
 public class MoesifServletTests extends TestCase {
@@ -39,7 +40,7 @@ public class MoesifServletTests extends TestCase {
 		config = new MoesifConfiguration();
 		config.disableTransactionId = true;
 		servletOutputStream = Mockito.mock(ServletOutputStream.class);
-		filter = new MoesifFilter("Your Moesif Application Id", config);
+		filter = new MoesifFilter(EnvVars.readMoesifApplicationId(), config);
 	}
 
 	public void testSendEvent() throws Exception {
@@ -298,5 +299,30 @@ public class MoesifServletTests extends TestCase {
         subscriptions.add(subscriptionB);
 
 		filter.updateSubscriptionsBatch(subscriptions);
+	}
+
+	/**
+	 * Test user agent configuration functionality
+	 */
+	public void testUserAgentConfiguration() throws Exception {
+		// Test default behavior (no custom user agent)
+		MoesifConfiguration defaultConfig = new MoesifConfiguration();
+		MoesifFilter defaultFilter = new MoesifFilter(EnvVars.readMoesifApplicationId(), defaultConfig);
+		assertNotNull("Filter should be created successfully", defaultFilter);
+		assertNotNull("API should be accessible", defaultFilter.getAPI());
+
+		// Test custom user agent via configuration
+		MoesifConfiguration customConfig = new MoesifConfiguration();
+		customConfig.userAgent = "MyServletApp/1.0 (Custom User Agent Test)";
+		MoesifFilter customFilter = new MoesifFilter(EnvVars.readMoesifApplicationId(), customConfig);
+		assertNotNull("Filter with custom user agent should be created successfully", customFilter);
+		assertNotNull("API should be accessible with custom user agent", customFilter.getAPI());
+
+		// Test setting user agent after filter creation
+		MoesifConfiguration updateConfig = new MoesifConfiguration();
+		updateConfig.userAgent = "UpdatedServletApp/2.0 (Updated User Agent Test)";
+		MoesifFilter updateFilter = new MoesifFilter(EnvVars.readMoesifApplicationId());
+		updateFilter.setConfigure(updateConfig);
+		assertNotNull("Filter should work after updating configuration", updateFilter.getAPI());
 	}
 }

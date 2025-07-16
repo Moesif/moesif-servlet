@@ -6,6 +6,7 @@ import com.moesif.api.IpAddress;
 import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.controllers.APIController;
 import com.moesif.api.models.*;
+import com.moesif.servlet.MoesifServletHelper;
 import com.moesif.servlet.wrappers.BodyHandler;
 import com.moesif.servlet.wrappers.LoggingHttpServletRequestWrapper;
 import com.moesif.servlet.wrappers.LoggingHttpServletResponseWrapper;
@@ -93,6 +94,17 @@ public class MoesifFilter implements Filter {
   }
 
   /**
+   * Constructor for testing purposes.
+   * @param    moesifApi   mocked moesifApi client.
+   */
+  MoesifFilter(MoesifAPIClient moesifApi) {
+    this.setDebug(false);
+    this.setLogBody(true);
+    this.setConfigure( new MoesifConfigurationAdapter() );
+    this.moesifApi = moesifApi;
+  }
+
+  /**
    * Sets the Moesif Application Id.
    * @param    applicationId   Required parameter: obtained from your moesif Account.
    */
@@ -106,6 +118,7 @@ public class MoesifFilter implements Filter {
    */
   private void createMoesifApiClient() {
     this.moesifApi = new MoesifAPIClient(this.applicationId);
+    this.moesifApi.setUserAgent(buildUserAgent());
   }
 
   /**
@@ -114,6 +127,25 @@ public class MoesifFilter implements Filter {
    */
   public void setConfigure(MoesifConfiguration config) {
     this.config = config;
+    
+    // Apply user agent configuration if API client exists
+    if (this.moesifApi != null) {
+      this.moesifApi.setUserAgent(buildUserAgent());
+    }
+  }
+
+  /**
+   * Builds the User-Agent string.
+   * @return The User-Agent string.
+   */
+  private String buildUserAgent() {
+    String servletVersion = MoesifServletHelper.getVersion();
+    String baseUserAgent = "moesif-servlet/" + servletVersion;
+
+    if (this.config != null && this.config.userAgent != null && !this.config.userAgent.trim().isEmpty()) {
+      return baseUserAgent + " " + this.config.userAgent.trim();
+    }
+    return baseUserAgent;
   }
 
   /**

@@ -6,7 +6,7 @@
     <groupId>com.moesif.servlet.spark</groupId>
     <artifactId>spark-servlet-example</artifactId>
     <packaging>war</packaging>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <name>spark-servlet-example</name>
 
     <build>

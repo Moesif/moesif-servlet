@@ -6,7 +6,7 @@
     <groupId>com.moesif.servlet.jersey</groupId>
     <artifactId>jersey-servlet-example-annotations</artifactId>
     <packaging>war</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>jersey-servlet-example-annotations</name>
 
     <properties>

@@ -6,7 +6,7 @@
   <artifactId>spring-boot-servlet-example</artifactId>
   <name>spring-boot-servlet-example</name>
   <packaging>war</packaging>
-  <version>2.0.3</version>
+  <version>2.0.4</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>

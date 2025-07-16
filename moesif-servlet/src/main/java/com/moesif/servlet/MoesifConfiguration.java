@@ -18,6 +18,12 @@ public class MoesifConfiguration {
   public long requestMaxBodySize = 1024 * 1024; // in bytes
   public long responseMaxBodySize = 1024 * 1024; // in bytes
 
+  /**
+   * Custom User-Agent string for HTTP requests.
+   * If null or empty, defaults to "moesifapi-java/{version}"
+   */
+  public String userAgent;
+
   public String identifyUser(HttpServletRequest request, HttpServletResponse response) {
     try {
       if (request.getUserPrincipal() == null) {
